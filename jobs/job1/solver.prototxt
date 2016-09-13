@@ -1,0 +1,16 @@
+net: "/home/ellerch/caffeProject/jobs/job1/net_train.prototxt"
+snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job1/"
+snapshot: 3000
+solver_mode: GPU
+test_iter: 200          # how many mini-batches to test in each validation phase
+test_interval: 500      # how often do we call the test phase
+base_lr: 0.02           # begin training at a learning rate of 0.01 = 1e-2
+lr_policy: "step"       # learning rate policy: drop the learning rate in "steps"
+                        # by a factor of gamma every stepsize iterations
+gamma: 0.1              # drop the learning rate by a factor of 10
+                        # (i.e., multiply it by a factor of gamma = 0.1)
+stepsize: 100          # drop the learning rate every 100K iterations
+display: 200           # how often do we print training loss
+max_iter: 400          # train for 4000 iterations total
+momentum: 0.9
+weight_decay: 0.0005
