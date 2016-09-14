@@ -3,7 +3,7 @@ import time
 import os
 import subprocess
 
-from run_trainer import CAFFE_TOOL_PATH
+CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 
 
 def get_networks_from_file(jobs_file_path):
@@ -54,11 +54,17 @@ def draw_job_plot(caffe_log_path, log):
     return output
 
 
-def draw_job_net(net_prototxt_path, output_file, log):
+def draw_job_net(solver_path, output_file, log):
     # draw_net.py <netprototxt_filename> <out_img_filename>
+    net_path = ''
+    with open(solver_path, 'r') as search:
+        for line in search:
+            line = line.rstrip()  # remove '\n' at end of line
+            if line.startswith('net: '):
+                net_path = line.replace('net: ', '').replace('"', '')
     process = subprocess.Popen(['python',
                                 CAFFE_TOOL_PATH + 'draw_net.py',
-                                net_prototxt_path,
+                                net_path,
                                 output_file],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)

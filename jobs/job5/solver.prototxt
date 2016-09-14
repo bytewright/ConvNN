@@ -11,7 +11,7 @@ gamma: 0.1              # drop the learning rate by a factor of 10
                         # (i.e., multiply it by a factor of gamma = 0.1)
 stepsize: 400          # drop the learning rate every 100K iterations
 display: 400           # how often do we print training loss
-max_iter: 500          # train for 4000 iterations total
+max_iter: 100          # train for 4000 iterations total
 momentum: 0.9
 weight_decay: 0.0005
 
