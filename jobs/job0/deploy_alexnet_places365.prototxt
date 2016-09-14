@@ -371,34 +371,4 @@ layer {
   bottom: "fc8"
   top: "prob"
 }
-layer {
-  name: "accuracy"
-  type: "Accuracy"
-  bottom: "fc8"
-  bottom: "label"
-  top: "accuracy"
-  include {
-    phase: TEST
-  }
-}
-layer {
-  name: "accuracy_top_5"
-  type: "Accuracy"
-  bottom: "fc8"
-  bottom: "label"
-  top: "accuracy_top_5"
-  accuracy_param {
-    top_k: 5
-  }
-  include {
-    phase: TEST
-  }
-}  
-layer {
-  name: "loss"
-  type: "SoftmaxWithLoss"
-  bottom: "fc8"
-  bottom: "label"
-  top: "loss"
-}
 
