@@ -37,11 +37,11 @@ def train_network(thread_name, job_file):
 
 
 def get_networks_from_python():
-    with open('examples/mnist/lenet_auto_train.prototxt', 'w') as f:
-        f.write(str(example_lenet('examples/mnist/mnist_train_lmdb', 64)))
+    #with open('examples/mnist/lenet_auto_train.prototxt', 'w') as f:
+    #    f.write(str(example_lenet('examples/mnist/mnist_train_lmdb', 64)))
 
-    with open('examples/mnist/lenet_auto_test.prototxt', 'w') as f:
-        f.write(str(example_lenet('examples/mnist/mnist_test_lmdb', 100)))
+    #with open('examples/mnist/lenet_auto_test.prototxt', 'w') as f:
+    #    f.write(str(example_lenet('examples/mnist/mnist_test_lmdb', 100)))
     # todo make solver file
     return []
 
@@ -101,6 +101,28 @@ def train_networks(network_list, output_path):
     for job in train_threads:
         log.info('thread {}: completed in {}s'.format(job.getName(), job.get_duration()))
 
+
+def generate_output_directories(network_list):
+    generated_dirs = []
+    for network in network_list:
+        solver_path = os.path.join(network, 'solver.prototxt')
+        if not os.path.isfile(solver_path):
+            log.error(solver_path + ' does not exist!, skipping job')
+            network_list.remove(network)
+            continue
+        with open(solver_path, 'r') as search:
+            for line in search:
+                line = line.rstrip()  # remove '\n' at end of line
+                if line.startswith('snapshot_prefix: '):
+                    snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
+        if not os.path.exists(snapshot_path):
+            generated_dirs.append(snapshot_path)
+            os.makedirs(snapshot_path)
+        else:
+            log.error('tmp directory is not empty! Aborting')
+            sys.exit()
+    return network_list, generated_dirs
+
 if __name__ == '__main__':
     args = get_args()
     if args.debug:
@@ -120,18 +142,21 @@ if __name__ == '__main__':
     # load networks
     parsed_network_list = get_networks_from_file(args.jobs_file)
     # network_list += get_networks_from_python()
-    log.info('Parsed {} job(s). Creating tmp dir'.format(parsed_network_list.__len__()))
-    for i in range(parsed_network_list.__len__()):
-        job_path = os.path.join(args.output_path, 'tmp', 'job{}'.format(i))
-        if not os.path.exists(job_path):
-            os.makedirs(job_path)
-        else:
-            log.error('tmp directory is not empty! Aborting')
-            sys.exit()
-    train_networks(parsed_network_list, os.path.join(args.output_path, dir_name))
+    parsed_network_list, tmp_dirs = generate_output_directories(parsed_network_list)
+    log.info('Parsed {} job(s)'.format(parsed_network_list.__len__()))
+    #for i in range(parsed_network_list.__len__()):
+    #    job_path = os.path.join(args.output_path, 'tmp', 'job{}'.format(i))
+    #    if not os.path.exists(job_path):
+    #        os.makedirs(job_path)
+    #    else:
+    #        log.error('tmp directory is not empty! Aborting')
+    #        sys.exit()
+    #train_networks(parsed_network_list, os.path.join(args.output_path, dir_name))
     log.info('cleaning up tmp dir')
     # move all from tmp_dir to correct folder
-    for i in range(parsed_network_list.__len__()):
-        job_path = os.path.join(args.output_path, 'tmp', 'job{}'.format(i))
-        shutil.move(job_path, os.path.join(args.output_path, dir_name, 'weights'))
-    os.rmdir(os.path.join(args.output_path, 'tmp'))
+    #for i in range(parsed_network_list.__len__()):
+    #    job_path = os.path.join(args.output_path, 'tmp', 'job{}'.format(i))
+    #    shutil.move(job_path, os.path.join(args.output_path, dir_name, 'weights'))
+    #for path in tmp_dirs:
+    #    shutil.move(path, os.path.join(args.output_path, dir_name, 'weights'))
+    #os.rmdir(os.path.join(args.output_path, 'tmp'))

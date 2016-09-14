@@ -16,6 +16,8 @@ def get_networks_from_file(jobs_file_path):
     job_list = []
     with open(jobs_file_path, "r") as jobsfile:
         for filename in jobsfile:
+            if filename.startswith('#'):
+                continue
             job_list.append(filename.replace('\r\n', ''))
     #open txt with network names/paths
     return job_list
