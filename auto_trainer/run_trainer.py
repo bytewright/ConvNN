@@ -1,25 +1,23 @@
-import logging
-import json
-import subprocess
-import time
-import os
 import datetime
+import json
+import logging
+import os
 import sys
+import time
 import shutil
+
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import get_networks_from_file, get_args, draw_job_plot
-from net_creator import example_lenet
+from trainer_utils import get_networks_from_file, get_args, draw_job_net, draw_job_plot
+
+# global defines
+CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 
 logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
 log = logging.getLogger()
-#logging.basicConfig(format='%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s')
-#log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 consoleHandler = logging.StreamHandler()
 consoleHandler.setFormatter(logFormatter)
 log.addHandler(consoleHandler)
-
-caffePythonToolsPath = '/home/ellerch/bin/caffe/python/'
 
 
 def generate_job_log(output_dir, job_index, stats_dict):
@@ -44,18 +42,6 @@ def get_networks_from_python():
     #    f.write(str(example_lenet('examples/mnist/mnist_test_lmdb', 100)))
     # todo make solver file
     return []
-
-
-def draw_net_for_job(net_prototxt_path, output_path):
-    # draw_net.py <netprototxt_filename> <out_img_filename>
-    draw_net_process = subprocess.Popen(['python',
-                                         caffePythonToolsPath + 'draw_net.py',
-                                         net_prototxt_path,
-                                         output_path + 'net.png'],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.STDOUT)
-    output = draw_net_process.communicate()[0]
-    return output
 
 
 def train_networks(network_list, output_path):
@@ -84,7 +70,8 @@ def train_networks(network_list, output_path):
 
         # generate image of NN
         time.sleep(2)  # wait for trainer to get started
-        draw_net_for_job(job + 'net_train.prototxt', job_output_dir)
+        draw_job_net(os.path.join(job, 'net_train.prototxt'),
+                     os.path.join(job_output_dir, 'net.png'), log)
 
         train_thread.join()
         # traning is done, write log and other output
@@ -115,9 +102,18 @@ def generate_output_directories(network_list):
                 line = line.rstrip()  # remove '\n' at end of line
                 if line.startswith('snapshot_prefix: '):
                     snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
+                    break
+            for line in search:
+                line = line.rstrip()  # remove '\n' at end of line
+                if line.startswith('net: '):
+                    net_path = line.replace('net: ', '').replace('"', '')
+                    break
         if not os.path.exists(snapshot_path):
             generated_dirs.append(snapshot_path)
             os.makedirs(snapshot_path)
+            # copy used settings and network to output dir
+            shutil.copyfile(solver_path, os.path.join(snapshot_path, 'solver.prototxt'))
+            shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
         else:
             log.error('tmp directory is not empty! Aborting')
             sys.exit()

@@ -1,15 +1,9 @@
-import sys
-import getpass
 import configargparse
-import uuid
 import time
 import os
-import json
-from datetime import datetime, timedelta
-import logging
-import shutil
-import requests
 import subprocess
+
+from run_trainer import CAFFE_TOOL_PATH
 
 
 def get_networks_from_file(jobs_file_path):
@@ -56,5 +50,26 @@ def draw_job_plot(caffe_log_path, log):
         log.error('plotter return code: '+str(process.returncode))
         log.error(output)
     else:
-        log.info('plotter returned code {}, everything okay'.format(returncode))
+        log.info('plotter exited successfully (code {})'.format(returncode))
+    return output
 
+
+def draw_job_net(net_prototxt_path, output_file, log):
+    # draw_net.py <netprototxt_filename> <out_img_filename>
+    process = subprocess.Popen(['python',
+                                CAFFE_TOOL_PATH + 'draw_net.py',
+                                net_prototxt_path,
+                                output_file],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        log.error('draw_net return code: ' + str(process.returncode))
+        log.error(output)
+    else:
+        log.info('draw_net exited successfully (code {})'.format(returncode))
+    return output
