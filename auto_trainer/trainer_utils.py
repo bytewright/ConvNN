@@ -1,16 +1,10 @@
-import sys
-import getpass
 import configargparse
-import uuid
 import time
 import os
-import json
-from datetime import datetime, timedelta
-import logging
-import shutil
-import requests
 import subprocess
 
+CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
+MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
 
 def get_networks_from_file(jobs_file_path):
     job_list = []
@@ -56,5 +50,53 @@ def draw_job_plot(caffe_log_path, log):
         log.error('plotter return code: '+str(process.returncode))
         log.error(output)
     else:
-        log.info('plotter returned code {}, everything okay'.format(returncode))
+        log.info('plotter exited successfully (code {})'.format(returncode))
+    return output
 
+
+def draw_job_net(solver_path, output_file, log):
+    # draw_net.py <netprototxt_filename> <out_img_filename>
+    net_path = ''
+    with open(solver_path, 'r') as search:
+        for line in search:
+            line = line.rstrip()  # remove '\n' at end of line
+            if line.startswith('net: '):
+                net_path = line.replace('net: ', '').replace('"', '')
+    process = subprocess.Popen(['python',
+                                CAFFE_TOOL_PATH + 'draw_net.py',
+                                net_path,
+                                output_file],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        log.error('draw_net return code: ' + str(process.returncode))
+        log.error(output)
+    else:
+        log.info('draw_net exited successfully (code {})'.format(returncode))
+    return output
+
+
+def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
+    #./parse_log.sh <input_log> <output_path>
+    log.debug('calling {}'.format('./'+os.path.join(MY_TOOLS_PATH, 'parse_log.sh')))
+    process = subprocess.Popen(['./'+os.path.join(MY_TOOLS_PATH, 'parse_log.sh'),
+                                caffe_log_file,
+                                job_output_dir],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        log.error('parse_log return code: ' + str(process.returncode))
+        log.error(output)
+    else:
+        log.info('parse_log exited successfully (code {})'.format(returncode))
+    return output
