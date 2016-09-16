@@ -83,11 +83,9 @@ def draw_job_net(solver_path, output_file, log):
 
 def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
     #./parse_log.sh <input_log> <output_path>
-    script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools/', 'parse_log.sh')
+    script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'parse_log.sh')
     log.debug('calling \n{}\n{}\n{}'.format(script_path, caffe_log_file, job_output_dir))
-    process = subprocess.Popen([script_path,
-                                caffe_log_file,
-                                job_output_dir],
+    process = subprocess.Popen(['{} {} {}'.format(script_path, caffe_log_file, job_output_dir)],
                                shell=True,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
@@ -100,5 +98,5 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
         log.error('parse_log return code: ' + str(process.returncode))
         log.error(output.replace(': ', ':\n'))
     else:
-        log.info('parse_log exited successfully (code {})'.format(returncode))
+        log.info('parse_log exited successfully (code {})\noutput:\n----------{}\n-----------'.format(returncode, output))
     return output
