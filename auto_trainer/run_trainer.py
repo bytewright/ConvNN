@@ -142,4 +142,5 @@ if __name__ == '__main__':
     log.info('cleaning up tmp dir')
     for path in tmp_dirs:
         shutil.move(path, os.path.join(args.output_path, dir_name, path.split('/')[-2]))
-    os.rmdir(os.path.join(args.output_path, 'tmp'))
+    if os.path.exists(os.path.join(args.output_path, 'tmp')):
+        os.rmdir(os.path.join(args.output_path, 'tmp'))
