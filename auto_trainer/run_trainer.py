@@ -55,7 +55,8 @@ def train_networks(network_list, output_path):
         jobID = network_list.index(job)
         #job_output_dir = output_path + '/job{}/'.format(jobID)
         # todo dir handling
-        job_output_dir = os.path.join(output_path, '/job{}/'.format(job[-2]))
+        job_output_dir = os.path.join(output_path, 'job{}'.format(job[-2]))
+        log.debug('creating output dir:\n{}'.format(job_output_dir))
         os.makedirs(job_output_dir)
 
         log.info('starting thread for job {}'.format(jobID))
