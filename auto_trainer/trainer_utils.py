@@ -1,19 +1,28 @@
+import shutil
+import sys
+
 import configargparse
 import time
 import os
 import subprocess
 
+from auto_trainer.run_trainer import log
+
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
 
-def get_networks_from_file(jobs_file_path):
+
+def get_networks_from_file(jobs_file_path, log):
     job_list = []
+    # open txt with network names/paths
     with open(jobs_file_path, "r") as jobsfile:
-        for filename in jobsfile:
-            if filename.startswith('#'):
+        for job_desc in jobsfile:
+            if job_desc.startswith('#'):
                 continue
-            job_list.append(filename.replace('\r\n', ''))
-    #open txt with network names/paths
+            if not os.path.isfile(os.path.join(job_path, 'solver.prototxt')):
+                log.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_path))
+                continue
+            job_list.append(job_path.replace('\r\n', ''))
     return job_list
 
 
@@ -39,6 +48,32 @@ def draw_job_plot(caffe_log_path, log):
     log.info('plotting learning curve as png')
     plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
     process = subprocess.Popen(['python', plot_script, caffe_log_path, os.path.dirname(caffe_log_path)],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        log.error('plotter return code: '+str(process.returncode))
+        log.error(output)
+    else:
+        log.info('plotter exited successfully (code {})'.format(returncode))
+    return output
+
+def draw_job_plot2(caffe_log_path, log):
+    if not os.path.exists(caffe_log_path):
+        log.error('caffe logfile not found!')
+        return
+    log.info('plotting learning curve as png')
+    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'plot_training_log.py')
+    #todo call all plottypes
+    process = subprocess.Popen(['python',
+                                plot_script,
+                                '0',
+                                os.path.join(os.path.dirname(caffe_log_path), 'plot0.png'),
+                                caffe_log_path],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     output = process.communicate()[0]
@@ -100,3 +135,28 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
     else:
         log.info('parse_log exited successfully (code {})\noutput:\n----------{}\n-----------'.format(returncode, output))
     return output
+
+
+def generate_output_directory(network_path):
+    net_path = ''
+    snapshot_path = ''
+    solver_path = os.path.join(network_path, 'solver.prototxt')
+    if not os.path.isfile(solver_path):
+        log.error(solver_path + ' does not exist!, skipping job')
+        return None
+    with open(solver_path, 'r') as search:
+        for line in search:
+            line = line.rstrip()  # remove '\n' at end of line
+            if line.startswith('snapshot_prefix: '):
+                snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
+            if line.startswith('net: '):
+                net_path = line.replace('net: ', '').replace('"', '')
+    if not os.path.exists(snapshot_path):
+        os.makedirs(snapshot_path)
+        # copy used settings and network to output dir
+        shutil.copyfile(solver_path, os.path.join(snapshot_path, 'solver.prototxt'))
+        shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
+    else:
+        log.error('tmp directory is not empty! Aborting')
+        sys.exit()
+    return snapshot_path

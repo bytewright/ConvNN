@@ -2,15 +2,15 @@ import datetime
 import json
 import logging
 import os
-import sys
-import time
 import shutil
+import time
 
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import get_networks_from_file, get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
+from trainer_utils import generate_output_directory, get_networks_from_file, get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
 
 # global defines
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
+# todo caffe home?
 
 logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
 log = logging.getLogger()
@@ -70,12 +70,15 @@ def train_networks(network_list, output_path):
         time.sleep(2)  # wait for trainer to get started
         draw_job_net(solverProto,
                      os.path.join(job_output_dir, 'net.png'), log)
-
+        #todo check if thread finished, if false draw tmp plot and wait 10 min
         train_thread.join()
-        # traning is done, write log and other output
+        # training is done, write log and other output
         generate_job_log(job_output_dir, jobID, train_thread.get_stats())
-        generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
-        draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
+        if True:
+            generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
+            draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
+        #else:
+            #draw_job_plot2(os.path.join(job_output_dir, "caffe_training.log"), log)
         # time.sleep(2)
         # log.debug("testing classify")
         # proc = subprocess.Popen(['python', caffePythonToolsPath + 'classify.py',
@@ -85,32 +88,10 @@ def train_networks(network_list, output_path):
 
     log.info('all jobs completed')
     for job in train_threads:
-        log.info('thread {}: completed in {}s'.format(job.getName(), job.get_duration()))
+        minutes, sec = divmod(job.get_duration(), 60)
+        hours, minutes = divmod(minutes, 60)
+        log.info('thread {}: completed in {}'.format(job.getName(), '%02dh %02dm %02ds' % (hours, minutes, sec)))
 
-
-def generate_output_directory(network_path):
-    net_path = ''
-    snapshot_path = ''
-    solver_path = os.path.join(network_path, 'solver.prototxt')
-    if not os.path.isfile(solver_path):
-        log.error(solver_path + ' does not exist!, skipping job')
-        return None
-    with open(solver_path, 'r') as search:
-        for line in search:
-            line = line.rstrip()  # remove '\n' at end of line
-            if line.startswith('snapshot_prefix: '):
-                snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
-            if line.startswith('net: '):
-                net_path = line.replace('net: ', '').replace('"', '')
-    if not os.path.exists(snapshot_path):
-        os.makedirs(snapshot_path)
-        # copy used settings and network to output dir
-        shutil.copyfile(solver_path, os.path.join(snapshot_path, 'solver.prototxt'))
-        shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
-    else:
-        log.error('tmp directory is not empty! Aborting')
-        sys.exit()
-    return snapshot_path
 
 if __name__ == '__main__':
     args = get_args()

@@ -22,11 +22,11 @@ class NetworkTrainer(Thread):
 
     def run(self):
         self.log.debug('Name: {}, my job file: {}'.format(self.getName(), self.job_file))
-
+        logfile = open(os.path.join(self.job_output_dir, "tmp_caffe_training.log"), "w")
         start = timer()
         output = '{} train -solver {} {}\n\n'.format(caffeTool, self.job_file, '-gpu 0')
         solver_process = subprocess.Popen([caffeTool, 'train', '-solver', self.job_file, '-gpu', '0'],
-                                          stdout=subprocess.PIPE,
+                                          stdout=logfile,
                                           stderr=subprocess.STDOUT)
         output += solver_process.communicate()[0]
         end = timer()

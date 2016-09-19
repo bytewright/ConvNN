@@ -18,7 +18,7 @@ import configargparse
 
 #import caffe
 
-REPO_DIRNAME = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/../..')
+#REPO_DIRNAME = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/../..')
 UPLOAD_FOLDER = '/tmp/caffe_demos_uploads'
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'bmp', 'jpg', 'jpe', 'jpeg', 'gif'])
 
@@ -61,7 +61,7 @@ def classify_upload():
         imagefile = flask.request.files['imagefile']
         filename_ = str(datetime.datetime.now()).replace(' ', '_') + \
             werkzeug.secure_filename(imagefile.filename)
-        filename = os.path.join(UPLOAD_FOLDER, filename_)
+        filename = os.path.join(args.flask_upload_folder, filename_)
         imagefile.save(filename)
         logging.info('Saving to %s.', filename)
         image = exifutil.open_oriented_im(filename)
@@ -97,50 +97,63 @@ def allowed_file(filename):
     )
 
 
-class ImagenetClassifier(object):
-    default_args = {
-        'model_def_file': (
-            '{}/models/bvlc_reference_caffenet/deploy.prototxt'.format(REPO_DIRNAME)),
-        'pretrained_model_file': (
-            '{}/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'.format(REPO_DIRNAME)),
-        'mean_file': (
-            '{}/python/caffe/imagenet/ilsvrc_2012_mean.npy'.format(REPO_DIRNAME)),
-        'class_labels_file': (
-            '{}/data/ilsvrc12/synset_words.txt'.format(REPO_DIRNAME)),
-        'bet_file': (
-            '{}/data/ilsvrc12/imagenet.bet.pickle'.format(REPO_DIRNAME)),
-    }
+class ImageClassifier(object):
+    #default_args = {
+    #    'model_def_file': (
+    #        '{}/models/bvlc_reference_caffenet/deploy.prototxt'.format(REPO_DIRNAME)),
+    #    'pretrained_model_file': (
+    #        '{}/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'.format(REPO_DIRNAME)),
+    #    'mean_file': (
+    #        '{}/python/caffe/imagenet/ilsvrc_2012_mean.npy'.format(REPO_DIRNAME)),
+    #    'class_labels_file': (
+    #        '{}/data/ilsvrc12/synset_words.txt'.format(REPO_DIRNAME)),
+    #    'bet_file': (
+    #        '{}/data/ilsvrc12/imagenet.bet.pickle'.format(REPO_DIRNAME)),
+    #}
     #for key, val in default_args.iteritems():
     #    if not os.path.exists(val):
     #        raise Exception(
     #            "File for {} is missing. Should be at: {}".format(key, val))
     #default_args['image_dim'] = 256
     #default_args['raw_scale'] = 255.
+    model_args = {
+        'model_path_prefix': '',
+        'model_definition': '',
+        'model_weights': '',
+        'db_mean_file': '',
+        'db_labels': '',
+        'bet_file': '',
+        'image_dim': (100, 100),
+        'image_raw_scale': 99
+    }
+    #todo set dims to correct val for placesdb
 
-    def __init__(self, model_def_file, pretrained_model_file, mean_file,
-                 raw_scale, class_labels_file, bet_file, image_dim, gpu_mode):
-        logging.info('Loading net and associated files...')
+    def __init__(self, gpu_mode):
         if gpu_mode:
             caffe.set_mode_gpu()
         else:
             caffe.set_mode_cpu()
+        self.load_classifier(bet_file, class_labels_file, image_dim, mean_file, model_def_file, pretrained_model_file,
+                             raw_scale)
+
+    def load_classifier(self):
+        logging.info('Loading net and associated files...')
         self.net = caffe.Classifier(
-            model_def_file, pretrained_model_file,
-            image_dims=(image_dim, image_dim), raw_scale=raw_scale,
-            mean=np.load(mean_file).mean(1).mean(1), channel_swap=(2, 1, 0)
+            self.model_args['model_definition'],self.model_args['model_weights'],
+            image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
+            mean=np.load(self.model_args['db_mean_file']).mean(1).mean(1), channel_swap=(2, 1, 0)
         )
-
-        with open(class_labels_file) as f:
+        with open(self.model_args['db_labels']) as f:
             labels_df = pd.DataFrame([
-                {
-                    'synset_id': l.strip().split(' ')[0],
-                    'name': ' '.join(l.strip().split(' ')[1:]).split(',')[0]
-                }
-                for l in f.readlines()
-            ])
+                                         {
+                                             # todo an places labels anpassen
+                                             'synset_id': l.strip().split(' ')[0],
+                                             'name': ' '.join(l.strip().split(' ')[1:]).split(',')[0]
+                                         }
+                                         for l in f.readlines()
+                                         ])
         self.labels = labels_df.sort('synset_id')['name'].values
-
-        self.bet = cPickle.load(open(bet_file))
+        self.bet = cPickle.load(open(self.model_args['bet_file']))
         # A bias to prefer children nodes in single-chain paths
         # I am setting the value to 0.1 as a quick, simple model.
         # We could use better psychological models here...
@@ -151,7 +164,7 @@ class ImagenetClassifier(object):
             starttime = time.time()
             scores = self.net.predict([image], oversample=True).flatten()
             endtime = time.time()
-
+            logging.debug(scores)
             indices = (-scores).argsort()[:5]
             predictions = self.labels[indices]
 
@@ -181,6 +194,21 @@ class ImagenetClassifier(object):
             return (False, 'Something went wrong when classifying the '
                            'image. Maybe try another one?')
 
+    def set_model_args(self,
+                       new_path=model_args['model_path_prefix'],
+                       new_model_def=model_args['model_definition'],
+                       new_weights=model_args['model_weights'],
+                       new_mean_file=model_args['db_mean_file'],
+                       new_labels=model_args['db_labels'],
+                       new_bet_file=model_args['bet_file']):
+        self.model_args['model_path_prefix'] = new_path
+        self.model_args['model_definition'] = new_model_def
+        self.model_args['model_weights'] = new_weights
+        self.model_args['db_mean_file'] = new_mean_file
+        self.model_args['db_labels'] = new_labels
+        self.model_args['bet_file'] = new_bet_file
+        self.load_classifier()
+
 
 def start_tornado(app, port=5000):
     http_server = tornado.httpserver.HTTPServer(
@@ -205,13 +233,17 @@ def get_args():
         '-g', '--gpu',
         help="use gpu mode",
         action='store_true', default=False)
-    parser.add_argument('-j', '--model-def-file', type=str,
+    parser.add_argument('--flask-upload-folder', type=str,
                         help='text file, each line should be one path to a solver file')
-    parser.add_argument('-j', '--pretrained-model-file', type=str,
+    parser.add_argument('--path-prefix', type=str,
                         help='text file, each line should be one path to a solver file')
-    parser.add_argument('-j', '--mean-file', type=str,
+    parser.add_argument('--model-def-file', type=str,
                         help='text file, each line should be one path to a solver file')
-    parser.add_argument('-j', '--labels-file', type=str,
+    parser.add_argument('--pretrained-model-file', type=str,
+                        help='text file, each line should be one path to a solver file')
+    parser.add_argument('--mean-file', type=str,
+                        help='text file, each line should be one path to a solver file')
+    parser.add_argument('--labels-file', type=str,
                         help='text file, each line should be one path to a solver file')
     return parser.parse_args()
 
@@ -221,26 +253,45 @@ def start_from_terminal(app):
     Parse command line options and start the server.
     """
 
-    opts, args = get_args()
+
+args = get_args()
+if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.INFO)
+    logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    logging.getLogger().addHandler(consoleHandler)
+    #start_from_terminal(app)
+    # log = logging.getLogger()
     print('{}:{}'.format(args.model_def_file, os.path.exists(args.model_def_file)))
     print('{}:{}'.format(args.pretrained_model_file, os.path.exists(args.model_def_file)))
     print('{}:{}'.format(args.mean_file, os.path.exists(args.model_def_file)))
     print('{}:{}'.format(args.labels_file, os.path.exists(args.model_def_file)))
     print('port:{}'.format(args.port))
-    #ImagenetClassifier.default_args.update({'gpu_mode': opts.gpu})
 
+    ImageClassifier.default_args.update({'gpu_mode': opts.gpu})
+    classifier = ImageClassifier(True)
+    classifier.set_model_args(args.path_prefix,
+                              args.model_def_file,
+                              args.pretrained_model_file,
+                              args.mean_file,
+                              args.labels_file)
+    logging.info('starting with Parameters:\n{}\n{}\n{}\n{}\n{}\n{}'.format(
+        classifier.model_args['model_path_prefix'],
+        classifier.model_args['model_definition'],
+        classifier.model_args['model_weights'],
+        classifier.model_args['db_mean_file'],
+        classifier.model_args['db_labels'],
+        classifier.model_args['bet_file']))
+
+    if not os.path.exists(args.flask_upload_folder):
+        logging.info('creating upload folder at:\n{}'.format(args.flask_upload_folder))
+        os.makedirs(args.flask_upload_folder)
     # Initialize classifier + warm start by forward for allocation
-    #app.clf = ImagenetClassifier(**ImagenetClassifier.default_args)
-    #app.clf.net.forward()
+    app.clf = classifier
+    app.clf.net.forward()
 
-    #if opts.debug:
-    #    app.run(debug=True, host='0.0.0.0', port=opts.port)
-    #else:
-    #    start_tornado(app, opts.port)
-
-
-if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-    start_from_terminal(app)
+    if args.debug:
+        app.run(debug=True, host='0.0.0.0', port=args.port)
+    else:
+        start_tornado(app, opts.port)
