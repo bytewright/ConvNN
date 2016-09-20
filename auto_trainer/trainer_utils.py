@@ -15,12 +15,13 @@ def get_networks_from_file(jobs_file_path, log):
     # open txt with network names/paths
     with open(jobs_file_path, "r") as jobsfile:
         for job_desc in jobsfile:
+            job_desc = job_desc.rstrip()  # remove '\n' at end of line
             if job_desc.startswith('#'):
                 continue
             if not os.path.isfile(os.path.join(job_desc, 'solver.prototxt')):
                 log.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
                 continue
-            job_list.append(job_desc.replace('\r\n', ''))
+            job_list.append(job_desc)
     return job_list
 
 
