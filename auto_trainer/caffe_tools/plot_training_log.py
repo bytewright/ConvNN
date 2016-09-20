@@ -27,10 +27,10 @@ def is_x_axis_field(field):
 def create_field_index():
     train_key = 'Train'
     test_key = 'Test'
-    field_index = {train_key:{'Iters':0, 'Seconds':1, train_key + ' loss':2,
-                              train_key + ' learning rate':3},
-                   test_key:{'Iters':0, 'Seconds':1, test_key + ' accuracy':2,
-                             test_key + ' loss':3}}
+    field_index = {train_key:{'Iters':0, 'Seconds':1,'TrainingLoss':2,
+                              'LearningRate':3},
+                   test_key:{'Iters':0, 'Seconds':1, 'TestAccuracy':2,
+                             'TestLoss':3}}
     fields = set()
     for data_file_type in field_index.keys():
         fields = fields.union(set(field_index[data_file_type].keys()))
@@ -62,8 +62,10 @@ def get_data_file_type(chart_type):
     return data_file_type
 
 def get_data_file(chart_type, path_to_log):
-    return (os.path.basename(path_to_log) + '.' +
+    return ('parsed_caffe_log' + '.' +
             get_data_file_type(chart_type).lower())
+    #return (os.path.basename(path_to_log).replace('.', '_') + '.' +
+    #        get_data_file_type(chart_type).lower())
 
 def get_field_descriptions(chart_type):
     description = get_chart_type_description(chart_type).split(
@@ -102,15 +104,15 @@ def get_data_label(path_to_log):
 def get_legend_loc(chart_type):
     x_axis, y_axis = get_field_descriptions(chart_type)
     loc = 'lower right'
-    if y_axis.find('accuracy') != -1:
+    if y_axis.find('TestAccuracy') != -1:
         pass
-    if y_axis.find('loss') != -1 or y_axis.find('learning rate') != -1:
+    if y_axis.find('Loss') != -1 or y_axis.find('LearningRate') != -1:
         loc = 'upper right'
     return loc
 
 def plot_chart(chart_type, path_to_png, path_to_log_list):
     for path_to_log in path_to_log_list:
-        os.system('%s %s' % (get_log_parsing_script(), path_to_log))
+        os.system('%s %s %s' % (get_log_parsing_script(), path_to_log, os.path.dirname(path_to_log)))
         data_file = get_data_file(chart_type, path_to_log)
         x_axis_field, y_axis_field = get_field_descriptions(chart_type)
         x, y = get_field_indices(x_axis_field, y_axis_field)
@@ -142,7 +144,7 @@ def plot_chart(chart_type, path_to_png, path_to_log_list):
     plt.xlabel(x_axis_field)
     plt.ylabel(y_axis_field)
     plt.savefig(path_to_png)
-    plt.show()
+    #plt.show()
 
 def print_help():
     print """This script mainly serves as the basis of your customizations.

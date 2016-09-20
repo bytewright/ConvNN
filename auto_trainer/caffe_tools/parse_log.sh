@@ -31,7 +31,7 @@ python $DIR/extract_seconds.py $OUTDIR/aux3.txt $OUTDIR/aux4.txt
 
 # Generating
 echo 'writing to $OUTDIR/parsed_caffe_log.test'
-echo '#Iters Seconds TestAccuracy TestLoss'> $OUTDIR/parsed_caffe_log.test
+echo 'Iters Seconds TestAccuracy TestLoss'> $OUTDIR/parsed_caffe_log.test
 paste $OUTDIR/aux0.txt $OUTDIR/aux4.txt $OUTDIR/aux1.txt $OUTDIR/aux2.txt | column -t >> $OUTDIR/parsed_caffe_log.test
 rm $OUTDIR/aux.txt $OUTDIR/aux0.txt $OUTDIR/aux1.txt $OUTDIR/aux2.txt $OUTDIR/aux3.txt $OUTDIR/aux4.txt
 
@@ -47,6 +47,6 @@ python $DIR/extract_seconds.py $OUTDIR/aux.txt $OUTDIR/aux3.txt
 
 # Generating
 echo 'writing to $OUTDIR/parsed_caffe_log.train'
-echo '#Iters Seconds TrainingLoss LearningRate'> $OUTDIR/parsed_caffe_log.train
+echo 'Iters Seconds TrainingLoss LearningRate'> $OUTDIR/parsed_caffe_log.train
 paste $OUTDIR/aux0.txt $OUTDIR/aux3.txt $OUTDIR/aux1.txt $OUTDIR/aux2.txt | column -t >> $OUTDIR/parsed_caffe_log.train
 rm $OUTDIR/aux.txt $OUTDIR/aux0.txt $OUTDIR/aux1.txt $OUTDIR/aux2.txt  $OUTDIR/aux3.txt
