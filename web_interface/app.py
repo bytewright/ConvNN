@@ -37,7 +37,7 @@ def classify_url():
     try:
         string_buffer = StringIO.StringIO(
             urllib.urlopen(imageurl).read())
-        image = caffe.io.load_image(string_buffer)
+        #image = caffe.io.load_image(string_buffer)
 
     except Exception as err:
         # For any exception we encounter in reading the image, we will just
@@ -49,9 +49,10 @@ def classify_url():
         )
 
     logging.info('Image: %s', imageurl)
-    result = app.clf.classify_image(image)
-    return flask.render_template(
-        'index.html', has_result=True, result=result, imagesrc=imageurl)
+    #result = app.clf.classify_image(image)
+    #return flask.render_template(
+    #    'index.html', has_result=True, result=result, imagesrc=imageurl)
+    return flask.render_template('index.html', has_result=True, imagesrc=imageurl)
 
 
 @app.route('/classify_upload', methods=['POST'])
@@ -97,7 +98,7 @@ def allowed_file(filename):
     )
 
 
-class ImageClassifier(object):
+class ImageClassifier:
     #default_args = {
     #    'model_def_file': (
     #        '{}/models/bvlc_reference_caffenet/deploy.prototxt'.format(REPO_DIRNAME)),
@@ -130,19 +131,20 @@ class ImageClassifier(object):
 
     def __init__(self, gpu_mode):
         if gpu_mode:
-            caffe.set_mode_gpu()
+            logging.info("using GPU mode")
+            #caffe.set_mode_gpu()
         else:
-            caffe.set_mode_cpu()
-        self.load_classifier(bet_file, class_labels_file, image_dim, mean_file, model_def_file, pretrained_model_file,
-                             raw_scale)
+            logging.info("using CPU mode")
+            #caffe.set_mode_cpu()
+        #self.load_classifier()
 
     def load_classifier(self):
         logging.info('Loading net and associated files...')
-        self.net = caffe.Classifier(
-            self.model_args['model_definition'],self.model_args['model_weights'],
-            image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
-            mean=np.load(self.model_args['db_mean_file']).mean(1).mean(1), channel_swap=(2, 1, 0)
-        )
+        #self.net = caffe.Classifier(
+        #    self.model_args['model_definition'],self.model_args['model_weights'],
+        #    image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
+        #    mean=np.load(self.model_args['db_mean_file']).mean(1).mean(1), channel_swap=(2, 1, 0)
+        #)
         with open(self.model_args['db_labels']) as f:
             labels_df = pd.DataFrame([
                                          {
@@ -207,6 +209,14 @@ class ImageClassifier(object):
         self.model_args['db_mean_file'] = new_mean_file
         self.model_args['db_labels'] = new_labels
         self.model_args['bet_file'] = new_bet_file
+        logging.info('setting arguments:\n{}: {}\n{}: {}\n{}: {}\n{}: {}\n{}: {}\n{}: {}\n'.format(
+            'model_path_prefix', new_path,
+            'model_definition', new_model_def,
+            'model_weights', new_weights,
+            'db_mean_file', new_mean_file,
+            'db_labels', new_labels,
+            'bet_file', new_bet_file
+            ))
         self.load_classifier()
 
 
@@ -269,20 +279,19 @@ if __name__ == '__main__':
     print('{}:{}'.format(args.labels_file, os.path.exists(args.model_def_file)))
     print('port:{}'.format(args.port))
 
-    ImageClassifier.default_args.update({'gpu_mode': opts.gpu})
     classifier = ImageClassifier(True)
     classifier.set_model_args(args.path_prefix,
                               args.model_def_file,
                               args.pretrained_model_file,
                               args.mean_file,
                               args.labels_file)
-    logging.info('starting with Parameters:\n{}\n{}\n{}\n{}\n{}\n{}'.format(
-        classifier.model_args['model_path_prefix'],
-        classifier.model_args['model_definition'],
-        classifier.model_args['model_weights'],
-        classifier.model_args['db_mean_file'],
-        classifier.model_args['db_labels'],
-        classifier.model_args['bet_file']))
+    #logging.info('starting with Parameters:\n{}\n{}\n{}\n{}\n{}\n{}'.format(
+    #    classifier.model_args['model_path_prefix'],
+    #    classifier.model_args['model_definition'],
+    #    classifier.model_args['model_weights'],
+    #    classifier.model_args['db_mean_file'],
+    #    classifier.model_args['db_labels'],
+    #    classifier.model_args['bet_file']))
 
     if not os.path.exists(args.flask_upload_folder):
         logging.info('creating upload folder at:\n{}'.format(args.flask_upload_folder))
@@ -294,4 +303,4 @@ if __name__ == '__main__':
     if args.debug:
         app.run(debug=True, host='0.0.0.0', port=args.port)
     else:
-        start_tornado(app, opts.port)
+        start_tornado(app, args.port)

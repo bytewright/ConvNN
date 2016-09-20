@@ -1,6 +1,7 @@
 import sys
 import caffe
 import logging
+import time
 import os
 import subprocess
 from threading import Thread
@@ -30,11 +31,21 @@ class NetworkTrainer(Thread):
                                           stderr=subprocess.STDOUT)
         output += solver_process.communicate()[0]
         end = timer()
+        returncode = solver_process.returncode
+        while returncode is None:
+            time.sleep(2)
+            returncode = solver_process.returncode
+        if returncode is not 0:
+            self.log.error('solver return code: ' + str(solver_process.returncode))
+            self.log.error(output.replace(': ', ':\n'))
+        else:
+            self.log.info('solver exited successfully (code {})'.format(returncode))
         self.train_duration = end - start
         self.log.info('training finished, duration: {:.2f}s'.format(self.train_duration))
-
-        with open(os.path.join(self.job_output_dir, "caffe_training.log"), "w") as text_file:
-            text_file.write(output)
+        os.rename(os.path.join(self.job_output_dir, "tmp_caffe_training.log"),
+                  os.path.join(self.job_output_dir, "caffe_training.log"))
+        #with open(os.path.join(self.job_output_dir, "caffe_training.log"), "w") as text_file:
+        #    text_file.write(output)
         # todo parse output for final accuracy and duration
         # todo load net, get conv-filter
 

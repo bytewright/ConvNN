@@ -6,7 +6,8 @@ import shutil
 import time
 
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import generate_output_directory, get_networks_from_file, get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
+from trainer_utils import generate_output_directory, get_networks_from_file, \
+    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
 
 # global defines
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
@@ -114,7 +115,7 @@ if __name__ == '__main__':
     # network_list += get_networks_from_python()
     tmp_dirs = []
     for network in parsed_network_list:
-        new_dir = generate_output_directory(network)
+        new_dir = generate_output_directory(network, log)
         if new_dir is not None:
             tmp_dirs.append(new_dir)
         else:

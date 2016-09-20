@@ -6,8 +6,6 @@ import time
 import os
 import subprocess
 
-from auto_trainer.run_trainer import log
-
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
 
@@ -19,10 +17,10 @@ def get_networks_from_file(jobs_file_path, log):
         for job_desc in jobsfile:
             if job_desc.startswith('#'):
                 continue
-            if not os.path.isfile(os.path.join(job_path, 'solver.prototxt')):
-                log.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_path))
+            if not os.path.isfile(os.path.join(job_desc, 'solver.prototxt')):
+                log.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
                 continue
-            job_list.append(job_path.replace('\r\n', ''))
+            job_list.append(job_desc.replace('\r\n', ''))
     return job_list
 
 
@@ -61,6 +59,7 @@ def draw_job_plot(caffe_log_path, log):
     else:
         log.info('plotter exited successfully (code {})'.format(returncode))
     return output
+
 
 def draw_job_plot2(caffe_log_path, log):
     if not os.path.exists(caffe_log_path):
@@ -133,11 +132,11 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
         log.error('parse_log return code: ' + str(process.returncode))
         log.error(output.replace(': ', ':\n'))
     else:
-        log.info('parse_log exited successfully (code {})\noutput:\n----------{}\n-----------'.format(returncode, output))
+        log.info('parse_log exited successfully (code {})'.format(returncode, output))
     return output
 
 
-def generate_output_directory(network_path):
+def generate_output_directory(network_path, log):
     net_path = ''
     snapshot_path = ''
     solver_path = os.path.join(network_path, 'solver.prototxt')
