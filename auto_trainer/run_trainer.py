@@ -111,7 +111,7 @@ if __name__ == '__main__':
     log.addHandler(fileHandler)
 
     # load networks
-    parsed_network_list = get_networks_from_file(args.jobs_file)
+    parsed_network_list = get_networks_from_file(args.jobs_file, log)
     # network_list += get_networks_from_python()
     tmp_dirs = []
     for network in parsed_network_list:
