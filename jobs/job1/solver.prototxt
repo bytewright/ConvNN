@@ -18,7 +18,7 @@ test_interval: 500
 # begin training at a learning rate of 0.01 = 1e-2
 base_lr: 0.01
 
-# factor for gradiant correction based on previous gradiants
+# factor for gradiant correction based on previous gradients
 momentum: 0.9
 weight_decay: 0.0005
 

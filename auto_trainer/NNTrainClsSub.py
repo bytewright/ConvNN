@@ -29,7 +29,7 @@ class NetworkTrainer(Thread):
         solver_process = subprocess.Popen([caffeTool, 'train', '-solver', self.job_file, '-gpu', '0'],
                                           stdout=logfile,
                                           stderr=subprocess.STDOUT)
-        output += solver_process.communicate()[0]
+        solver_process.communicate()
         end = timer()
         returncode = solver_process.returncode
         while returncode is None:
@@ -37,7 +37,6 @@ class NetworkTrainer(Thread):
             returncode = solver_process.returncode
         if returncode is not 0:
             self.log.error('solver return code: ' + str(solver_process.returncode))
-            self.log.error(output.replace(': ', ':\n'))
         else:
             self.log.info('solver exited successfully (code {})'.format(returncode))
         self.train_duration = end - start
@@ -46,7 +45,6 @@ class NetworkTrainer(Thread):
                   os.path.join(self.job_output_dir, "caffe_training.log"))
         #with open(os.path.join(self.job_output_dir, "caffe_training.log"), "w") as text_file:
         #    text_file.write(output)
-        # todo parse output for final accuracy and duration
         # todo load net, get conv-filter
 
     def get_stats(self):

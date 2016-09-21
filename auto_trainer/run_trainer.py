@@ -11,7 +11,6 @@ from trainer_utils import generate_output_directory, get_networks_from_file, \
 
 # global defines
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
-# todo caffe home?
 
 logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
 log = logging.getLogger()
@@ -40,6 +39,25 @@ def get_networks_from_python():
     return []
 
 
+def get_avg_acc_and_loss(log_path):
+    delimiter = ' '
+    test_data = []
+    with open(log_path, 'r') as dest_f:
+        for line in dest_f.readlines():
+            line = line.rstrip()
+            test_data.append([data for data in line.split(delimiter) if data is not ''])
+    avg_acc = 0.0
+    avg_loss = 0.0
+    use_last_n = 10.0
+    for data in test_data[-int(use_last_n):]:
+        if len(data) < 4:
+            log.error('not enough data points in test log!')
+            continue
+        avg_acc += float(data[2]) / use_last_n
+        avg_loss += float(data[3]) / use_last_n
+    return avg_acc, avg_loss
+
+
 def train_networks(network_list, output_path):
     train_threads = []
     for job in network_list:
@@ -48,20 +66,19 @@ def train_networks(network_list, output_path):
             log.info('skipping comment: ' + job)
             continue
 
-        solverProto = job + 'solver.prototxt'
-        if not open(solverProto, 'r'):
+        solver_prototxt = job + 'solver.prototxt'
+        if not open(solver_prototxt, 'r'):
             log.error('can\'t open solver.prototxt!, skipping job')
             continue
 
         jobID = network_list.index(job)
-        #job_output_dir = output_path + '/job{}/'.format(jobID)
         # todo dir handling
         job_output_dir = os.path.join(output_path, 'job{}'.format(job[-2]))
         log.debug('creating output dir:\n{}'.format(job_output_dir))
         os.makedirs(job_output_dir)
 
         log.info('starting thread for job {}'.format(jobID))
-        train_thread = NetworkTrainer(job, job_output_dir, solverProto, log)
+        train_thread = NetworkTrainer(job, job_output_dir, solver_prototxt, log)
         train_threads.append(train_thread)
         train_thread.daemon = True
         train_thread.setName('thread {}'.format(jobID))
@@ -69,23 +86,18 @@ def train_networks(network_list, output_path):
 
         # generate image of NN
         time.sleep(2)  # wait for trainer to get started
-        draw_job_net(solverProto,
+        draw_job_net(solver_prototxt,
                      os.path.join(job_output_dir, 'net.png'), log)
-        #todo check if thread finished, if false draw tmp plot and wait 10 min
         train_thread.join()
+
         # training is done, write log and other output
-        generate_job_log(job_output_dir, jobID, train_thread.get_stats())
-        if True:
-            generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
-            draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
-        #else:
-            #draw_job_plot2(os.path.join(job_output_dir, "caffe_training.log"), log)
-        # time.sleep(2)
-        # log.debug("testing classify")
-        # proc = subprocess.Popen(['python', caffePythonToolsPath + 'classify.py',
-        #                         'input_file', validationFolder,
-        #                         ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        # output = proc.communicate()[0]
+        generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
+        draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
+        acc, training_loss = get_avg_acc_and_loss(os.path.join(job_output_dir, "parsed_caffe_log.test"))
+        thread_stats = train_thread.get_stats()
+        thread_stats['accuracy'] = acc
+        thread_stats['test_loss'] = training_loss
+        generate_job_log(job_output_dir, jobID, thread_stats)
 
     log.info('all jobs completed')
     for job in train_threads:
@@ -97,9 +109,9 @@ def train_networks(network_list, output_path):
 if __name__ == '__main__':
     args = get_args()
     if args.debug:
-        log.setLevel(logging.DEBUG);
+        log.setLevel(logging.DEBUG)
     else:
-        log.setLevel(logging.INFO);
+        log.setLevel(logging.INFO)
     # prepare folders
     if not os.path.exists(args.output_path):
         os.makedirs(args.output_path)
