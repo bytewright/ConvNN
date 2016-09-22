@@ -49,12 +49,16 @@ def get_avg_acc_and_loss(log_path):
     avg_acc = 0.0
     avg_loss = 0.0
     use_last_n = 10.0
-    for data in test_data[-int(use_last_n):]:
+    found_data_points = 0
+    for data in reversed(test_data):
+        if found_data_points == use_last_n:
+            break
         if len(data) < 4:
-            log.error('not enough data points in test log!')
+            log.error('incomplete datalines in log!')
             continue
         avg_acc += float(data[2]) / use_last_n
         avg_loss += float(data[3]) / use_last_n
+        found_data_points += 1
     return avg_acc, avg_loss
 
 

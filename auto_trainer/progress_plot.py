@@ -88,7 +88,8 @@ if __name__ == "__main__":
   p3, = host.plot(test_iterations, test_loss, label="valdation log loss")
   p2, = par1.plot(test_iterations, test_accuracy, label="validation accuracy")
 
-  host.legend(loc=2)
+  #host.legend(loc=2)
+  host.legend().set_visible(False)
 
   host.axis["left"].label.set_color(p1.get_color())
   par1.axis["right"].label.set_color(p2.get_color())
