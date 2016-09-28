@@ -9,11 +9,11 @@ layer {
   }
   transform_param {
     mirror: true
-    crop_size: 224
-    mean_file: "/home/ellerch/db/levelDB/img_traindb_mean.binaryproto"
+    crop_size: 227
+    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/levelDB/train_lmdb"
+    source: "/home/ellerch/db/places365/train_lmdb"
     batch_size: 256
     backend: LMDB
   }
@@ -28,11 +28,11 @@ layer {
   }
   transform_param {
     mirror: false
-    crop_size: 224
-    mean_file: "/home/ellerch/db/levelDB/img_traindb_mean.binaryproto"
+    crop_size: 227
+    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/levelDB/val_lmdb"
+    source: "/home/ellerch/db/places365/val_lmdb"
     batch_size: 50
     backend: LMDB
   }

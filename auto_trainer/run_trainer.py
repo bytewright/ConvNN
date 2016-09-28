@@ -4,7 +4,7 @@ import logging
 import os
 import shutil
 import time
-
+import sys
 from NNTrainClsSub import NetworkTrainer
 from trainer_utils import generate_output_directory, get_networks_from_file, \
     get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
@@ -88,20 +88,30 @@ def train_networks(network_list, output_path):
         train_thread.setName('thread {}'.format(jobID))
         train_thread.start()
 
-        # generate image of NN
-        time.sleep(2)  # wait for trainer to get started
-        draw_job_net(solver_prototxt,
-                     os.path.join(job_output_dir, 'net.png'), log)
         train_thread.join()
-
-        # training is done, write log and other output
-        generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
-        draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
-        acc, training_loss = get_avg_acc_and_loss(os.path.join(job_output_dir, "parsed_caffe_log.test"))
-        thread_stats = train_thread.get_stats()
-        thread_stats['accuracy'] = acc
-        thread_stats['test_loss'] = training_loss
-        generate_job_log(job_output_dir, jobID, thread_stats)
+        if train_thread.get_training_returncode() is 0:
+            log.info('training finished, processing data from log')
+        else:
+            log.error('training was not successful! skipping data processing')
+            continue
+        # all data processing for jobs
+        try:
+            # generate image of NN
+            draw_job_net(solver_prototxt,
+                         os.path.join(job_output_dir, 'net.png'), log)
+            # training is done, write log and other output
+            generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
+            draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
+            acc, training_loss = get_avg_acc_and_loss(os.path.join(job_output_dir, "parsed_caffe_log.test"))
+            thread_stats = train_thread.get_stats()
+            thread_stats['accuracy'] = acc
+            thread_stats['test_loss'] = training_loss
+            generate_job_log(job_output_dir, jobID, thread_stats)
+        except (KeyboardInterrupt, SystemExit):
+            log.info('KeyboardInterrupt, raising error')
+            raise
+        except:
+            log.error("Unexpected error:", sys.exc_info()[0])
 
     log.info('all jobs completed')
     for job in train_threads:

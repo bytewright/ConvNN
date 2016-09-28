@@ -20,6 +20,7 @@ class NetworkTrainer(Thread):
         self.train_duration = None
         self.test_duration = None
         self.accuracy = 0.0
+        self.returncode = None
 
     def run(self):
         self.log.debug('Name: {}, my job file: {}'.format(self.getName(), self.job_file))
@@ -31,14 +32,14 @@ class NetworkTrainer(Thread):
                                           stderr=subprocess.STDOUT)
         solver_process.communicate()
         end = timer()
-        returncode = solver_process.returncode
-        while returncode is None:
+        #self.returncode = solver_process.returncode
+        while self.returncode is None:
             time.sleep(2)
-            returncode = solver_process.returncode
-        if returncode is not 0:
+            self.returncode = solver_process.returncode
+        if self.returncode is not 0:
             self.log.error('solver return code: ' + str(solver_process.returncode))
         else:
-            self.log.info('solver exited successfully (code {})'.format(returncode))
+            self.log.info('solver exited successfully (code {})'.format(self.returncode))
         self.train_duration = end - start
         self.log.info('training finished, duration: {:.2f}s'.format(self.train_duration))
         os.rename(os.path.join(self.job_output_dir, "tmp_caffe_training.log"),
@@ -59,3 +60,6 @@ class NetworkTrainer(Thread):
 
     def get_duration(self):
         return self.train_duration
+
+    def get_training_returncode(self):
+        return self.returncode
