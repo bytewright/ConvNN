@@ -1,6 +1,7 @@
-/home/ellerch/caffeProject/jobs/job0/
-/home/ellerch/caffeProject/jobs/job1/
+#/home/ellerch/caffeProject/jobs/job0/
+#/home/ellerch/caffeProject/jobs/job1/
 #/home/ellerch/caffeProject/jobs/job2/
 /home/ellerch/caffeProject/jobs/job3/
 /home/ellerch/caffeProject/jobs/job4/
 #/home/ellerch/caffeProject/jobs/job5/
+/home/ellerch/caffeProject/jobs/job1/

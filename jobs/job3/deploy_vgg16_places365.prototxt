@@ -619,12 +619,6 @@ layer {
   }
 }
 layer {
-  name: "prob"
-  type: "Softmax"
-  bottom: "fc8a"
-  top: "prob"
-}
-layer {
   name: "accuracy"
   type: "Accuracy"
   bottom: "fc8a"

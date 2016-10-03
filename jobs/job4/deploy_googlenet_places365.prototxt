@@ -2183,12 +2183,6 @@ layer {
   }
 }
 layer {
-  name: "prob"
-  type: "Softmax"
-  bottom: "loss3/classifier"
-  top: "prob"
-}
-layer {
   name: "accuracy"
   type: "Accuracy"
   bottom: "loss3/classifier"
