@@ -1,20 +1,21 @@
-import os
-import time
 import cPickle
+import cStringIO as StringIO
 import datetime
 import logging
+import os
+import time
+import urllib
+
+import configargparse
 import flask
-import werkzeug
-import optparse
-import tornado.wsgi
-import tornado.httpserver
 import numpy as np
 import pandas as pd
+import tornado.httpserver
+import tornado.wsgi
+import werkzeug
 from PIL import Image
-import cStringIO as StringIO
-import urllib
+
 import exifutil
-import configargparse
 
 #import caffe
 
