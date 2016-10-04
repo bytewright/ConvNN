@@ -34,10 +34,6 @@ def get_args():
 
 
 def run_self_test():
-    log.info('network_path: {}'.format(args.network_path))
-    log.info('class_labels: {}'.format(args.class_labels))
-    log.info('weights_path: {}'.format(args.weights_path))
-    log.info('db_mean: {}'.format(args.db_mean))
     log.info('allowed_extensions: {}'.format(set(args.allowed_extensions.split(','))))
     log.info('upload_path: {}'.format(args.upload_path))
 
@@ -52,8 +48,11 @@ if __name__ == '__main__':
     fileHandler.setFormatter(logFormatter)
     log.addHandler(fileHandler)
     run_self_test()
-    classifier = NNClassifier()
-    if not classifier.set_neural_network(args.network_path, args.weights_path, args.db_mean):
+    classifier = NNClassifier(gpu_mode=True)
+    if not classifier.set_neural_network(args.network_path,
+                                         args.weights_path,
+                                         args.db_mean,
+                                         args.class_labels):
         log.error('classifier could not be loaded')
     else:
         app = NNWebInterface('webinterface', classifier, args.upload_path)

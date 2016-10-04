@@ -14,7 +14,7 @@ layer {
   }
   data_param {
     source: "/home/ellerch/db/places365/train_lmdb"
-    batch_size: 128
+    batch_size: 64
     backend: LMDB
   }
 }
@@ -33,7 +33,7 @@ layer {
   }
   data_param {
     source: "/home/ellerch/db/places365/val_lmdb"
-    batch_size: 50
+    batch_size: 40
     backend: LMDB
   }
 }
