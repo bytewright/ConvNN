@@ -1,0 +1,6 @@
+werkzeug
+flask
+numpy
+pandas
+pillow
+pyyaml

@@ -48,7 +48,7 @@ if __name__ == '__main__':
     fileHandler.setFormatter(logFormatter)
     log.addHandler(fileHandler)
     run_self_test()
-    classifier = NNClassifier(gpu_mode=True)
+    classifier = NNClassifier(gpu_mode=False)
     if not classifier.set_neural_network(args.network_path,
                                          args.weights_path,
                                          args.db_mean,
