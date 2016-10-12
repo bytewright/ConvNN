@@ -180,6 +180,7 @@ layer {
   type: "ReLU"
   bottom: "conv3"
   top: "conv3"
+}
 layer {
   name: "pool5"
   type: "Pooling"
