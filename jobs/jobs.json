@@ -1,0 +1,12 @@
+{
+    "0": {
+        "model_path": "bla",
+        "name": "my_conv1_to_abc",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt"
+    },
+    "1": {
+        "model_path": "bla",
+        "name": "my_conv345_to_1",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job7/solver.prototxt"
+    }
+}
