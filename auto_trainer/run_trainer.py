@@ -20,12 +20,14 @@ consoleHandler.setFormatter(logFormatter)
 log.addHandler(consoleHandler)
 
 
-def generate_job_log(output_dir, job_index, stats_dict):
+def generate_job_log(job, stats_dict):
     log.info('Job "{}" completed in {:.2f}s. Accuracy: {:.3f}'.format(stats_dict['name'],
                                                                       stats_dict['duration'],
                                                                       stats_dict['accuracy']))
-    log_path = os.path.join(output_dir, "stats.json".format(job_index))
-    json.dump(stats_dict, open(log_path, 'w'))
+    job['duration'] = stats_dict['duration']
+    job['accuracy'] = stats_dict['accuracy']
+    log_path = os.path.join(job['snapshot_path'], "stats.json")
+    json.dump(job, open(log_path, 'w'))
     return
 
 
@@ -54,7 +56,6 @@ def get_avg_acc_and_loss(log_path):
         if found_data_points == use_last_n:
             break
         if len(data) < 4:
-            log.error('incomplete datalines in log!')
             continue
         avg_acc += float(data[2]) / use_last_n
         avg_loss += float(data[3]) / use_last_n
@@ -62,7 +63,7 @@ def get_avg_acc_and_loss(log_path):
     return avg_acc, avg_loss
 
 
-def train_networks(jobs_list, output_path):
+def train_networks(jobs_list):
     train_threads = []
     for job in jobs_list:
         if job['ignore']:
@@ -71,14 +72,8 @@ def train_networks(jobs_list, output_path):
         log.debug('reading job desc: ' + job)
 
         jobID = jobs_list.index(job)
-        # todo dir handling
-        job['snapshot_path']
-        job_output_dir = os.path.join(output_path, 'job{}'.format(job[-2]))
-        log.debug('creating output dir:\n{}'.format(job_output_dir))
-        os.makedirs(job_output_dir)
-
         log.info('starting thread for job {}'.format(jobID))
-        train_thread = NetworkTrainer(job, job['snapshot_path'], job['solver_path'], log)
+        train_thread = NetworkTrainer(job, log)
         train_threads.append(train_thread)
         train_thread.daemon = True
         train_thread.setName('thread {}'.format(jobID))
@@ -87,6 +82,7 @@ def train_networks(jobs_list, output_path):
         train_thread.join()
         if train_thread.get_training_returncode() is 0:
             log.info('training finished, processing data from log')
+            job['caffe_log_path'] = train_thread.get_caffe_log_path()
         else:
             log.error('training was not successful! skipping data processing')
             continue
@@ -96,13 +92,14 @@ def train_networks(jobs_list, output_path):
             draw_job_net(job['solver_path'],
                          os.path.join(job['snapshot_path'], 'net.png'), log)
             # training is done, write log and other output
-            generate_parsed_splitted_logs(os.path.join(job['snapshot_path'], "caffe_training.log"), job['snapshot_path'], log)
-            draw_job_plot(os.path.join(job['snapshot_path'], "caffe_training.log"), log)
+            generate_parsed_splitted_logs(job['caffe_log_path'],
+                                          job['snapshot_path'], log)
+            draw_job_plot(job['caffe_log_path'], log)
             acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
             thread_stats = train_thread.get_stats()
             thread_stats['accuracy'] = acc
             thread_stats['test_loss'] = training_loss
-            generate_job_log(job['snapshot_path'], jobID, thread_stats)
+            generate_job_log(job, jobID, thread_stats)
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise
@@ -135,8 +132,8 @@ if __name__ == '__main__':
     # load networks
     jobs_dict = json.load(open(args.jobs_file, 'r'))
     jobs = []
-    for job in jobs_dict:
-        checked_job = check_job(job)
+    for tmp_job in jobs_dict:
+        checked_job = check_job(tmp_job)
         if checked_job is not None:
             generate_output_directory(checked_job['solver_path'],
                                       checked_job['model_path'],
@@ -148,13 +145,16 @@ if __name__ == '__main__':
     train_networks(jobs)
 
     log.info('cleaning up tmp dir')
-    for job in jobs:
+    for tmp_job in jobs:
         failed = ''
-        if job['failed']:
+        if tmp_job['failed']:
             failed = 'fail_'
-        log.debug('moving all from:\n{}\nto:\n{}'.format(job['snapshot_path'],
-                                                         os.path.join(args.output_path, dir_name, failed, job['name'])))
-        os.makedirs(os.path.join(args.output_path, dir_name, failed, job['name']))
-        shutil.move(job['snapshot_path'], os.path.join(args.output_path, dir_name, failed, job['name']))
+        log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'],
+                                                         os.path.join(args.output_path,
+                                                                      dir_name,
+                                                                      failed,
+                                                                      tmp_job['name'])))
+        os.makedirs(os.path.join(args.output_path, dir_name, failed, tmp_job['name']))
+        shutil.move(tmp_job['snapshot_path'], os.path.join(args.output_path, dir_name, failed, tmp_job['name']))
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))

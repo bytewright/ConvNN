@@ -11,11 +11,9 @@ caffeTool = '/home/ellerch/bin/caffe/build/tools/caffe'  # path to caffe script
 
 
 class NetworkTrainer(Thread):
-    def __init__(self, job_path, job_output_dir, job_file, log):
+    def __init__(self, job, log):
         Thread.__init__(self)
-        self.job_file = job_file
-        self.job_output_dir = job_output_dir
-        self.job_path = job_path
+        self.job = job
         self.log = log
         self.train_duration = None
         self.test_duration = None
@@ -23,11 +21,11 @@ class NetworkTrainer(Thread):
         self.returncode = None
 
     def run(self):
-        self.log.debug('Name: {}, my job file: {}'.format(self.getName(), self.job_file))
-        logfile = open(os.path.join(self.job_output_dir, "tmp_caffe_training.log"), "w")
+        self.log.info('Thread start\nName: {}\njob file: {}'.format(self.getName(), self.job['solver_path']))
+        logfile = open(os.path.join(self.job['snapshot_path'], "tmp_caffe_training.log"), "w")
         start = timer()
-        output = '{} train -solver {} {}\n\n'.format(caffeTool, self.job_file, '-gpu 0')
-        solver_process = subprocess.Popen([caffeTool, 'train', '-solver', self.job_file, '-gpu', '0'],
+        # output = '{} train -solver {} {}\n\n'.format(caffeTool, self.job_file, '-gpu 0')
+        solver_process = subprocess.Popen([caffeTool, 'train', '-solver', self.job['solver_path'], '-gpu', '0'],
                                           stdout=logfile,
                                           stderr=subprocess.STDOUT)
         solver_process.communicate()
@@ -42,8 +40,8 @@ class NetworkTrainer(Thread):
             self.log.info('solver exited successfully (code {})'.format(self.returncode))
         self.train_duration = end - start
         self.log.info('training finished, duration: {:.2f}s'.format(self.train_duration))
-        os.rename(os.path.join(self.job_output_dir, "tmp_caffe_training.log"),
-                  os.path.join(self.job_output_dir, "caffe_training.log"))
+        os.rename(os.path.join(self.job['snapshot_path'], "tmp_caffe_training.log"),
+                  os.path.join(self.job['snapshot_path'], "caffe_training.log"))
         #with open(os.path.join(self.job_output_dir, "caffe_training.log"), "w") as text_file:
         #    text_file.write(output)
         # todo load net, get conv-filter
