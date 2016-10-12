@@ -25,6 +25,35 @@ def get_networks_from_file(jobs_file_path, log):
     return job_list
 
 
+def check_job(job, log):
+    if 'solver_path' not in job:
+        log.error('no valid solver_path key\n"{}",\nskipping job'.format(job))
+        return None
+    if not os.path.isfile(job['solver_path']):
+        log.error('no solver at \n"{}",\nskipping job'.format(job['solver_path']))
+        return None
+    net_path = ''
+    snapshot_path = ''
+    with open(job['solver_path'], 'r') as search:
+        for line in search:
+            line = line.rstrip()  # remove '\n' at end of line
+            if line.startswith('snapshot_prefix: '):
+                snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
+            if line.startswith('net: '):
+                net_path = line.replace('net: ', '').replace('"', '')
+    if net_path is not '' and snapshot_path is not '':
+        job['model_path'] = net_path
+        job['snapshot_path'] = snapshot_path
+    else:
+        log.error('no valid model_path or snapshot_path in solver, skipping job')
+        return None
+    if not os.path.isfile(job['model_path']):
+        log.error('model_path in solver is no file, skipping job')
+        return None
+    log.debug(job)
+    return job
+
+
 def get_args():
     configpath = os.path.join(os.path.dirname(__file__), 'config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
@@ -137,24 +166,11 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
     return output
 
 
-def generate_output_directory(network_path, log):
-    net_path = ''
-    snapshot_path = ''
-    solver_path = os.path.join(network_path, 'solver.prototxt')
-    if not os.path.isfile(solver_path):
-        log.error(solver_path + ' does not exist!, skipping job')
-        return None
-    with open(solver_path, 'r') as search:
-        for line in search:
-            line = line.rstrip()  # remove '\n' at end of line
-            if line.startswith('snapshot_prefix: '):
-                snapshot_path = line.replace('snapshot_prefix: ', '').replace('"', '')
-            if line.startswith('net: '):
-                net_path = line.replace('net: ', '').replace('"', '')
+def generate_output_directory(solver_path, net_path, snapshot_path, log):
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
         # copy used settings and network to output dir
-        shutil.copyfile(solver_path, os.path.join(snapshot_path, 'solver.prototxt'))
+        shutil.copyfile(solver_path, snapshot_path)
         shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
     else:
         log.error('tmp directory is not empty! Aborting')

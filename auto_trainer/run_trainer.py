@@ -6,7 +6,7 @@ import shutil
 import time
 import sys
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import generate_output_directory, get_networks_from_file, \
+from trainer_utils import check_job, generate_output_directory, get_networks_from_file, \
     get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
 
 # global defines
@@ -62,27 +62,23 @@ def get_avg_acc_and_loss(log_path):
     return avg_acc, avg_loss
 
 
-def train_networks(network_list, output_path):
+def train_networks(jobs_list, output_path):
     train_threads = []
-    for job in network_list:
+    for job in jobs_list:
+        if job['ignore']:
+            log.info('skipping job: ' + job)
+            continue
         log.debug('reading job desc: ' + job)
-        if job.startswith('#'):
-            log.info('skipping comment: ' + job)
-            continue
 
-        solver_prototxt = job + 'solver.prototxt'
-        if not open(solver_prototxt, 'r'):
-            log.error('can\'t open solver.prototxt!, skipping job')
-            continue
-
-        jobID = network_list.index(job)
+        jobID = jobs_list.index(job)
         # todo dir handling
+        job['snapshot_path']
         job_output_dir = os.path.join(output_path, 'job{}'.format(job[-2]))
         log.debug('creating output dir:\n{}'.format(job_output_dir))
         os.makedirs(job_output_dir)
 
         log.info('starting thread for job {}'.format(jobID))
-        train_thread = NetworkTrainer(job, job_output_dir, solver_prototxt, log)
+        train_thread = NetworkTrainer(job, job['snapshot_path'], job['solver_path'], log)
         train_threads.append(train_thread)
         train_thread.daemon = True
         train_thread.setName('thread {}'.format(jobID))
@@ -97,16 +93,16 @@ def train_networks(network_list, output_path):
         # all data processing for jobs
         try:
             # generate image of NN
-            draw_job_net(solver_prototxt,
-                         os.path.join(job_output_dir, 'net.png'), log)
+            draw_job_net(job['solver_path'],
+                         os.path.join(job['snapshot_path'], 'net.png'), log)
             # training is done, write log and other output
-            generate_parsed_splitted_logs(os.path.join(job_output_dir, "caffe_training.log"), job_output_dir, log)
-            draw_job_plot(os.path.join(job_output_dir, "caffe_training.log"), log)
-            acc, training_loss = get_avg_acc_and_loss(os.path.join(job_output_dir, "parsed_caffe_log.test"))
+            generate_parsed_splitted_logs(os.path.join(job['snapshot_path'], "caffe_training.log"), job['snapshot_path'], log)
+            draw_job_plot(os.path.join(job['snapshot_path'], "caffe_training.log"), log)
+            acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
             thread_stats = train_thread.get_stats()
             thread_stats['accuracy'] = acc
             thread_stats['test_loss'] = training_loss
-            generate_job_log(job_output_dir, jobID, thread_stats)
+            generate_job_log(job['snapshot_path'], jobID, thread_stats)
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise
@@ -137,21 +133,28 @@ if __name__ == '__main__':
     log.addHandler(fileHandler)
 
     # load networks
-    parsed_network_list = get_networks_from_file(args.jobs_file, log)
-    # network_list += get_networks_from_python()
-    tmp_dirs = []
-    for network in parsed_network_list:
-        new_dir = generate_output_directory(network, log)
-        if new_dir is not None:
-            tmp_dirs.append(new_dir)
-        else:
-            parsed_network_list.remove(network)
+    jobs_dict = json.load(open(args.jobs_file, 'r'))
+    jobs = []
+    for job in jobs_dict:
+        checked_job = check_job(job)
+        if checked_job is not None:
+            generate_output_directory(checked_job['solver_path'],
+                                      checked_job['model_path'],
+                                      checked_job['snapshot_path'],
+                                      log)
+            jobs.append(checked_job)
 
-    log.info('Parsed {} job(s)'.format(parsed_network_list.__len__()))
-    train_networks(parsed_network_list, os.path.join(args.output_path, dir_name))
+    log.info('Parsed {} job(s)'.format(jobs.__len__()))
+    train_networks(jobs)
 
     log.info('cleaning up tmp dir')
-    for path in tmp_dirs:
-        shutil.move(path, os.path.join(args.output_path, dir_name, path.split('/')[-2]))
+    for job in jobs:
+        failed = ''
+        if job['failed']:
+            failed = 'fail_'
+        log.debug('moving all from:\n{}\nto:\n{}'.format(job['snapshot_path'],
+                                                         os.path.join(args.output_path, dir_name, failed, job['name'])))
+        os.makedirs(os.path.join(args.output_path, dir_name, failed, job['name']))
+        shutil.move(job['snapshot_path'], os.path.join(args.output_path, dir_name, failed, job['name']))
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))

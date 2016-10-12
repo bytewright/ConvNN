@@ -1,12 +1,16 @@
 {
     "0": {
-        "model_path": "bla",
+        "ignore": true,
         "name": "my_conv1_to_abc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt"
+        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt",
+        "model_path": "",
+        "snapshot_path": ""
     },
     "1": {
-        "model_path": "bla",
+        "ignore": false,
         "name": "my_conv345_to_1",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job7/solver.prototxt"
+        "solver_path": "/home/ellerch/caffeProject/jobs/job7/solver.prototxt",
+        "model_path": "",
+        "snapshot_path": ""
     }
 }

@@ -9,5 +9,6 @@ log_path = os.path.join(output_dir, "jobs.json")
 #json.dump(stats_dict, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
 log_path = 'H:\\Entwicklung\\ConvNN\\jobs\\jobs.json'
 a=json.load(open(log_path, 'r'))
-for job in a:
-    print a[job]
+b = [a[job] for job in json.load(open(log_path, 'r'))]
+for job in b:
+    print job
