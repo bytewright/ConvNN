@@ -9,6 +9,6 @@
     "1": {
         "ignore": false,
         "name": "test_job",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     }
 }
