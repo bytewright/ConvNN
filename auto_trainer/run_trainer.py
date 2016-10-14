@@ -65,16 +65,16 @@ def get_avg_acc_and_loss(log_path):
 
 def train_networks(jobs_list):
     train_threads = []
-    for job in jobs:
+    for job in jobs_list:
         #if job['ignore']:
         #    log.info('skipping job: ' + job)
         #    continue
         #jobID = jobs_list.index(job)
-        log.info('starting thread for job {}'.format(job['name']))
+        log.info('starting training for job {}'.format(job['name']))
         train_thread = NetworkTrainer(job, log)
         train_threads.append(train_thread)
         train_thread.daemon = True
-        train_thread.setName('thread {}'.format(job['name']))
+        train_thread.setName('{}-thread'.format(job['name']))
         train_thread.start()
 
         train_thread.join()
@@ -146,12 +146,9 @@ if __name__ == '__main__':
 
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
-        failed = ''
-        if tmp_job['failed']:
-            failed = 'fail_'
-        output_path = os.path.join(args.output_path, dir_name, failed, tmp_job['name'])
+        output_path = os.path.join(args.output_path, dir_name, tmp_job['name'])
         log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'], output_path))
-        os.makedirs(os.path.join(args.output_path, dir_name, failed, tmp_job['name']))
+        os.makedirs(output_path)
         shutil.move(tmp_job['snapshot_path'], output_path)
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))
