@@ -27,7 +27,7 @@ def get_networks_from_file(jobs_file_path, log):
 
 def check_job(job, log):
     if job['ignore']:
-        log.info('ignoring job: ' + job)
+        log.info('ignoring job: ' + job['name'])
         return None
     if 'solver_path' not in job:
         log.error('no valid solver_path key\n"{}",\nskipping job'.format(job))
