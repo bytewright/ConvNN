@@ -65,7 +65,7 @@ def get_avg_acc_and_loss(log_path):
 
 def train_networks(jobs_list):
     train_threads = []
-    for job in jobs_list:
+    for job in jobs:
         #if job['ignore']:
         #    log.info('skipping job: ' + job)
         #    continue
