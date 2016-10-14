@@ -21,13 +21,13 @@ log.addHandler(consoleHandler)
 
 
 def generate_job_log(job, stats_dict):
-    log.info('Job "{}" completed in {:.2f}s. Accuracy: {:.3f}'.format(stats_dict['name'],
-                                                                      stats_dict['duration'],
-                                                                      stats_dict['accuracy']))
     job['duration'] = stats_dict['duration']
     job['accuracy'] = stats_dict['accuracy']
+    log.info('Job "{}" completed in {:.2f}s. Accuracy: {:.3f}'.format(job['name'],
+                                                                      job['duration'],
+                                                                      job['accuracy']))
     log_path = os.path.join(job['snapshot_path'], "stats.json")
-    json.dump(job, open(log_path, 'w'))
+    json.dump(job, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
     return
 
 
@@ -147,7 +147,6 @@ if __name__ == '__main__':
         #output_path = os.path.join(args.output_path, dir_name, tmp_job['name'])
         output_path = os.path.join(args.output_path, dir_name)
         log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'], output_path))
-        os.makedirs(output_path)
         shutil.move(tmp_job['snapshot_path'], output_path)
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))

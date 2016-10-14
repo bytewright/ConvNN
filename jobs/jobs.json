@@ -2,9 +2,7 @@
     "0": {
         "ignore": true,
         "name": "my_conv1_to_abc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt",
-        "model_path": "",
-        "snapshot_path": ""
+        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt"
     },
     "1": {
         "ignore": false,

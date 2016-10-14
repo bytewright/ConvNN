@@ -90,7 +90,6 @@ def draw_job_plot(caffe_log_path, log):
         log.error(output)
     else:
         log.info('plotter exited successfully (code {})'.format(returncode))
-    return output
 
 
 def draw_job_plot2(caffe_log_path, log):
