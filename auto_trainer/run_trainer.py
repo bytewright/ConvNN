@@ -98,13 +98,11 @@ def train_networks(jobs_list):
             thread_stats['accuracy'] = acc
             thread_stats['test_loss'] = training_loss
             generate_job_log(job, thread_stats)
-            job['failed'] = False
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise
         except:
             log.error("Unexpected error:", sys.exc_info()[0])
-            job['failed'] = True
 
     log.info('all jobs completed')
     for job in train_threads:
@@ -146,7 +144,8 @@ if __name__ == '__main__':
 
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
-        output_path = os.path.join(args.output_path, dir_name, tmp_job['name'])
+        #output_path = os.path.join(args.output_path, dir_name, tmp_job['name'])
+        output_path = os.path.join(args.output_path, dir_name)
         log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'], output_path))
         os.makedirs(output_path)
         shutil.move(tmp_job['snapshot_path'], output_path)
