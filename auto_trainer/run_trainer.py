@@ -20,14 +20,18 @@ consoleHandler.setFormatter(logFormatter)
 log.addHandler(consoleHandler)
 
 
-def generate_job_log(job, stats_dict):
-    job['duration'] = stats_dict['duration']
-    job['accuracy'] = stats_dict['accuracy']
-    log.info('Job "{}" completed in {:.2f}s. Accuracy: {:.3f}'.format(job['name'],
-                                                                      job['duration'],
-                                                                      job['accuracy']))
+def generate_job_log(job):
+
+
     log_path = os.path.join(job['snapshot_path'], "stats.json")
     json.dump(job, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
+    log.debug(job.keys())
+    log.debug(job['name'])
+    log.debug(job['duration'])
+    log.debug(job['accuracy'])
+    log.info('Job "{}" completed in {}. Accuracy: {:.3f}'.format(job['name'],
+                                                                 job['duration'],
+                                                                 job['accuracy']))
     return
 
 
@@ -48,6 +52,7 @@ def get_avg_acc_and_loss(log_path):
         for line in dest_f.readlines():
             line = line.rstrip()
             test_data.append([data for data in line.split(delimiter) if data is not ''])
+    log.debug('found {} lines in log'.format(test_data.__len__()))
     avg_acc = 0.0
     avg_loss = 0.0
     use_last_n = 10.0
@@ -95,9 +100,10 @@ def train_networks(jobs_list):
             draw_job_plot(job['caffe_log_path'], log)
             acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
             thread_stats = train_thread.get_stats()
-            thread_stats['accuracy'] = acc
-            thread_stats['test_loss'] = training_loss
-            generate_job_log(job, thread_stats)
+            job['accuracy'] = acc
+            job['test_loss'] = training_loss
+            job['duration'] = thread_stats['duration_str']
+            generate_job_log(job)
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise
