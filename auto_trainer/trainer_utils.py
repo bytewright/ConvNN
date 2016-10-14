@@ -53,7 +53,6 @@ def check_job(job, log):
     if not os.path.isfile(job['model_path']):
         log.error('model_path in solver is no file, skipping job')
         return None
-    log.debug(job)
     return job
 
 
@@ -173,7 +172,7 @@ def generate_output_directory(solver_path, net_path, snapshot_path, log):
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
         # copy used settings and network to output dir
-        shutil.copyfile(solver_path, snapshot_path)
+        shutil.copyfile(solver_path, os.path.join(snapshot_path, os.path.basename(solver_path)))
         shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
     else:
         log.error('tmp directory is not empty! Aborting')
