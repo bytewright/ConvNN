@@ -66,9 +66,9 @@ def get_avg_acc_and_loss(log_path):
 def train_networks(jobs_list):
     train_threads = []
     for job in jobs_list:
-        if job['ignore']:
-            log.info('skipping job: ' + job)
-            continue
+        #if job['ignore']:
+        #    log.info('skipping job: ' + job)
+        #    continue
         log.debug('reading job desc: ' + job)
 
         jobID = jobs_list.index(job)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     jobs_dict = json.load(open(args.jobs_file, 'r'))
     jobs = []
     for tmp_job in jobs_dict:
-        checked_job = check_job(tmp_job, log)
+        checked_job = check_job(jobs_dict[tmp_job], log)
         if checked_job is not None:
             generate_output_directory(checked_job['solver_path'],
                                       checked_job['model_path'],
