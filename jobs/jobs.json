@@ -1,11 +1,11 @@
 {
     "0": {
-        "ignore": true,
+        "ignore": false,
         "name": "my_conv1_to_abc",
         "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt"
     },
     "1": {
-        "ignore": false,
+        "ignore": true,
         "name": "test_job",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     }
