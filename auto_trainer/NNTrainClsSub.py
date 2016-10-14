@@ -46,6 +46,9 @@ class NetworkTrainer(Thread):
         #    text_file.write(output)
         # todo load net, get conv-filter
 
+    def get_caffe_log_path(self):
+        return os.path.join(self.job['snapshot_path'], "caffe_training.log")
+
     def get_stats(self):
         minutes, sec = divmod(self.train_duration, 60)
         hours, minutes = divmod(minutes, 60)
