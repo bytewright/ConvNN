@@ -8,9 +8,7 @@
     },
     "1": {
         "ignore": false,
-        "name": "my_conv345_to_1",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job7/solver.prototxt",
-        "model_path": "",
-        "snapshot_path": ""
+        "name": "test_job",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt",
     }
 }
