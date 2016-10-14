@@ -9,7 +9,7 @@ solver_mode: GPU
 # test_iter specifies how many forward passes the test should carry out.
 # (max_iter/test_interval)*test_iter = 28000 test images used
 # how many mini-batches to test in each validation phase
-test_iter: 64
+test_iter: 200
 
 # Carry out testing every 500 training iterations.
 test_interval: 200
