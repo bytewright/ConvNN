@@ -100,11 +100,13 @@ def train_networks(jobs_list):
             thread_stats['accuracy'] = acc
             thread_stats['test_loss'] = training_loss
             generate_job_log(job, jobID, thread_stats)
+            job['failed'] = False
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise
         except:
             log.error("Unexpected error:", sys.exc_info()[0])
+            job['failed'] = True
 
     log.info('all jobs completed')
     for job in train_threads:
@@ -133,7 +135,7 @@ if __name__ == '__main__':
     jobs_dict = json.load(open(args.jobs_file, 'r'))
     jobs = []
     for tmp_job in jobs_dict:
-        checked_job = check_job(tmp_job)
+        checked_job = check_job(tmp_job, log)
         if checked_job is not None:
             generate_output_directory(checked_job['solver_path'],
                                       checked_job['model_path'],
@@ -149,12 +151,9 @@ if __name__ == '__main__':
         failed = ''
         if tmp_job['failed']:
             failed = 'fail_'
-        log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'],
-                                                         os.path.join(args.output_path,
-                                                                      dir_name,
-                                                                      failed,
-                                                                      tmp_job['name'])))
+        output_path = os.path.join(args.output_path, dir_name, failed, tmp_job['name'])
+        log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'], output_path))
         os.makedirs(os.path.join(args.output_path, dir_name, failed, tmp_job['name']))
-        shutil.move(tmp_job['snapshot_path'], os.path.join(args.output_path, dir_name, failed, tmp_job['name']))
+        shutil.move(tmp_job['snapshot_path'], output_path)
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))
