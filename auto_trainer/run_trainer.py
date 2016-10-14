@@ -69,14 +69,12 @@ def train_networks(jobs_list):
         #if job['ignore']:
         #    log.info('skipping job: ' + job)
         #    continue
-        log.debug('reading job desc: ' + job)
-
-        jobID = jobs_list.index(job)
-        log.info('starting thread for job {}'.format(jobID))
+        #jobID = jobs_list.index(job)
+        log.info('starting thread for job {}'.format(job['name']))
         train_thread = NetworkTrainer(job, log)
         train_threads.append(train_thread)
         train_thread.daemon = True
-        train_thread.setName('thread {}'.format(jobID))
+        train_thread.setName('thread {}'.format(job['name']))
         train_thread.start()
 
         train_thread.join()
@@ -99,7 +97,7 @@ def train_networks(jobs_list):
             thread_stats = train_thread.get_stats()
             thread_stats['accuracy'] = acc
             thread_stats['test_loss'] = training_loss
-            generate_job_log(job, jobID, thread_stats)
+            generate_job_log(job, thread_stats)
             job['failed'] = False
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
