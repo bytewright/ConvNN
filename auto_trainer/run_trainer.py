@@ -52,10 +52,13 @@ def get_avg_acc_and_loss(log_path):
         for line in dest_f.readlines():
             line = line.rstrip()
             test_data.append([data for data in line.split(delimiter) if data is not ''])
-    log.debug('found {} lines in log'.format(test_data.__len__()))
+    if test_data.__len__() < 10:
+        log.info('found only {} lines in log'.format(test_data.__len__()))
+        use_last_n = 1.0
+    else:
+        use_last_n = 10.0
     avg_acc = 0.0
     avg_loss = 0.0
-    use_last_n = 10.0
     found_data_points = 0
     for data in reversed(test_data):
         if found_data_points == use_last_n:
@@ -108,7 +111,8 @@ def train_networks(jobs_list):
             log.info('KeyboardInterrupt, raising error')
             raise
         except:
-            log.error("Unexpected error:", sys.exc_info()[0])
+            log.error("Unexpected error, processing next job")
+            log.error(sys.exc_info())
 
     log.info('all jobs completed')
     for job in train_threads:
