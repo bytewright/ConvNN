@@ -66,7 +66,7 @@ layer {
   }
 }
 layer {
-  name: "relu1"
+  name: "relu1a"
   type: "ReLU"
   bottom: "conv1a"
   top: "conv1a"
@@ -100,7 +100,7 @@ layer {
   }
 }
 layer {
-  name: "relu1"
+  name: "relu1b"
   type: "ReLU"
   bottom: "conv1b"
   top: "conv1b"

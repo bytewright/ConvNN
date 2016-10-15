@@ -1,5 +1,5 @@
-net: "/home/ellerch/caffeProject/jobs/job6/my_conv1abc_alexnet.prototxt"
-snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job6/"
+net: "/home/ellerch/caffeProject/jobs/job6_conv1toabc/my_conv1abc_alexnet.prototxt"
+snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job6_conv1toabc/"
 snapshot: 30000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

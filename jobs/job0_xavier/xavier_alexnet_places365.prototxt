@@ -14,7 +14,7 @@ layer {
   }
   data_param {
     source: "/home/ellerch/db/places365/train_lmdb"
-    batch_size: 128
+    batch_size: 256
     backend: LMDB
   }
 }
@@ -38,10 +38,10 @@ layer {
   }
 }
 layer {
-  name: "conv1a"
+  name: "conv1"
   type: "Convolution"
   bottom: "data"
-  top: "conv1a"
+  top: "conv1"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -52,10 +52,10 @@ layer {
   }
   convolution_param {
     num_output: 96
-    kernel_size: 5
-    stride: 2
+    kernel_size: 11
+    stride: 4
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {
@@ -65,48 +65,15 @@ layer {
   }
 }
 layer {
-  name: "relu1a"
+  name: "relu1"
   type: "ReLU"
-  bottom: "conv1a"
-  top: "conv1a"
-}
-layer {
-  name: "conv1b"
-  type: "Convolution"
-  bottom: "conv1a"
-  top: "conv1b"
-  param {
-    lr_mult: 1
-    decay_mult: 1
-  }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
-  convolution_param {
-    num_output: 96
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "gaussian"
-      std: 0.01
-    }
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
-  }
-}
-layer {
-  name: "relu1b"
-  type: "ReLU"
-  bottom: "conv1b"
-  top: "conv1b"
+  bottom: "conv1"
+  top: "conv1"
 }
 layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1b"
+  bottom: "conv1"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -144,7 +111,7 @@ layer {
     kernel_size: 5
     group: 2
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {
@@ -199,7 +166,7 @@ layer {
     pad: 1
     kernel_size: 3
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {
@@ -233,7 +200,7 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {
@@ -267,7 +234,7 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {
@@ -309,7 +276,7 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.005
     }
     bias_filler {
@@ -349,7 +316,7 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.005
     }
     bias_filler {
@@ -389,7 +356,7 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "gaussian"
+      type: "xavier"
       std: 0.01
     }
     bias_filler {

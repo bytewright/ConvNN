@@ -1,12 +1,22 @@
 {
     "0": {
-        "ignore": false,
-        "name": "my_conv1_to_abc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job6/solver.prototxt"
-    },
-    "1": {
         "ignore": true,
         "name": "test_job",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
+    },
+    "1": {
+        "ignore": false,
+        "name": "xavier_init",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
+    },
+    "2": {
+        "ignore": false,
+        "name": "uniform_init",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
+    },
+    "3": {
+        "ignore": false,
+        "name": "my_conv1_to_abc",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job6_conv1toabc/solver.prototxt"
     }
 }
