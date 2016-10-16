@@ -24,7 +24,7 @@ def generate_job_log(job):
     log.info('Job "{}" completed in {}. Accuracy: {:.3f}'.format(job['name'],
                                                                  job['duration'],
                                                                  job['accuracy']))
-    log_path = os.path.join(job['snapshot_path'], "stats.json")
+    log_path = os.path.join(job['snapshot_path'], job['name'], "_stats.json")
     json.dump(job, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
     return
 
@@ -73,6 +73,7 @@ def train_networks(jobs_list):
         #    continue
         #jobID = jobs_list.index(job)
         log.info('starting training for job {}'.format(job['name']))
+        job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
         train_thread = NetworkTrainer(job, log)
         train_threads.append(train_thread)
         train_thread.daemon = True
@@ -90,11 +91,11 @@ def train_networks(jobs_list):
         try:
             # generate image of NN
             draw_job_net(job['solver_path'],
-                         os.path.join(job['snapshot_path'], 'net.png'), log)
+                         os.path.join(job['snapshot_path'], job['name'], 'net.png'), log)
             # training is done, write log and other output
             generate_parsed_splitted_logs(job['caffe_log_path'],
                                           job['snapshot_path'], log)
-            draw_job_plot(job['caffe_log_path'], log)
+            draw_job_plot(job['caffe_log_path'], job['name'], log)
             acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
             thread_stats = train_thread.get_stats()
             job['accuracy'] = acc
