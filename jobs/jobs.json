@@ -24,8 +24,9 @@
         "name": "extra_fc_layer",
         "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
     },
-    "4": {
+    "5": {
         "ignore": false,
         "name": "vanilla_alexnet",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/deploy_alexnet_places365.prototxt"}
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/deploy_alexnet_places365.prototxt"
+    }
 }

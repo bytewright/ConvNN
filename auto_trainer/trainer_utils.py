@@ -30,7 +30,7 @@ def check_job(job, log):
         log.info('ignoring job: ' + job['name'])
         return None
     if 'solver_path' not in job:
-        log.error('no valid solver_path key\n"{}",\nskipping job'.format(job))
+        log.error('no valid solver_path key in job "{}",\nskipping job'.format(job))
         return None
     if not os.path.isfile(job['solver_path']):
         log.error('no solver at \n"{}",\nskipping job'.format(job['solver_path']))
@@ -48,10 +48,10 @@ def check_job(job, log):
         job['model_path'] = net_path
         job['snapshot_path'] = snapshot_path
     else:
-        log.error('no valid model_path or snapshot_path in solver, skipping job')
+        log.error('no valid model_path or snapshot_path in {}-solver, skipping job'.format(job['name']))
         return None
     if not os.path.isfile(job['model_path']):
-        log.error('model_path in solver is no file, skipping job')
+        log.error('model_path in {}-solver is no file, skipping job'.format(job['name']))
         return None
     return job
 

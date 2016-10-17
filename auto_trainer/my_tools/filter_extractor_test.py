@@ -4,27 +4,35 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.misc import toimage
 
+# 1. load network
 network_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/job0/deploy_alexnet_places365.prototxt'
 weight_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/job0/_iter_75000.caffemodel'
 net = caffe.Net(network_path, weight_path, caffe.TEST)
 
-plt.rcParams['figure.figsize'] = (10, 10)
-plt.rcParams['image.interpolation'] = 'nearest'
-plt.rcParams['image.cmap'] = 'gray'
+# 2. get filters
+for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
+    print '{}, Dims:{}'.format(name, dim)
+# 96 x 11x11 x3
+#nice_edge_detectors = net.blobs['conv1']
+#higher_level_filter = net.blobs['fc7']
 
-nice_edge_detectors = net.blobs['conv1']
-higher_level_filter = net.blobs['fc7']
-print [(k, v[0].data.shape) for k, v in net.params.items()]
-# the parameters are a list of [weights, biases]
 filters = net.params['conv1'][0].data
 print np.shape(filters)
-#vis_square(filters.transpose(0, 2, 3, 1))
-#feat = net.blobs['conv1'].data[4, :36]
-#vis_square(feat, padval=1)
-path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/con1_filters/'
-for i in range(np.shape(filters)[0]):
-    toimage(filters[i]).save(path+'{}.png'.format(i))
 
+# 3. compose new image
+path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/con1_filters/'
+comp_im = Image.new("RGB", (200, 200), "white")
+offset = (0, 0)
+for i in range(np.shape(filters)[0]):
+    comp_im.paste(toimage(filters[i]),
+                  offset)
+    offset[0] += 12
+    if offset[0] > 120:
+        offset[0] = 0
+        offset[1] += 12
+
+# 4. save to path
+comp_im.save(path + 'conv1_filters.png')
 #w, h = 512, 512
 #data = np.zeros((h, w, 3), dtype=np.uint8)
 #data[256, 256] = [255, 0, 0]
