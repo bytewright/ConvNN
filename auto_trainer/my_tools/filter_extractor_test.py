@@ -19,22 +19,34 @@ for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
         continue
     filters = net.params[name][0].data
     print np.shape(filters)
-    filter_size = np.shape(filters)[2]
-    print 'filter size: {}x{}'.format(filter_size,filter_size)
-    # 3. compose new image
-    comp_im = Image.new("RGB", ((filter_size + 1) * 10, (filter_size + 1) * 10), "white")
-    offset_x = 0
-    offset_y = 0
-    for i in range(np.shape(filters)[0]):
-        comp_im.paste(toimage(filters[i]),
-                      (offset_x, offset_y))
-        offset_x += filter_size + 1
-        if offset_x > (filter_size + 1) * 10:
-            offset_x = 0
-            offset_y += filter_size + 1
-
+    filter_count, filter_channels, filter_size,_  = np.shape(filters)
+    print '{} filters with size: {}x{}x'.format(filter_count, filter_size, filter_size, filter_channels)
+    if filter_channels > 3:
+        # 3. compose new image
+        comp_im = Image.new("RGB", ((filter_size + 1) * 10, (filter_size + 1) * 10), "white")
+        offset_x = 0
+        offset_y = 0
+        for i in range(filter_count):
+            comp_im.paste(toimage(filters[i]),
+                          (offset_x, offset_y))
+            offset_x += filter_size + 1
+            if offset_x > (filter_size + 1) * 10:
+                offset_x = 0
+                offset_y += filter_size + 1
+        comp_im = comp_im.resize((400, 400), Image.ANTIALIAS)
+    else:
+        comp_im = Image.new("L", (filter_channels * (filter_size + 1), (filter_size + 1) * filter_count), "white")
+        offset_x = 0
+        offset_y = 0
+        for i in range(filter_count):
+            for j in range(filter_channels):
+                comp_im.paste(toimage(filters[i][j]),
+                              (offset_x, offset_y))
+                offset_x += filter_size + 1
+                if offset_x > (filter_size + 1) * filter_channels:
+                    offset_x = 0
+                    offset_y += filter_size + 1
     # 4. save to path
-    comp_im = comp_im.resize((400, 400), Image.ANTIALIAS)
     comp_im.save(output_path + name + '_filters.png')
 #w, h = 512, 512
 #data = np.zeros((h, w, 3), dtype=np.uint8)
