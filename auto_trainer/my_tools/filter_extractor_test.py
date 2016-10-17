@@ -20,8 +20,8 @@ for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
     filters = net.params[name][0].data
     print np.shape(filters)
     filter_count, filter_channels, filter_size,_  = np.shape(filters)
-    print '{} filters with size: {}x{}x'.format(filter_count, filter_size, filter_size, filter_channels)
-    if filter_channels > 3:
+    print '{} filters with size: {}x{}x{}'.format(filter_count, filter_size, filter_size, filter_channels)
+    if filter_channels is 3:
         # 3. compose new image
         comp_im = Image.new("RGB", ((filter_size + 1) * 10, (filter_size + 1) * 10), "white")
         offset_x = 0
@@ -38,8 +38,11 @@ for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
         comp_im = Image.new("L", (filter_channels * (filter_size + 1), (filter_size + 1) * filter_count), "white")
         offset_x = 0
         offset_y = 0
+
         for i in range(filter_count):
             for j in range(filter_channels):
+                #print filters[i][j]
+                print np.shape(filters[i][j])
                 comp_im.paste(toimage(filters[i][j]),
                               (offset_x, offset_y))
                 offset_x += filter_size + 1
