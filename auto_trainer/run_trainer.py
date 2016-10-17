@@ -7,7 +7,7 @@ import time
 import sys
 from NNTrainClsSub import NetworkTrainer
 from trainer_utils import check_job, generate_output_directory, get_networks_from_file, \
-    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs
+    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters
 
 # global defines
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
@@ -65,6 +65,18 @@ def get_avg_acc_and_loss(log_path):
     return avg_acc, avg_loss
 
 
+def get_best_caffemodel(snapshot_path):
+    best_file = 1
+    best_file_name = ''
+    for f in os.listdir(snapshot_path):
+        if f.endswith(".caffemodel"):
+            iter_num = int(f.replace('_iter_', '').replace('.caffemodel'))
+            if iter_num > best_file:
+                best_file = iter_num
+                best_file_name = f
+    return os.path.join(snapshot_path, best_file_name)
+
+
 def train_networks(jobs_list):
     train_threads = []
     for job in jobs_list:
@@ -106,6 +118,10 @@ def train_networks(jobs_list):
             job['test_loss'] = training_loss
             job['duration'] = thread_stats['duration_str']
             generate_job_log(job)
+            # get best caffemodel
+            weights_path = get_best_caffemodel(job['snapshot_path'])
+            extract_filters(job['solver_path'], weights_path, job['snapshot_path'], log)
+
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
             raise

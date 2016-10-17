@@ -1,14 +1,12 @@
 import os
 import json
-
-#output_dir = '/home/ellerch/caffeProject/auto_trainer_output'
-output_dir = 'H:\\Entwicklung\\ConvNN\\auto_trainer\\my_tools'
-stats_dict = {'0':'1', 'abc':['a','b','c'], '123':{'x':'y','g':'h'}}
-stats_dict = {'0':{'name':'bla', 'solver_path':'bla', 'model_path':'bla'}, '1':{'name':'bla2', 'solver_path':'bla', 'model_path':'bla'}}
-log_path = os.path.join(output_dir, "jobs.json")
-#json.dump(stats_dict, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
-log_path = 'H:\\Entwicklung\\ConvNN\\jobs\\jobs.json'
-a=json.load(open(log_path, 'r'))
-b = [a[job] for job in json.load(open(log_path, 'r'))]
-for job in b:
-    print job
+snapshot_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7'
+best_file = 1
+best_file_name = ''
+for f in os.listdir(snapshot_path):
+    if f.endswith(".caffemodel"):
+        iter_num = int(f.replace('_iter_', '').replace('.caffemodel'))
+        if iter_num > best_file:
+            best_file = iter_num
+            best_file_name = f
+print os.path.join(snapshot_path, best_file_name)

@@ -1,10 +1,13 @@
 import shutil
 import sys
-
 import configargparse
 import time
 import os
 import subprocess
+import caffe
+from PIL import Image
+import numpy as np
+from scipy.misc import toimage
 
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
@@ -69,6 +72,30 @@ def get_args():
     args = parser.parse_args()
 
     return args
+
+
+def extract_filters(network_path, weight_path, output_path, log):
+    if not os.path.exists(weight_path):
+        log.error('weights not found!: ' + weight_path)
+        return
+    log.info('extracting filters')
+    filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                         'my_tools',
+                                         'filter_extractor_test.py')
+    process = subprocess.Popen(['python', filter_extract_script,
+                                network_path, weight_path, output_path],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        log.error('extractor return code: '+str(process.returncode))
+        log.error(output)
+    else:
+        log.info('extractor exited successfully (code {})'.format(returncode))
 
 
 def draw_job_plot(caffe_log_path, output_file, log):

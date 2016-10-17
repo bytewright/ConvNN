@@ -42,9 +42,6 @@ class NetworkTrainer(Thread):
         self.log.info('training finished, duration: {:.2f}s'.format(self.train_duration))
         os.rename(os.path.join(self.job['snapshot_path'], "tmp_caffe_training.log"),
                   os.path.join(self.job['snapshot_path'], "caffe_training.log"))
-        #with open(os.path.join(self.job_output_dir, "caffe_training.log"), "w") as text_file:
-        #    text_file.write(output)
-        # todo load net, get conv-filter
 
     def get_caffe_log_path(self):
         return os.path.join(self.job['snapshot_path'], "caffe_training.log")
