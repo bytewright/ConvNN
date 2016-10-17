@@ -19,11 +19,12 @@ for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
         continue
     filters = net.params[name][0].data
     print np.shape(filters)
-    print filters[0]
-    print filters[0][0]
-    print filters[0][0][0]
-    print filters[0][0][0][0]
-    filter_size = filters[0][0][0]
+    print np.shape(filters)[0]
+    print np.shape(filters)[0][0]
+    print np.shape(filters)[0][0][0]
+    print np.shape(filters)[0][0][0][0]
+    filter_size = np.shape(filters)[0][0][0]
+    print 'filter size: {}x{}'.format(filter_size,filter_size)
     # 3. compose new image
     comp_im = Image.new("RGB", ((filter_size + 1) * 10, (filter_size + 1) * 10), "white")
     offset_x = 0
