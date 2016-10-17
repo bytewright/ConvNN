@@ -91,11 +91,15 @@ def train_networks(jobs_list):
         try:
             # generate image of NN
             draw_job_net(job['solver_path'],
-                         os.path.join(job['snapshot_path'], job['name'], 'net.png'), log)
+                         os.path.join(job['snapshot_path'], job['name'] + '_net.png'), log)
+
             # training is done, write log and other output
             generate_parsed_splitted_logs(job['caffe_log_path'],
                                           job['snapshot_path'], log)
-            draw_job_plot(job['caffe_log_path'], job['name'], log)
+
+            draw_job_plot(job['caffe_log_path'],
+                          os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'),
+                          log)
             acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
             thread_stats = train_thread.get_stats()
             job['accuracy'] = acc

@@ -97,7 +97,7 @@ if __name__ == "__main__":
   plt.draw()
   #plt.show()
 
-  pylab.savefig(os.path.join(args.output_png_path, 'training_plot.png'))
+  pylab.savefig(args.output_png_path)
 
 
 

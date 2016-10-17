@@ -71,16 +71,13 @@ def get_args():
     return args
 
 
-def draw_job_plot(caffe_log_path, name_prefix, log):
+def draw_job_plot(caffe_log_path, output_file, log):
     if not os.path.exists(caffe_log_path):
         log.error('caffe logfile not found!')
         return
     log.info('plotting learning curve as png')
     plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
-    process = subprocess.Popen(['python',
-                                plot_script,
-                                caffe_log_path,
-                                os.path.dirname(caffe_log_path) + name_prefix + '_'],
+    process = subprocess.Popen(['python', plot_script, caffe_log_path, output_file],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     output = process.communicate()[0]
