@@ -22,14 +22,15 @@ print np.shape(filters)
 # 3. compose new image
 path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/con1_filters/'
 comp_im = Image.new("RGB", (200, 200), "white")
-offset = (0, 0)
+offset_x = 0
+offset_y = 0
 for i in range(np.shape(filters)[0]):
     comp_im.paste(toimage(filters[i]),
-                  offset)
-    offset[0] += 12
-    if offset[0] > 120:
-        offset[0] = 0
-        offset[1] += 12
+                  (offset_x, offset_y))
+    offset_x += 12
+    if offset_x > 120:
+        offset_x = 0
+        offset_y += 12
 
 # 4. save to path
 comp_im.save(path + 'conv1_filters.png')
