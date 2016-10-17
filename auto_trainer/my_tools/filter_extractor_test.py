@@ -5,9 +5,9 @@ import numpy as np
 from scipy.misc import toimage
 
 # 1. load network
-network_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/job0/deploy_alexnet_places365.prototxt'
-weight_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/job0/_iter_75000.caffemodel'
-output_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/alexnet_80k/'
+network_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/my_conv3+4+5to1_alexnet.prototxt'
+weight_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/_iter_75000.caffemodel'
+output_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/'
 
 net = caffe.Net(network_path, weight_path, caffe.TEST)
 
@@ -41,8 +41,6 @@ for name, dim in [(k, v[0].data.shape) for k, v in net.params.items()]:
 
         for i in range(filter_count):
             for j in range(filter_channels):
-                #print filters[i][j]
-                print np.shape(filters[i][j])
                 comp_im.paste(toimage(filters[i][j]),
                               (offset_x, offset_y))
                 offset_x += filter_size + 1
