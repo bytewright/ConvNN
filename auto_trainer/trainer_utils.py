@@ -108,7 +108,7 @@ def draw_job_plot(caffe_log_path, output_file, log):
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     output = process.communicate()[0]
-    log.debug(output)
+    #log.debug(output)
     returncode = process.returncode
     while returncode is None:
         time.sleep(2)

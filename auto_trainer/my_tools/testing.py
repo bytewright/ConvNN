@@ -5,7 +5,7 @@ best_file = 1
 best_file_name = ''
 for f in os.listdir(snapshot_path):
     if f.endswith(".caffemodel"):
-        iter_num = int(f.replace('_iter_', '').replace('.caffemodel'))
+        iter_num = int(f.replace('_iter_', '').replace('.caffemodel', ''))
         if iter_num > best_file:
             best_file = iter_num
             best_file_name = f

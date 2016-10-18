@@ -70,7 +70,7 @@ def get_best_caffemodel(snapshot_path):
     best_file_name = ''
     for f in os.listdir(snapshot_path):
         if f.endswith(".caffemodel"):
-            iter_num = int(f.replace('_iter_', '').replace('.caffemodel'))
+            iter_num = int(f.replace('_iter_', '').replace('.caffemodel', ''))
             if iter_num > best_file:
                 best_file = iter_num
                 best_file_name = f
@@ -117,10 +117,11 @@ def train_networks(jobs_list):
             job['accuracy'] = acc
             job['test_loss'] = training_loss
             job['duration'] = thread_stats['duration_str']
-            generate_job_log(job)
+
             # get best caffemodel
             weights_path = get_best_caffemodel(job['snapshot_path'])
             extract_filters(job['solver_path'], weights_path, job['snapshot_path'], log)
+            generate_job_log(job)
 
         except (KeyboardInterrupt, SystemExit):
             log.info('KeyboardInterrupt, raising error')
@@ -165,7 +166,12 @@ if __name__ == '__main__':
             jobs.append(checked_job)
 
     log.info('Parsed {} job(s)'.format(jobs.__len__()))
-    train_networks(jobs)
+    path1 = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/'
+    solver_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/solver.prototxt'
+    # get best caffemodel
+    weights_path = get_best_caffemodel(path1)
+    extract_filters(solver_path, weights_path, path1, log)
+    #train_networks(jobs)
 
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
