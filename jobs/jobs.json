@@ -27,6 +27,6 @@
     "5": {
         "ignore": false,
         "name": "vanilla_alexnet",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/deploy_alexnet_places365.prototxt"
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     }
 }
