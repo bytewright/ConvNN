@@ -5,12 +5,12 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
     "1": {
-        "ignore": false,
+        "ignore": true,
         "name": "xavier_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
     },
     "2": {
-        "ignore": false,
+        "ignore": true,
         "name": "uniform_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
     },

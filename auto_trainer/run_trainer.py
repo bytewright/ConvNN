@@ -74,67 +74,64 @@ def get_best_caffemodel(snapshot_path):
             if iter_num > best_file:
                 best_file = iter_num
                 best_file_name = f
-    return os.path.join(snapshot_path, best_file_name)
+    path_to_file = os.path.join(snapshot_path, best_file_name)
+    if os.path.isfile(path_to_file):
+        return path_to_file
+    return None
 
 
-def train_networks(jobs_list):
-    train_threads = []
-    for job in jobs_list:
-        #if job['ignore']:
-        #    log.info('skipping job: ' + job)
-        #    continue
-        #jobID = jobs_list.index(job)
-        log.info('starting training for job {}'.format(job['name']))
-        job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
-        train_thread = NetworkTrainer(job, log)
-        train_threads.append(train_thread)
-        train_thread.daemon = True
-        train_thread.setName('{}-thread'.format(job['name']))
-        train_thread.start()
+def train_network(job):
+    log.info('starting training for job {}'.format(job['name']))
+    job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
+    train_thread = NetworkTrainer(job, log)
+    train_thread.daemon = True
+    train_thread.setName('{}-thread'.format(job['name']))
+    train_thread.start()
 
-        train_thread.join()
-        if train_thread.get_training_returncode() is 0:
-            log.info('training finished, processing data from log')
-            job['caffe_log_path'] = train_thread.get_caffe_log_path()
-        else:
-            log.error('training was not successful! skipping data processing')
-            continue
-        # all data processing for jobs
-        try:
-            # generate image of NN
-            draw_job_net(job['solver_path'],
-                         os.path.join(job['snapshot_path'], job['name'] + '_net.png'), log)
+    train_thread.join()
+    if train_thread.get_training_returncode() is 0:
+        log.info('training finished, processing data from log')
+        job['caffe_log_path'] = train_thread.get_caffe_log_path()
+    else:
+        log.error('training was not successful! skipping data processing')
+        return '0', False
+    # all data processing for jobs
+    try:
+        # generate image of NN
+        draw_job_net(job['solver_path'],
+                     os.path.join(job['snapshot_path'], job['name'] + '_net.png'), log)
 
-            # training is done, write log and other output
-            generate_parsed_splitted_logs(job['caffe_log_path'],
-                                          job['snapshot_path'], log)
+        # training is done, write log and other output
+        generate_parsed_splitted_logs(job['caffe_log_path'],
+                                      job['snapshot_path'], log)
 
-            draw_job_plot(job['caffe_log_path'],
-                          os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'),
-                          log)
-            acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
-            thread_stats = train_thread.get_stats()
-            job['accuracy'] = acc
-            job['test_loss'] = training_loss
-            job['duration'] = thread_stats['duration_str']
+        draw_job_plot(job['caffe_log_path'],
+                      os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'),
+                      log)
+        acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
+        thread_stats = train_thread.get_stats()
+        job['accuracy'] = acc
+        job['test_loss'] = training_loss
+        job['duration'] = thread_stats['duration_str']
 
-            # get best caffemodel
-            weights_path = get_best_caffemodel(job['snapshot_path'])
+        # get best caffemodel
+        weights_path = get_best_caffemodel(job['snapshot_path'])
+        if weights_path is not None:
             extract_filters(job['solver_path'], weights_path, job['snapshot_path'], log)
-            generate_job_log(job)
+        else:
+            log.error('Could not find a caffemodel for solver in {}, '
+                      'no filters extracted.'.format(job['snapshot_path']))
+        generate_job_log(job)
 
-        except (KeyboardInterrupt, SystemExit):
-            log.info('KeyboardInterrupt, raising error')
-            raise
-        except:
-            log.error("Unexpected error, processing next job")
-            log.error(sys.exc_info())
+    except (KeyboardInterrupt, SystemExit):
+        log.info('KeyboardInterrupt, raising error')
+        raise
+    except:
+        log.error("Unexpected error, processing next job")
+        log.error(sys.exc_info())
+        return train_thread.get_duration(), False
 
-    log.info('all jobs completed')
-    for job in train_threads:
-        minutes, sec = divmod(job.get_duration(), 60)
-        hours, minutes = divmod(minutes, 60)
-        log.info('thread {}: completed in {}'.format(job.getName(), '%02dh %02dm %02ds' % (hours, minutes, sec)))
+    return train_thread.get_duration(), True
 
 
 if __name__ == '__main__':
@@ -166,12 +163,16 @@ if __name__ == '__main__':
             jobs.append(checked_job)
 
     log.info('Parsed {} job(s)'.format(jobs.__len__()))
-    path1 = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/'
-    solver_path = '/home/ellerch/caffeProject/auto_trainer_output/_gute_runs/my_conv3+4+5_to_1/job7/job7/solver.prototxt'
-    # get best caffemodel
-    weights_path = get_best_caffemodel(path1)
-    extract_filters(solver_path, weights_path, path1, log)
-    #train_networks(jobs)
+    for i in range(jobs.__len__()):
+        duration, completed = train_network(jobs[i])
+        jobs[i]['job_duration'] = duration
+        jobs[i]['completed'] = completed
+
+    log.info('all jobs completed')
+    for tmp_job in jobs:
+        minutes, sec = divmod(tmp_job['job_duration'], 60)
+        hours, minutes = divmod(minutes, 60)
+        log.info('Job {}: completed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
 
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
