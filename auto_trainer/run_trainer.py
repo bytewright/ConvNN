@@ -179,7 +179,7 @@ if __name__ == '__main__':
         else:
             log.info('Job {}: failed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
 
-    # clean up
+
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
         output_path = os.path.join(args.output_path, dir_name)
