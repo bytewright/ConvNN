@@ -80,6 +80,19 @@ def get_best_caffemodel(snapshot_path):
     return None
 
 
+def get_next_job(jobs_file):
+    jobs_dict = json.load(open(jobs_file, 'r'))
+    for tmp_job in jobs_dict:
+        if jobs_dict[tmp_job]['name'] not in finished_job_names:
+            log.debug(checked_job['name'] + ' not in:')
+            log.debug(finished_job_names)
+            checked_job = check_job(jobs_dict[tmp_job], log)
+            if checked_job is not None:
+                return checked_job, True
+    log.debug('No new jobs found, terminating')
+    return None, False
+
+
 def train_network(job):
     log.info('starting training for job {}'.format(job['name']))
     job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
@@ -131,7 +144,7 @@ def train_network(job):
         log.error(sys.exc_info())
         return train_thread.get_duration(), False
 
-    return train_thread.get_duration(), True
+    return job['duration'], True
 
 
 if __name__ == '__main__':
@@ -150,39 +163,34 @@ if __name__ == '__main__':
     fileHandler.setFormatter(logFormatter)
     log.addHandler(fileHandler)
 
-    # load jobs from jobs.json
-    jobs_dict = json.load(open(args.jobs_file, 'r'))
-    jobs = []
-    for tmp_job in jobs_dict:
-        checked_job = check_job(jobs_dict[tmp_job], log)
-        if checked_job is not None:
-            generate_output_directory(checked_job['solver_path'],
-                                      checked_job['model_path'],
-                                      checked_job['snapshot_path'],
-                                      log)
-            jobs.append(checked_job)
-    log.info('Parsed {} job(s)'.format(jobs.__len__()))
+    finished_job_names = []
+    while True:
+        # load new job from jobs.json
+        job, do_work = get_next_job(args.jobs_file)
+        if not do_work:
+            break
+        generate_output_directory(job['solver_path'],
+                                  job['model_path'],
+                                  job['snapshot_path'],
+                                  log)
+        # run training for job
+        duration, completed = train_network(job)
+        job['job_duration'] = duration
+        job['completed'] = completed
 
-    # run training for each job
-    for i in range(jobs.__len__()):
-        duration, completed = train_network(jobs[i])
-        jobs[i]['job_duration'] = duration
-        jobs[i]['completed'] = completed
-    log.info('all jobs completed')
-
-    # after training, post stats
-    for tmp_job in jobs:
-        minutes, sec = divmod(tmp_job['job_duration'], 60)
-        hours, minutes = divmod(minutes, 60)
-        if jobs[i]['completed']:
-            log.info('Job {}: completed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
-        else:
-            log.info('Job {}: failed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
-
-
-    log.info('cleaning up tmp dir')
-    for tmp_job in jobs:
+        # cleanup
         output_path = os.path.join(args.output_path, dir_name)
-        shutil.move(tmp_job['snapshot_path'], output_path)
+
+        # after training, post stats
+        if job['completed']:
+            shutil.move(job['snapshot_path'], output_path)
+            log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
+        else:
+            os.rename(job['snapshot_path'], job['snapshot_path']+'_failed')
+            shutil.move(job['snapshot_path']+'_failed', output_path)
+            log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
+
+    log.info('all jobs completed')
+    log.info('cleaning up tmp dir')
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))
