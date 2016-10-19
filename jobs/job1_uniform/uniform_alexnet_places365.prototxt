@@ -56,7 +56,8 @@ layer {
     stride: 4
     weight_filler {
       type: "uniform"
-      std: 0.01
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -112,7 +113,8 @@ layer {
     group: 2
     weight_filler {
       type: "uniform"
-      std: 0.01
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -167,7 +169,8 @@ layer {
     kernel_size: 3
     weight_filler {
       type: "uniform"
-      std: 0.01
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -201,7 +204,8 @@ layer {
     group: 2
     weight_filler {
       type: "uniform"
-      std: 0.01
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -235,7 +239,8 @@ layer {
     group: 2
     weight_filler {
       type: "uniform"
-      std: 0.01
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -276,8 +281,9 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "uniform"
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -316,8 +322,9 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "uniform"
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"
@@ -356,8 +363,9 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "uniform"
+      min: -0.5
+      max: 0.5
     }
     bias_filler {
       type: "constant"

@@ -150,7 +150,7 @@ if __name__ == '__main__':
     fileHandler.setFormatter(logFormatter)
     log.addHandler(fileHandler)
 
-    # load networks
+    # load jobs from jobs.json
     jobs_dict = json.load(open(args.jobs_file, 'r'))
     jobs = []
     for tmp_job in jobs_dict:
@@ -161,24 +161,28 @@ if __name__ == '__main__':
                                       checked_job['snapshot_path'],
                                       log)
             jobs.append(checked_job)
-
     log.info('Parsed {} job(s)'.format(jobs.__len__()))
+
+    # run training for each job
     for i in range(jobs.__len__()):
         duration, completed = train_network(jobs[i])
         jobs[i]['job_duration'] = duration
         jobs[i]['completed'] = completed
-
     log.info('all jobs completed')
+
+    # after training, post stats
     for tmp_job in jobs:
         minutes, sec = divmod(tmp_job['job_duration'], 60)
         hours, minutes = divmod(minutes, 60)
-        log.info('Job {}: completed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
+        if jobs[i]['completed']:
+            log.info('Job {}: completed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
+        else:
+            log.info('Job {}: failed in {}'.format(tmp_job['name'], '%02dh %02dm %02ds' % (hours, minutes, sec)))
 
+    # clean up
     log.info('cleaning up tmp dir')
     for tmp_job in jobs:
-        #output_path = os.path.join(args.output_path, dir_name, tmp_job['name'])
         output_path = os.path.join(args.output_path, dir_name)
-        #log.debug('moving all from:\n{}\nto:\n{}'.format(tmp_job['snapshot_path'], output_path))
         shutil.move(tmp_job['snapshot_path'], output_path)
     if os.path.exists(os.path.join(args.output_path, 'tmp')):
         os.rmdir(os.path.join(args.output_path, 'tmp'))

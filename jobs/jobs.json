@@ -5,12 +5,12 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
     "1": {
-        "ignore": true,
+        "ignore": false,
         "name": "xavier_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
     },
     "2": {
-        "ignore": true,
+        "ignore": false,
         "name": "uniform_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
     },
@@ -25,7 +25,7 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
     },
     "5": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     }

@@ -56,11 +56,9 @@ layer {
     stride: 4
     weight_filler {
       type: "xavier"
-      std: 0.01
     }
     bias_filler {
       type: "constant"
-      value: 0
     }
   }
 }
@@ -112,11 +110,9 @@ layer {
     group: 2
     weight_filler {
       type: "xavier"
-      std: 0.01
     }
     bias_filler {
       type: "constant"
-      value: 1
     }
   }
 }
@@ -167,11 +163,9 @@ layer {
     kernel_size: 3
     weight_filler {
       type: "xavier"
-      std: 0.01
     }
     bias_filler {
       type: "constant"
-      value: 0
     }
   }
 }
@@ -201,11 +195,9 @@ layer {
     group: 2
     weight_filler {
       type: "xavier"
-      std: 0.01
     }
     bias_filler {
       type: "constant"
-      value: 1
     }
   }
 }
@@ -235,11 +227,9 @@ layer {
     group: 2
     weight_filler {
       type: "xavier"
-      std: 0.01
     }
     bias_filler {
       type: "constant"
-      value: 1
     }
   }
 }
