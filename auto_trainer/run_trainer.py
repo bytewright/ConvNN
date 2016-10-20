@@ -84,7 +84,7 @@ def get_next_job(jobs_file):
     jobs_dict = json.load(open(jobs_file, 'r'))
     for tmp_job in jobs_dict:
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
-            log.debug(checked_job['name'] + ' not in:')
+            log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
             log.debug(finished_job_names)
             checked_job = check_job(jobs_dict[tmp_job], log)
             if checked_job is not None:
