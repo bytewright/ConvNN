@@ -18,15 +18,15 @@ compress = Compress()
 
 
 class NNWebInterface(Flask):
-    def __init__(self, import_name, classifier, upload_folder, **kwargs):
+    def __init__(self, import_name, classifiers, upload_folder, **kwargs):
         super(NNWebInterface, self).__init__(import_name)
         compress.init_app(self)
         self.route("/", methods=['GET'])(self.index)
-        self.route("/set_classifier", methods=['GET', 'POST'])(self.set_classifier)
+        #self.route("/set_classifier", methods=['GET', 'POST'])(self.set_classifier)
         self.route("/classify_upload", methods=['POST'])(self.classify_upload)
-        self.classifier = classifier
+        self.route("/classify_url", methods=['GET'])(self.classify_url)
+        self.classifiers = classifiers
         self.flask_upload_folder = upload_folder
-        self.classifier_list = []
 
     def classify_upload(self):
         try:
@@ -46,17 +46,35 @@ class NNWebInterface(Flask):
                 result=(False, 'Cannot open uploaded image.')
             )
 
-        result = self.classifier.classify_image(image)
+        # gather results from all classifiers
+        results = []
+        for classifier in self.classifiers:
+            result = classifier.classify_image(image)
+            results.append(result)
         return render_template(
-            'index.html', has_result=True, result=result,
+            'index.html', has_result=True, result=results[0],
             imagesrc=self.embed_image_html(image)
         )
 
-    def set_other_classifiers(self, new_classifiers):
-        self.classifier_list = new_classifiers
+    def classify_url(self):
+        image_url = request.args.get('imageurl', '')
+        logging.info('Image: %s', image_url)
 
-    def set_classifier(self):
-        return self.classifier_list
+        results = []
+        try:
+            for classifier in self.classifiers:
+                result = classifier.classify_url(image_url)
+                results.append(result)
+        except Exception as err:
+            logging.info('URL error: %s', err)
+            return render_template(
+                'index.html', has_result=True,
+                result=(False, 'Cannot open image url.')
+            )
+
+        return render_template(
+            'index.html', has_result=True, result=results[0], imagesrc=image_url)
+
 
     @staticmethod
     def index():

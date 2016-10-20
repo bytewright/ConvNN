@@ -3,8 +3,10 @@
 
 import logging
 import numpy as np
+import cStringIO as StringIO
 import time
 import caffe
+import urllib
 
 log = logging.getLogger(__name__)
 
@@ -33,8 +35,8 @@ class NNClassifier:
         log.info('loading network_path:{}'.format(network_path))
         log.info('loading weight_path:{}'.format(weight_path))
         self.net = caffe.Classifier(
-            network_path,
-            weight_path)
+            str(network_path),
+            str(weight_path), caffe.TEST)
         #, mean=out
         #image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
         #mean = np.load(db_mean_path).mean(1).mean(1), channel_swap = (2, 1, 0)
@@ -79,3 +81,18 @@ class NNClassifier:
                   [(1, 'maxAccurate1'), (2, 'maxAccurate2')],
                   '%.3f' % (endtime - starttime)]
         return result
+
+    def classify_url(self, img_url):
+        try:
+            string_buffer = StringIO.StringIO(
+                urllib.urlopen(img_url).read())
+            image = caffe.io.load_image(string_buffer)
+
+        except Exception as err:
+            # For any exception we encounter in reading the image, we will just
+            # not continue.
+            logging.info('URL Image open error: %s', err)
+            return (False, 'Something went wrong when classifying the '
+                           'image. Maybe try another one?')
+
+        return self.classify_image(image)
