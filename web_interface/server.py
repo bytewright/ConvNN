@@ -49,7 +49,8 @@ class NNWebInterface(Flask):
         # gather results from all classifiers
         results = []
         for classifier in self.classifiers:
-            result = classifier.classify_image(image)
+            result = classifier.dummy_classify(image)
+            #result = classifier.classify_image(image)
             results.append(result)
         return render_template(
             'index.html', has_result=True, result=results[0],

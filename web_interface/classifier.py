@@ -51,6 +51,16 @@ class NNClassifier:
 
         return True
 
+    def dummy_classify(self, image):
+        starttime = time.time()
+        log.info('classifing image...')
+        endtime = time.time()
+        result = [True,
+                  [(1, 0.0)],
+                  [(1, 'maxAccurate1'), (2, 'maxAccurate2')],
+                  '%.3f' % (endtime - starttime)]
+        return result
+
     def classify_image(self, image):
         #try:
         starttime = time.time()
