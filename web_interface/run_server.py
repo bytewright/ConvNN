@@ -62,4 +62,4 @@ if __name__ == '__main__':
     if classifiers.__len__() <= 0:
         log.error('no valid classifier in '+args.cnns_json)
     app = NNWebInterface('webinterface', classifiers, args.upload_path)
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=args.port)
