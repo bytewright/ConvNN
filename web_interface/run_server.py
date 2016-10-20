@@ -22,6 +22,7 @@ def get_args():
     parser = configargparse.ArgParser(default_config_files=[configpath])
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-np', '--cnns_json', type=str, help='Debug Mode')
+    parser.add_argument('-p', '--port', type=int, help='Debug Mode')
     parser.add_argument('-ae', '--allowed_extensions',
                         help='Path, where auto_trainer will create an output-directory')
     parser.add_argument('-up', '--upload_path', type=str,

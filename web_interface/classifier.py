@@ -52,30 +52,32 @@ class NNClassifier:
         return True
 
     def classify_image(self, image):
-        try:
-            starttime = time.time()
-            log.info('classifing image...')
-            scores = self.net.predict([image], oversample=True).flatten()
-            endtime = time.time()
-            logging.debug(scores)
-            logging.debug(-scores)
-            indices = (-scores).argsort()[:5]
-            logging.debug(indices)
-            predictions = []
-            for index in indices:
-                pred = '{}: {}'.format(index, self.labels[index])
-                predictions.append(self.labels[index])
-                logging.debug(pred)
-            #predictions = self.labels[indices]
-            logging.debug(predictions)
-            meta = [
-                (p, '%.5f' % scores[i])
-                for i, p in zip(indices, predictions)
-                ]
-        except Exception as err:
-            logging.info('Classification error: %s', err)
-            return (False, 'Something went wrong when classifying the '
-                           'image. Maybe try another one?')
+        #try:
+        starttime = time.time()
+        log.info('classifing image...')
+        scores = self.net.predict([image], oversample=True).flatten()
+        endtime = time.time()
+        minutes, sec = divmod(endtime-starttime, 60)
+        log.info('classification done in {}'.format('%02dm %02ds' % (minutes, sec)))
+        log.debug(scores)
+        log.debug(-scores)
+        indices = (-scores).argsort()[:5]
+        log.debug(indices)
+        predictions = []
+        for index in indices:
+            pred = '{}: {}'.format(index, self.labels[index])
+            predictions.append(self.labels[index])
+            logging.debug(pred)
+        #predictions = self.labels[indices]
+        log.debug(predictions)
+        meta = [
+            (p, '%.5f' % scores[i])
+            for i, p in zip(indices, predictions)
+            ]
+        #except Exception as err:
+        #    logging.info('Classification error: %s', err)
+        #    return (False, 'Something went wrong when classifying the '
+        #                   'image. Maybe try another one?')
         result = [True,
                   meta,
                   [(1, 'maxAccurate1'), (2, 'maxAccurate2')],
