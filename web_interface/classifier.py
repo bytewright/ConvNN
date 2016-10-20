@@ -53,6 +53,7 @@ class NNClassifier:
 
     def dummy_classify(self, image):
         starttime = time.time()
+        time.sleep(15)
         log.info('classifing image...')
         endtime = time.time()
         result = [True,
