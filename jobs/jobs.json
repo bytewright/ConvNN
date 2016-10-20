@@ -20,7 +20,7 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job6_conv1toabc/solver.prototxt"
     },
     "4": {
-        "ignore": true,
+        "ignore": false,
         "name": "extra_fc_layer",
         "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
     },

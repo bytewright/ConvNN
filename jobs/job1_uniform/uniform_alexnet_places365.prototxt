@@ -281,9 +281,8 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
@@ -322,9 +321,8 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
@@ -363,9 +361,8 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"

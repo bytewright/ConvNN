@@ -59,4 +59,4 @@ if __name__ == '__main__':
         other_classifiers = [(args.network_path, args.weights_path, args.db_mean),
                        (args.network_path, args.weights_path, args.db_mean)]
         app.set_other_classifiers(other_classifiers)
-        app.run()
+        app.run(host='0.0.0.0')

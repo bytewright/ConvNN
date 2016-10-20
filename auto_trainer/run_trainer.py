@@ -130,7 +130,7 @@ def train_network(job):
         # get best caffemodel
         weights_path = get_best_caffemodel(job['snapshot_path'])
         if weights_path is not None:
-            extract_filters(job['solver_path'], weights_path, job['snapshot_path'], log)
+            extract_filters(job['model_path'], weights_path, job['snapshot_path'], log)
         else:
             log.error('Could not find a caffemodel for solver in {}, '
                       'no filters extracted.'.format(job['snapshot_path']))
