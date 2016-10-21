@@ -75,5 +75,5 @@ if __name__ == "__main__":
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         output = process.communicate()[0]
-        print output
+        #print output
     print 'all done'

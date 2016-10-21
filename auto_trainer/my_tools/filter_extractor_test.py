@@ -35,17 +35,19 @@ if __name__ == "__main__":
         print '{} filters with size: {}x{}x{}'.format(filter_count, filter_size, filter_size, filter_channels)
         if filter_channels is 3:
             # 3. compose new image
-            comp_im = Image.new("RGB", ((filter_size + 1) * 10, (filter_size + 1) * 10), "white")
+            # new size = 120x120
+            comp_im = Image.new("RGB", ((filter_size + 1) * 10 - 1, (filter_size + 1) * 10 - 1), "white")
             offset_x = 0
             offset_y = 0
             for i in range(filter_count):
                 comp_im.paste(toimage(filters[i]),
                               (offset_x, offset_y))
                 offset_x += filter_size + 1
-                if offset_x > (filter_size + 1) * 10:
+                if offset_x > (filter_size + 1) * 10 - 1:
                     offset_x = 0
                     offset_y += filter_size + 1
-            comp_im = comp_im.resize((400, 400), Image.ANTIALIAS)
+            comp_im_big = comp_im.resize((400, 400))
+            comp_im_big.save(os.path.join(output_path, name + '_filters_big.png'))
         else:
             comp_im = Image.new("L", (filter_channels * (filter_size + 1), (filter_size + 1) * filter_count), "white")
             offset_x = 0
