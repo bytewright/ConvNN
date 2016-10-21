@@ -1,5 +1,7 @@
 import os
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.use('Agg')
 import pylab
 import configargparse
 
@@ -39,6 +41,7 @@ if __name__ == "__main__":
     ref_iterations = [x[0] for x in ref_data[:plot_x_len]]
     ref_accuracy = [x[2] for x in ref_data[:plot_x_len]]
     ref_loss = [x[3] for x in ref_data[:plot_x_len]]
+    plt.ioff()
 
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()

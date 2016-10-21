@@ -59,7 +59,7 @@ if __name__ == "__main__":
                                     '--plot_data',
                                     get_test_log(path),
                                     '--output_png_path',
-                                    os.path.join(path, 'plotter_plot.png')],
+                                    path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         output = process.communicate()[0]
