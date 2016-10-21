@@ -167,7 +167,9 @@ if __name__ == '__main__':
         os.makedirs(args.output_path)
     # create output folder for this run
     dir_name = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss') + '_experiment'
-    os.makedirs(os.path.join(args.output_path, dir_name))
+    output_path = os.path.join(args.output_path, dir_name)
+    os.makedirs(output_path)
+    log.info('output dir for this run:\n{}'.format(output_path))
     fileHandler = logging.FileHandler(os.path.join(args.output_path, dir_name, 'auto_trainer.log'))
     fileHandler.setFormatter(logFormatter)
     log.addHandler(fileHandler)
@@ -178,21 +180,20 @@ if __name__ == '__main__':
         job, do_work = get_next_job(args.jobs_file)
         if not do_work:
             break
-        generate_output_directory(job['solver_path'],
-                                  job['model_path'],
-                                  job['snapshot_path'],
-                                  log)
+        job['output_dir'] = generate_output_directory(job['solver_path'],
+                                                   job['model_path'],
+                                                   job['snapshot_path'],
+                                                   log)
+
         # run training for job
         duration, completed = train_network(job)
         job['job_duration'] = duration
         job['completed'] = completed
 
         # cleanup
-        output_path = os.path.join(args.output_path, dir_name)
-
         # after training, post stats
         if job['completed']:
-            if os.path.exists(os.path.join(output_path, os.path.basename(job['snapshot_path']))):
+            if os.path.exists(os.path.join(output_path, os.path.basename(os.path.dirname(job['snapshot_path'])))):
                 log.error('there is already a completed job with name {} in output dir, '
                           'please move manually from tmp dir.'.format(os.path.basename(job['snapshot_path'])))
             else:
