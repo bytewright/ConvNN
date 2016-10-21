@@ -192,8 +192,12 @@ if __name__ == '__main__':
             shutil.move(job['snapshot_path'], output_path)
             log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
         else:
-            os.rename(job['snapshot_path'], job['snapshot_path']+'_failed')
-            shutil.move(job['snapshot_path']+'_failed', output_path)
+            path = job['snapshot_path']
+            if job['snapshot_path'].endswith('/'):
+                path = job['snapshot_path'][:-1]
+            log.debug('trying to rename \n{}\nto:\n{}\n'.format(path, path + '_failed'))
+            os.rename(path, path + '_failed')
+            shutil.move(path + '_failed', output_path)
             log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
 
     log.info('all jobs completed')
