@@ -1,4 +1,4 @@
-net: "/home/ellerch/caffeProject/jobs/job_test/my_not_conv3+4+5to1_alexnet.prototxt"
+net: "/home/ellerch/caffeProject/jobs/job_test/my_conv3+4+5to1_alexnet.prototxt"
 snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job_testxdcfgvbhnjmk/"
 snapshot: 30000
 # A final snapshot is saved at the end of training unless
