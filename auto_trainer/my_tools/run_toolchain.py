@@ -51,35 +51,38 @@ if __name__ == "__main__":
                  '/home/ellerch/caffeProject/auto_trainer_output/_archiv/2016-09-21_09h-45m-39s_experiment/job0',
                  '/home/ellerch/caffeProject/auto_trainer_output/_archiv/2016-09-22_13h-32m-23s_experiment/job0']
 
+    run_plotter = True
+    run_extractor = False
+
     for path in path_list:
         print path
         print get_test_log(path)
         print get_network_path(path)
         print get_weight_path(path)
-
-        #plotter
-        print 'plotting learning curve as png'
-        plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
-        process = subprocess.Popen(['python',
-                                    plot_script,
-                                    '--plot_data',
-                                    get_test_log(path),
-                                    '--output_png_path',
-                                    os.path.join(path, 'plotter_plot.png')],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
-        output = process.communicate()[0]
-        print output
-
-        #extractor
-        print 'extracting filters'
-        filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                             'filter_extractor_test.py')
-        process = subprocess.Popen(['python', filter_extract_script,
-                                    get_network_path(path), get_weight_path(path),
-                                    path],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
-        output = process.communicate()[0]
-        #print output
+        if run_plotter:
+            #plotter
+            print 'plotting learning curve as png'
+            plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
+            process = subprocess.Popen(['python',
+                                        plot_script,
+                                        '--plot_data',
+                                        get_test_log(path),
+                                        '--output_png_path',
+                                        os.path.join(path, 'plotter_plot.png')],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT)
+            output = process.communicate()[0]
+            print output
+        if run_extractor:
+            #extractor
+            print 'extracting filters'
+            filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                 'filter_extractor_test.py')
+            process = subprocess.Popen(['python', filter_extract_script,
+                                        get_network_path(path), get_weight_path(path),
+                                        path],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT)
+            output = process.communicate()[0]
+            #print output
     print 'all done'

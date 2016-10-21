@@ -12,7 +12,10 @@ def load_data(data_file):
     with open(data_file, 'r') as f:
         for line in f.readlines():
             line = line.rstrip()
-            test_data.append([data for data in line.split(delimiter) if data is not ''])
+            if line.split(delimiter).__len__() < 3:
+                print('incomplete line found')
+            else:
+                test_data.append([data for data in line.split(delimiter) if data is not ''])
 
     return test_data[1:]
 
@@ -33,7 +36,7 @@ if __name__ == "__main__":
     plot_x_len = ref_data.__len__()
     if ref_data.__len__() > plot_data.__len__():
         plot_x_len = plot_data.__len__()
-
+    print 'found {} viable datapoints to plot'.format(plot_x_len)
     # 0:Iters 1:Seconds 2:TestAccuracy 3:TestLoss
     test_iterations = [x[0] for x in plot_data[:plot_x_len]]
     test_accuracy = [x[2] for x in plot_data[:plot_x_len]]
@@ -56,4 +59,5 @@ if __name__ == "__main__":
 
     legend = plt.legend(handles=[line1a, line1b, line2a, line2b], bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
                ncol=2, mode="expand", borderaxespad=0.)
+    print 'saving plot png to ' + args.output_png_path
     pylab.savefig(args.output_png_path, bbox_extra_artists=(legend,), bbox_inches='tight')
