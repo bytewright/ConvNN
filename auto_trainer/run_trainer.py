@@ -84,6 +84,9 @@ def get_next_job(jobs_file):
     jobs_dict = json.load(open(jobs_file, 'r'))
     log.info('fetching next job from {}'.format(jobs_file))
     for tmp_job in jobs_dict:
+        if jobs_dict[tmp_job]['ignore']:
+            log.info('ignoring job: ' + jobs_dict[tmp_job]['name'])
+            continue
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
             log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
             log.debug(finished_job_names)
@@ -189,7 +192,11 @@ if __name__ == '__main__':
 
         # after training, post stats
         if job['completed']:
-            shutil.move(job['snapshot_path'], output_path)
+            if os.path.exists(os.path.join(output_path, os.path.basename(job['snapshot_path']))):
+                log.error('there is already a completed job with name {} in output dir, '
+                          'please move manually from tmp dir.'.format(os.path.basename(job['snapshot_path'])))
+            else:
+                shutil.move(job['snapshot_path'], output_path)
             log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
         else:
             path = job['snapshot_path']

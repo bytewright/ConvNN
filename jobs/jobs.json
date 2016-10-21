@@ -1,7 +1,7 @@
 {
     "0": {
         "ignore": false,
-        "name": "test_job",
+        "name": "test_job0",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
     "1": {
@@ -31,12 +31,12 @@
     },
     "6": {
         "ignore": false,
-        "name": "test_job",
+        "name": "test_job_fail0",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test_fail/solver.prototxt"
     },
     "7": {
         "ignore": false,
-        "name": "test_job",
+        "name": "test_job2",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     }
 }
