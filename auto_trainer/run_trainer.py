@@ -20,7 +20,7 @@ consoleHandler.setFormatter(logFormatter)
 log.addHandler(consoleHandler)
 
 
-def generate_job_log(job):
+def save_job_stats_to_json(job):
     log.info('Job "{}" completed in {}. Accuracy: {:.3f}'.format(job['name'],
                                                                  job['duration'],
                                                                  job['accuracy']))
@@ -88,26 +88,27 @@ def get_next_job(jobs_file):
             log.info('ignoring job: ' + jobs_dict[tmp_job]['name'])
             continue
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
-            log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
-            log.debug(finished_job_names)
+            #log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
+            #log.debug(finished_job_names)
             checked_job = check_job(jobs_dict[tmp_job], log)
             if checked_job is not None:
-                log.info('found new job: {}'.format(jobs_dict[tmp_job]['name']))
+                log.info('jobs completed: {}, new job: {}'.format(finished_job_names.__len__(),
+                                                                  jobs_dict[tmp_job]['name']))
                 return checked_job, True
             else:
                 log.error('check_job returned None for this job: {}'.format(jobs_dict[tmp_job]['name']))
-        else:
-            log.info('already completed job with name: {}'.format(jobs_dict[tmp_job]['name']))
-    log.debug('No new jobs found, terminating')
+        #else:
+        #    log.info('already completed job with name: {}'.format(jobs_dict[tmp_job]['name']))
+    #log.debug('No new jobs found, terminating')
     return None, False
 
 
 def train_network(job):
-    log.info('starting training for job {}'.format(job['name']))
+    log.info('training starts for job {}'.format(job['name']))
     job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
     train_thread = NetworkTrainer(job, log)
     train_thread.daemon = True
-    train_thread.setName('{}-thread'.format(job['name']))
+    train_thread.setName('{}'.format(job['name']))
     train_thread.start()
 
     train_thread.join()
@@ -147,15 +148,18 @@ def train_network(job):
         else:
             log.error('Could not find a caffemodel for solver in {}, '
                       'no filters extracted.'.format(job['snapshot_path']))
-        generate_job_log(job)
+        save_job_stats_to_json(job)
 
-    except (KeyboardInterrupt, SystemExit):
+    except KeyboardInterrupt:
         log.info('KeyboardInterrupt, stopping current job')
-        return job['duration'], False
-    #except:
-    #    log.error("Unexpected error, processing next job")
-    #    log.error(sys.exc_info())
-    #    return train_thread.get_duration(), False
+        return '0s', False
+    except SystemExit:
+        log.error('SystemExit, stopping script')
+        raise
+    except:
+        log.error("Unexpected error during training, processing next job")
+        log.error(sys.exc_info())
+        return train_thread.get_duration(), False
 
     return job['duration'], True
 
