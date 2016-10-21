@@ -82,13 +82,19 @@ def get_best_caffemodel(snapshot_path):
 
 def get_next_job(jobs_file):
     jobs_dict = json.load(open(jobs_file, 'r'))
+    log.info('fetching next job from {}'.format(jobs_file))
     for tmp_job in jobs_dict:
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
             log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
             log.debug(finished_job_names)
             checked_job = check_job(jobs_dict[tmp_job], log)
             if checked_job is not None:
+                log.info('found new job: {}'.format(jobs_dict[tmp_job]['name']))
                 return checked_job, True
+            else:
+                log.error('check_job returned None for this job: {}'.format(jobs_dict[tmp_job]['name']))
+        else:
+            log.info('already completed job with name: {}'.format(jobs_dict[tmp_job]['name']))
     log.debug('No new jobs found, terminating')
     return None, False
 
@@ -139,10 +145,10 @@ def train_network(job):
     except (KeyboardInterrupt, SystemExit):
         log.info('KeyboardInterrupt, raising error')
         raise
-    except:
-        log.error("Unexpected error, processing next job")
-        log.error(sys.exc_info())
-        return train_thread.get_duration(), False
+    #except:
+    #    log.error("Unexpected error, processing next job")
+    #    log.error(sys.exc_info())
+    #    return train_thread.get_duration(), False
 
     return job['duration'], True
 

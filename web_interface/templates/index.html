@@ -21,9 +21,16 @@
           $('#imagefile').change(
             function(){
               if ($(this).val()){
+                <!-- div mit id erstellen,
+                   div anfangs versteckt
+                   on change div zeigen
+                   bild aus this.val holen
+                   submit()
+                   -->
                 $('#formupload').submit();
               }
             }
+
           );
         }
       );
