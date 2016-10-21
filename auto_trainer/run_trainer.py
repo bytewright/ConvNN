@@ -213,6 +213,7 @@ if __name__ == '__main__':
         duration, completed = train_network(job)
         job['job_duration'] = duration
         job['completed'] = completed
+        finished_job_names.append(job['name'])
 
         # cleanup
         # after training, post stats
