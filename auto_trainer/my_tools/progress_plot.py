@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import pylab
 
 
-
 def load_data(data_file):
     delimiter = ' '
     test_data = []
