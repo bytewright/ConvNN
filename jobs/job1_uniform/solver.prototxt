@@ -20,7 +20,7 @@ base_lr: 0.01
 
 # factor for gradiant correction based on previous gradiants
 momentum: 0.9
-weight_decay: 0.0005
+weight_decay: 0.0001
 
 # drop the learning rate by a factor of 10
 # (i.e., multiply it by a factor of gamma = 0.1)

@@ -266,12 +266,10 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
-      value: 1
     }
   }
 }
@@ -306,12 +304,10 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "gaussian"
-      std: 0.005
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
-      value: 1
     }
   }
 }
@@ -346,12 +342,10 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "gaussian"
-      std: 0.01
+      type: "xavier"
     }
     bias_filler {
       type: "constant"
-      value: 0
     }
   }
 }
