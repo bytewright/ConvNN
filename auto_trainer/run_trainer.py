@@ -156,6 +156,30 @@ def train_network(job):
     return job['duration'], True
 
 
+def move_all_files_from_to(src_path, dest_path):
+    if not os.path.exists(dest_path):
+        os.makedirs(dest_path)
+    else:
+        log.error('there already is a completed job with name {} in output dir!'.format(dest_path))
+        return False
+    fileList = os.listdir(src_path)
+    log.info('moving all files from\n{}\nto\n{}'.format(src_path, dest_path))
+    log.debug(fileList)
+    for i in fileList:
+        src = os.path.join(src_path, i)
+        dest = os.path.join(dest_path, i)
+        if os.path.exists(dest):
+            if os.path.isdir(dest):
+                # clean out subfolders
+                move_all_files_from_to(src, dest)
+                continue
+            else:
+                os.remove(dest)
+        shutil.move(src, dest_path)
+    os.rmdir(src_path)
+    return True
+
+
 if __name__ == '__main__':
     args = get_args()
     if args.debug:
@@ -181,9 +205,9 @@ if __name__ == '__main__':
         if not do_work:
             break
         job['output_dir'] = generate_output_directory(job['solver_path'],
-                                                   job['model_path'],
-                                                   job['snapshot_path'],
-                                                   log)
+                                                      job['model_path'],
+                                                      job['snapshot_path'],
+                                                      log)
 
         # run training for job
         duration, completed = train_network(job)
@@ -193,19 +217,21 @@ if __name__ == '__main__':
         # cleanup
         # after training, post stats
         if job['completed']:
-            if os.path.exists(os.path.join(output_path, os.path.basename(os.path.dirname(job['snapshot_path'])))):
-                log.error('there is already a completed job with name {} in output dir, '
-                          'please move manually from tmp dir.'.format(os.path.basename(job['snapshot_path'])))
-            else:
-                shutil.move(job['snapshot_path'], output_path)
+            move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']))
+            #if os.path.exists(os.path.join(output_path, os.path.basename(os.path.dirname(job['snapshot_path'])))):
+            #    log.error('there is already a completed job with name {} in output dir, '
+            #              'please move manually from tmp dir.'.format(os.path.basename(job['snapshot_path'])))
+            #else:
+            #    shutil.move(job['snapshot_path'], output_path)
             log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
         else:
-            path = job['snapshot_path']
-            if job['snapshot_path'].endswith('/'):
-                path = job['snapshot_path'][:-1]
-            log.debug('trying to rename \n{}\nto:\n{}\n'.format(path, path + '_failed'))
-            os.rename(path, path + '_failed')
-            shutil.move(path + '_failed', output_path)
+            move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']+'_failed'))
+            #path = job['snapshot_path']
+            #if job['snapshot_path'].endswith('/'):
+            #    path = job['snapshot_path'][:-1]
+            #log.debug('trying to rename \n{}\nto:\n{}\n'.format(path, path + '_failed'))
+            #os.rename(path, path + '_failed')
+            #shutil.move(path + '_failed', output_path)
             log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
 
     log.info('all jobs completed')
