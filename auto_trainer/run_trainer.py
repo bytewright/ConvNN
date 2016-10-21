@@ -24,7 +24,7 @@ def generate_job_log(job):
     log.info('Job "{}" completed in {}. Accuracy: {:.3f}'.format(job['name'],
                                                                  job['duration'],
                                                                  job['accuracy']))
-    log_path = os.path.join(job['snapshot_path'], job['name'], "_stats.json")
+    log_path = os.path.join(job['snapshot_path'], job['name'].replace(' ', '_') + "_stats.json")
     json.dump(job, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
     return
 
