@@ -7,7 +7,7 @@ import time
 import sys
 from NNTrainClsSub import NetworkTrainer
 from trainer_utils import check_job, generate_output_directory, get_networks_from_file, \
-    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters
+    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2
 
 # global defines
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
@@ -130,6 +130,10 @@ def train_network(job):
         draw_job_plot(job['caffe_log_path'],
                       os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'),
                       log)
+
+        draw_job_plot2(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"),
+                       os.path.join(job['snapshot_path'], job['name'] + '_better_training_plot.png'),
+                       log)
         acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
         thread_stats = train_thread.get_stats()
         job['accuracy'] = acc

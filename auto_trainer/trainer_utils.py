@@ -120,18 +120,18 @@ def draw_job_plot(caffe_log_path, output_file, log):
         log.info('plotter exited successfully (code {})'.format(returncode))
 
 
-def draw_job_plot2(caffe_log_path, log):
-    if not os.path.exists(caffe_log_path):
-        log.error('caffe logfile not found!')
+def draw_job_plot2(test_log_path, output_file, log):
+    if not os.path.exists(test_log_path):
+        log.error('test logfile not found!')
         return
     log.info('plotting learning curve as png')
-    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'plot_training_log.py')
-    #todo call all plottypes
+    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_tools', 'progress_plot.py')
     process = subprocess.Popen(['python',
                                 plot_script,
-                                '0',
-                                os.path.join(os.path.dirname(caffe_log_path), 'plot0.png'),
-                                caffe_log_path],
+                                '--plot_data',
+                                test_log_path,
+                                '--output_png_path',
+                                output_file],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     output = process.communicate()[0]
