@@ -150,8 +150,8 @@ def train_network(job):
         generate_job_log(job)
 
     except (KeyboardInterrupt, SystemExit):
-        log.info('KeyboardInterrupt, raising error')
-        raise
+        log.info('KeyboardInterrupt, stopping current job')
+        return job['duration'], False
     #except:
     #    log.error("Unexpected error, processing next job")
     #    log.error(sys.exc_info())
