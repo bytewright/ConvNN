@@ -59,7 +59,7 @@ if __name__ == "__main__":
                                     '--plot_data',
                                     get_test_log(path),
                                     '--output_png_path',
-                                    path],
+                                    os.path.join(path, 'plotter_plot.png')],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         output = process.communicate()[0]
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                                              'filter_extractor_test.py')
         process = subprocess.Popen(['python', filter_extract_script,
                                     get_network_path(path), get_weight_path(path),
-                                    os.path.join(path, 'plotter_plot.png')],
+                                    path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
         output = process.communicate()[0]
