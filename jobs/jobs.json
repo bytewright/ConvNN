@@ -5,17 +5,17 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
     "1": {
-        "ignore": false,
+        "ignore": true,
         "name": "all_xavier_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
     },
     "2": {
-        "ignore": false,
+        "ignore": true,
         "name": "all_uniform_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
     },
     "3": {
-        "ignore": false,
+        "ignore": true,
         "name": "my_conv1_to_abc",
         "solver_path": "/home/ellerch/caffeProject/jobs/job6_conv1toabc/solver.prototxt"
     },
