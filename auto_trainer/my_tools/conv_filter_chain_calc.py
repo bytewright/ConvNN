@@ -1,6 +1,6 @@
-conv_filter = [1, 3]
-conv_stride = [1, 2]
-padding =     [0, 1]
+conv_filter = [1]
+conv_stride = [2]
+padding =     [0]
 #conv_filter = [11]
 #conv_stride = [4]
 size = 13
