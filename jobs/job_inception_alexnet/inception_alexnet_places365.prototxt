@@ -153,11 +153,13 @@ layer {
     beta: 0.75
   }
 }
+# shape: [256, 256, 13, 13]
+# -------------------------- start inception module --------------------------
 layer {
-  name: "conv3"
+  name: "inception_conv1_1x1"
   type: "Convolution"
   bottom: "norm2"
-  top: "conv3"
+  top: "inception_conv1"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -167,44 +169,10 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 384
-    pad: 1
-    kernel_size: 3
-    weight_filler {
-      type: "gaussian"
-      std: 0.01
-    }
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
-  }
-}
-# shape: [256, 384, 13, 13]
-layer {
-  name: "relu3"
-  type: "ReLU"
-  bottom: "conv3"
-  top: "conv3"
-}
-layer {
-  name: "conv4"
-  type: "Convolution"
-  bottom: "conv3"
-  top: "conv4"
-  param {
-    lr_mult: 1
-    decay_mult: 1
-  }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
-  convolution_param {
-    num_output: 384
-    pad: 1
-    kernel_size: 3
-    group: 2
+    num_output: 128
+    pad: 0
+    kernel_size: 1
+    stride: 1
     weight_filler {
       type: "gaussian"
       std: 0.01
@@ -215,18 +183,11 @@ layer {
     }
   }
 }
-# shape: [256, 384, 13, 13]
 layer {
-  name: "relu4"
-  type: "ReLU"
-  bottom: "conv4"
-  top: "conv4"
-}
-layer {
-  name: "conv5"
+  name: "inception_conv2_1x1"
   type: "Convolution"
-  bottom: "conv4"
-  top: "conv5"
+  bottom: "norm2"
+  top: "inception_conv2_1x1"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -236,10 +197,10 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 256
-    pad: 1
-    kernel_size: 3
-    group: 2
+    num_output: 128
+    pad: 0
+    kernel_size: 1
+    stride: 1
     weight_filler {
       type: "gaussian"
       std: 0.01
@@ -250,29 +211,118 @@ layer {
     }
   }
 }
-# shape: [256, 256, 13, 13]
 layer {
-  name: "relu5"
-  type: "ReLU"
-  bottom: "conv5"
-  top: "conv5"
+  name: "inception_conv2_3x3"
+  type: "Convolution"
+  bottom: "inception_conv2_1x1"
+  top: "inception_conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 3
+    stride: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
 }
 layer {
-  name: "pool5"
+  name: "inception_conv3_1x1"
+  type: "Convolution"
+  bottom: "norm2"
+  top: "inception_conv3_1x1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 128
+    pad: 0
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "inception_conv3_5x5"
+  type: "Convolution"
+  bottom: "inception_conv3_1x1"
+  top: "inception_conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 128
+    pad: 2
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "inception_pool1"
   type: "Pooling"
-  bottom: "conv5"
-  top: "pool5"
+  bottom: "norm2"
+  top: "inception_pool1"
   pooling_param {
     pool: MAX
     kernel_size: 3
     stride: 2
   }
 }
-# shape: [256, 256, 6, 6]
+layer {
+  name: "ch_concat_mixed_chconcat"
+  type: "Concat"
+  bottom: "inception_conv1"
+  bottom: "inception_conv2"
+  bottom: "inception_conv3"
+  bottom: "inception_pool1"
+  top: "concat1"
+  concat_param {
+    axis: 1
+  }
+}
+# --------------------------- end inception module ---------------------------
 layer {
   name: "fc6"
   type: "InnerProduct"
-  bottom: "pool5"
+  bottom: "concat1"
   top: "fc6"
   param {
     lr_mult: 1
