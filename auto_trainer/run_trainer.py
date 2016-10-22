@@ -172,7 +172,7 @@ def move_all_files_from_to(src_path, dest_path):
         return False
     fileList = os.listdir(src_path)
     log.info('moving all files from\n{}\nto\n{}'.format(src_path, dest_path))
-    log.debug(fileList)
+    #log.debug(fileList)
     for i in fileList:
         src = os.path.join(src_path, i)
         dest = os.path.join(dest_path, i)
