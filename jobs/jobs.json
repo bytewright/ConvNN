@@ -33,12 +33,12 @@
         "ignore": false,
         "name": "inception_alexnet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_alexnet/solver.prototxt"
-    }
+    },
     "7": {
         "ignore": false,
         "name": "job_alexnet_parallel_fc",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc/solver.prototxt"
-    }
+    },
     "8": {
         "ignore": false,
         "name": "job_alexnet_parallel+extra_fc",

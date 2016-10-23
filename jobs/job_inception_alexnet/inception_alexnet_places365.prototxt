@@ -350,6 +350,12 @@ layer {
     axis: 1
   }
 }
+layer {
+  name: "concat_relu"
+  type: "ReLU"
+  bottom: "concat1"
+  top: "concat1"
+}
 # shape: [256, 512, 7, 7]
 # --------------------------- end inception module ---------------------------
 layer {
