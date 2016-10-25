@@ -1,6 +1,6 @@
 {
     "0": {
-        "ignore": true,
+        "ignore": false,
         "name": "test_job0",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
@@ -30,17 +30,17 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     },
     "6": {
-        "ignore": false,
+        "ignore": true,
         "name": "inception_alexnet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_alexnet/solver.prototxt"
     },
     "7": {
-        "ignore": false,
+        "ignore": true,
         "name": "job_alexnet_parallel_fc",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc/solver.prototxt"
     },
     "8": {
-        "ignore": false,
+        "ignore": true,
         "name": "job_alexnet_parallel+extra_fc",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc2/solver.prototxt"
     }

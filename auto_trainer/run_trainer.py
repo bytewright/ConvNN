@@ -88,8 +88,6 @@ def get_next_job(jobs_file):
             log.info('ignoring job: ' + jobs_dict[tmp_job]['name'])
             continue
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
-            #log.debug(jobs_dict[tmp_job]['name'] + ' not in:')
-            #log.debug(finished_job_names)
             checked_job = check_job(jobs_dict[tmp_job], log)
             if checked_job is not None:
                 log.info('jobs completed: {}, new job: {}'.format(finished_job_names.__len__(),
@@ -122,19 +120,17 @@ def train_network(job):
     try:
         # generate image of NN
         draw_job_net(job['solver_path'],
-                     os.path.join(job['snapshot_path'], job['name'] + '_net.png'), log)
+                     os.path.join(job['snapshot_path'], job['name'] + '_net.png'), '/home/ellerch/bin/caffe/python/')
 
         # training is done, write log and other output
         generate_parsed_splitted_logs(job['caffe_log_path'],
-                                      job['snapshot_path'], log)
+                                      job['snapshot_path'])
 
         draw_job_plot(job['caffe_log_path'],
-                      os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'),
-                      log)
+                      os.path.join(job['snapshot_path'], job['name'] + '_training_plot.png'))
 
         draw_job_plot2(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"),
-                       os.path.join(job['snapshot_path'], job['name'] + '_better_training_plot.png'),
-                       log)
+                       os.path.join(job['snapshot_path'], job['name'] + '_better_training_plot.png'))
         acc, training_loss = get_avg_acc_and_loss(os.path.join(job['snapshot_path'], "parsed_caffe_log.test"))
         thread_stats = train_thread.get_stats()
         job['accuracy'] = acc
@@ -144,7 +140,7 @@ def train_network(job):
         # get best caffemodel
         weights_path = get_best_caffemodel(job['snapshot_path'])
         if weights_path is not None:
-            extract_filters(job['model_path'], weights_path, job['snapshot_path'], log)
+            extract_filters(job['model_path'], weights_path, job['snapshot_path'])
         else:
             log.error('Could not find a caffemodel for solver in {}, '
                       'no filters extracted.'.format(job['snapshot_path']))
@@ -203,56 +199,43 @@ if __name__ == '__main__':
     dir_name = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss') + '_experiment'
     output_path = os.path.join(output_dir, dir_name)
     os.makedirs(output_path)
+    fileHandler = logging.FileHandler(os.path.join(output_path, 'auto_trainer.log'))
+    fileHandler.setFormatter(logFormatter)
+    log.addHandler(fileHandler)
     log.info('output dir for this run:\n{}'.format(output_path))
+
     job_file_path = os.path.join(os.path.dirname(__file__), '..', args.jobs_file)
     if not os.path.isfile(job_file_path):
         log.error('jobfile not found at:\n{}'.format(job_file_path))
-    else:
-        log.debug('jobfile found at:{}'.format(job_file_path))
-    test_log('eureka!')
-    if False:
-        fileHandler = logging.FileHandler(os.path.join(output_path, 'auto_trainer.log'))
-        fileHandler.setFormatter(logFormatter)
-        log.addHandler(fileHandler)
+        sys.exit()
 
-        finished_job_names = []
-        while True:
-            # load new job from jobs.json
-            job, do_work = get_next_job(args.jobs_file)
-            if not do_work:
-                break
-            job['output_dir'] = generate_output_directory(job['solver_path'],
-                                                          job['model_path'],
-                                                          job['snapshot_path'],
-                                                          log)
+    finished_job_names = []
+    while True:
+        # load new job from jobs.json
+        job, do_work = get_next_job(job_file_path)
+        if not do_work:
+            log.info('Couldn\'t find new job, ending script')
+            break
+        job['output_dir'] = generate_output_directory(job['solver_path'],
+                                                      job['model_path'],
+                                                      job['snapshot_path'])
 
-            # run training for job
-            duration, completed = train_network(job)
-            job['job_duration'] = duration
-            job['completed'] = completed
-            finished_job_names.append(job['name'])
+        # run training for job
+        duration, completed = train_network(job)
+        job['job_duration'] = duration
+        job['completed'] = completed
+        finished_job_names.append(job['name'])
 
-            # cleanup
-            # after training, post stats
-            if job['completed']:
-                move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']))
-                #if os.path.exists(os.path.join(output_path, os.path.basename(os.path.dirname(job['snapshot_path'])))):
-                #    log.error('there is already a completed job with name {} in output dir, '
-                #              'please move manually from tmp dir.'.format(os.path.basename(job['snapshot_path'])))
-                #else:
-                #    shutil.move(job['snapshot_path'], output_path)
-                log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
-            else:
-                move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']+'_failed'))
-                #path = job['snapshot_path']
-                #if job['snapshot_path'].endswith('/'):
-                #    path = job['snapshot_path'][:-1]
-                #log.debug('trying to rename \n{}\nto:\n{}\n'.format(path, path + '_failed'))
-                #os.rename(path, path + '_failed')
-                #shutil.move(path + '_failed', output_path)
-                log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
+        # cleanup
+        # after training, post stats
+        if job['completed']:
+            move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']))
+            log.info('Job {}: completed in {}'.format(job['name'], job['job_duration']))
+        else:
+            move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']+'_failed'))
+            log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
 
-        log.info('all jobs completed')
-        log.info('cleaning up tmp dir')
-        if os.path.exists(os.path.join(args.output_path, 'tmp')):
-            os.rmdir(os.path.join(args.output_path, 'tmp'))
+    log.info('all jobs completed')
+    log.info('cleaning up tmp dir')
+    if os.path.exists(os.path.join(output_dir, 'tmp')):
+        os.rmdir(os.path.join(output_dir, 'tmp'))
