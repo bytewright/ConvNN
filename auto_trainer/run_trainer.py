@@ -7,7 +7,7 @@ import time
 import sys
 from NNTrainClsSub import NetworkTrainer
 from trainer_utils import check_job, generate_output_directory, get_networks_from_file, \
-    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2, test_log
+    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2
 
 # global defines
 #CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
@@ -88,7 +88,7 @@ def get_next_job(jobs_file):
             log.info('ignoring job: ' + jobs_dict[tmp_job]['name'])
             continue
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
-            checked_job = check_job(jobs_dict[tmp_job], log)
+            checked_job = check_job(jobs_dict[tmp_job])
             if checked_job is not None:
                 log.info('jobs completed: {}, new job: {}'.format(finished_job_names.__len__(),
                                                                   jobs_dict[tmp_job]['name']))
@@ -166,10 +166,9 @@ def move_all_files_from_to(src_path, dest_path):
     else:
         log.error('there already is a completed job with name {} in output dir!'.format(dest_path))
         return False
-    fileList = os.listdir(src_path)
+    file_list = os.listdir(src_path)
     log.info('moving all files from\n{}\nto\n{}'.format(src_path, dest_path))
-    #log.debug(fileList)
-    for i in fileList:
+    for i in file_list:
         src = os.path.join(src_path, i)
         dest = os.path.join(dest_path, i)
         if os.path.exists(dest):
