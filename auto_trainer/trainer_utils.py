@@ -20,6 +20,8 @@ def get_args():
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-j', '--jobs-file', type=str,
                         help='text file, each line should be one path to a solver file')
+    parser.add_argument('-j', '--caffe-path', type=str,
+                        help='text file, each line should be one path to a solver file')
     parser.add_argument('-o', '--output-path', type=str,
                         help='Path, where auto_trainer will create an output-directory')
     #parser.set_defaults(DEBUG=True)

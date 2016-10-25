@@ -103,7 +103,7 @@ def get_next_job(jobs_file):
 def train_network(job):
     log.info('training starts for job {}'.format(job['name']))
     job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
-    train_thread = NetworkTrainer(job, log)
+    train_thread = NetworkTrainer(job, caffe_trainer_tool, log)
     train_thread.daemon = True
     train_thread.setName('{}'.format(job['name']))
     train_thread.start()
@@ -119,7 +119,7 @@ def train_network(job):
     try:
         # generate image of NN
         draw_job_net(job['solver_path'],
-                     os.path.join(job['snapshot_path'], job['name'] + '_net.png'), '/home/ellerch/bin/caffe/python/')
+                     os.path.join(job['snapshot_path'], job['name'] + '_net.png'), caffe_tool_path)
 
         # training is done, write log and other output
         generate_parsed_splitted_logs(job['caffe_log_path'],
@@ -202,11 +202,21 @@ if __name__ == '__main__':
     log.addHandler(fileHandler)
     log.info('output dir for this run:\n{}'.format(output_path))
 
+    # check pathes from args
+    caffe_trainer_tool = os.path.join(args.caffe_path, 'build', 'tools', 'caffe')
+    if not os.path.isfile(caffe_trainer_tool):
+        log.error('caffe_trainer_tool not found at:\n{}'.format(caffe_trainer_tool))
+        sys.exit()
+    caffe_tool_path = os.path.join(args.caffe_path, 'python')
+    if not os.path.isdir(caffe_tool_path):
+        log.error('caffe_tool_path not found at:\n{}'.format(caffe_tool_path))
+        sys.exit()
     job_file_path = os.path.join(os.path.dirname(__file__), '..', args.jobs_file)
     if not os.path.isfile(job_file_path):
         log.error('jobfile not found at:\n{}'.format(job_file_path))
         sys.exit()
 
+    # start training
     finished_job_names = []
     while True:
         # load new job from jobs.json
