@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
-    ref_data = load_data(args.reference_data)
+    ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
     plot_data = load_data(args.plot_data)
     # cut ref data to plot data
     plot_x_len = ref_data.__len__()

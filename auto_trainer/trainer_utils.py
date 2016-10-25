@@ -4,6 +4,7 @@ import configargparse
 import time
 import os
 import subprocess
+import logging
 import caffe
 from PIL import Image
 import numpy as np
@@ -12,6 +13,9 @@ from scipy.misc import toimage
 CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
 
+
+def test_log(bla):
+    logging.debug('blabla:'+bla)
 
 def get_networks_from_file(jobs_file_path, log):
     job_list = []
@@ -81,7 +85,7 @@ def extract_filters(network_path, weight_path, output_path, log):
     log.info('extracting filters')
     filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                          'my_tools',
-                                         'filter_extractor_test.py')
+                                         'filter_extractor.py')
     process = subprocess.Popen(['python', filter_extract_script,
                                 network_path, weight_path, output_path],
                                stdout=subprocess.PIPE,

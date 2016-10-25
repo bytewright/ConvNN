@@ -6,7 +6,7 @@ import argparse
 import os
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='extarcts convulution filter from trained model as pngs')
+    parser = argparse.ArgumentParser(description='extracts convolution filter from trained model as pngs')
     parser.add_argument('prototxt', help='prototxt of network')
     parser.add_argument('caffemodel', help='trained weights of network')
     parser.add_argument('output_path', help='path to png, will be overwritten by this script')

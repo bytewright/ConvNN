@@ -77,7 +77,7 @@ if __name__ == "__main__":
             #extractor
             print 'extracting filters'
             filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                 'filter_extractor_test.py')
+                                                 'filter_extractor.py')
             process = subprocess.Popen(['python', filter_extract_script,
                                         get_network_path(path), get_weight_path(path),
                                         path],
