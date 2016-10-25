@@ -85,7 +85,6 @@ def get_next_job(jobs_file):
     log.info('fetching next job from {}'.format(jobs_file))
     for tmp_job in jobs_dict:
         if jobs_dict[tmp_job]['ignore']:
-            log.info('ignoring job: ' + jobs_dict[tmp_job]['name'])
             continue
         if jobs_dict[tmp_job]['name'] not in finished_job_names:
             checked_job = check_job(jobs_dict[tmp_job])

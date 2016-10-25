@@ -1,6 +1,6 @@
 {
     "0": {
-        "ignore": false,
+        "ignore": true,
         "name": "test_job0",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
@@ -25,7 +25,7 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
     },
     "5": {
-        "ignore": true,
+        "ignore": false,
         "name": "vanilla_alexnet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     },
