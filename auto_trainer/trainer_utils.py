@@ -5,25 +5,18 @@ import time
 import os
 import subprocess
 import logging
-import caffe
-from PIL import Image
-import numpy as np
-from scipy.misc import toimage
-
-#CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
-#MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
 
 
 def get_args():
     configpath = os.path.join(os.path.dirname(__file__), 'config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument('-j', '--jobs-file', type=str,
-                        help='text file, each line should be one path to a solver file')
-    parser.add_argument('-j', '--caffe-path', type=str,
-                        help='text file, each line should be one path to a solver file')
-    parser.add_argument('-o', '--output-path', type=str,
+    parser.add_argument('--jobs-file', type=str,
+                        help='json file, gets parsed from trainingsjobs')
+    parser.add_argument('--caffe-path', type=str,
+                        help='path to caffe home dir')
+    parser.add_argument('--output-path', type=str,
                         help='Path, where auto_trainer will create an output-directory')
+    parser.add_argument('--debug', help='Debug Mode', action='store_true')
     #parser.set_defaults(DEBUG=True)
 
     args = parser.parse_args()
