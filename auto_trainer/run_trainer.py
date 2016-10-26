@@ -6,11 +6,9 @@ import shutil
 import time
 import sys
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import check_job, generate_output_directory, get_networks_from_file, \
-    get_args, draw_job_net, draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2
+from trainer_utils import check_job, generate_output_directory, get_args, draw_job_net,\
+     draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2
 
-# global defines
-#CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
 
 logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
 log = logging.getLogger()
@@ -103,7 +101,7 @@ def get_next_job(jobs_file):
 def train_network(job):
     log.info('training starts for job {}'.format(job['name']))
     job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
-    train_thread = NetworkTrainer(job, caffe_trainer_tool, log)
+    train_thread = NetworkTrainer(job, caffe_trainer_tool)
     train_thread.daemon = True
     train_thread.setName('{}'.format(job['name']))
     train_thread.start()

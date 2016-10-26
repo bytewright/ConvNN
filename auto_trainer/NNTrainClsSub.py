@@ -11,10 +11,9 @@ from timeit import default_timer as timer
 
 
 class NetworkTrainer(Thread):
-    def __init__(self, job, caffe_trainer_path, log):
+    def __init__(self, job, caffe_trainer_path):
         Thread.__init__(self)
         self.job = job
-        #self.log = log
         self.caffe_trainer_path = caffe_trainer_path
         self.train_duration = None
         self.test_duration = None
@@ -29,9 +28,12 @@ class NetworkTrainer(Thread):
         solver_process = subprocess.Popen([self.caffe_trainer_path, 'train', '-solver', self.job['solver_path'], '-gpu', '0'],
                                           stdout=logfile,
                                           stderr=subprocess.STDOUT)
-        solver_process.communicate()
+        try:
+            solver_process.communicate()
+        except KeyboardInterrupt:
+            logging.info('KeyboardInterrupt, stopping current job')
         end = timer()
-        #self.returncode = solver_process.returncode
+
         while self.returncode is None:
             time.sleep(2)
             self.returncode = solver_process.returncode

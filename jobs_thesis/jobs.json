@@ -1,0 +1,52 @@
+{
+    "0": {
+        "ignore": false,
+        "name": "thesis_exp0_vanilla",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/0_alexnet_vanilla/solver.prototxt"
+    },
+    "1": {
+        "ignore": false,
+        "name": "thesis_exp1_3+4+5to1",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/1_conv3+4+5to1/solver.prototxt"
+    },
+    "2": {
+        "ignore": false,
+        "name": "thesis_exp2_inception",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/2_inception_alexnet/solver.prototxt"
+    },
+    "3": {
+        "ignore": false,
+        "name": "thesis_exp3_all_xavier_init",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/3_xavier_init/solver.prototxt"
+    },
+    "4": {
+        "ignore": false,
+        "name": "thesis_exp4_all_msra_init",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/4_msra_init/solver.prototxt"
+    },
+    "5": {
+        "ignore": false,
+        "name": "thesis_exp5_parallel_fc",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/5_alexnet_parallel_fc/solver.prototxt"
+    },
+    "6": {
+        "ignore": false,
+        "name": "thesis_exp6_parallel+extra_fc",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/6_alexnet_parallel_fc2/solver.prototxt"
+    },
+    "7": {
+        "ignore": false,
+        "name": "thesis_exp7_smaller_pooling",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/7_smaller_pooling/solver.prototxt"
+    },
+    "8": {
+        "ignore": false,
+        "name": "thesis_exp8_no_pooling",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/8_no_pooling/solver.prototxt"
+    },
+    "9": {
+        "ignore": false,
+        "name": "thesis_exp9_dropout_in_conv",
+        "solver_path": "/home/ellerch/caffeProject/jobs_thesis/9_dropout_in_conv/solver.prototxt"
+    }
+}
