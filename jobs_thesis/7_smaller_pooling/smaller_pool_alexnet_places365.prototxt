@@ -79,7 +79,6 @@ layer {
   top: "pool1"
   pooling_param {
     pool: MAX
-    pad: 1
     kernel_size: 2
     stride: 1
   }
@@ -138,7 +137,6 @@ layer {
   top: "pool2"
   pooling_param {
     pool: MAX
-    pad: 1
     kernel_size: 2
     stride: 1
   }
@@ -266,7 +264,6 @@ layer {
   top: "pool5"
   pooling_param {
     pool: MAX
-    pad: 1
     kernel_size: 2
     stride: 1
   }
