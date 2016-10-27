@@ -266,7 +266,8 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "msra"
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
@@ -305,7 +306,8 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "msra"
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
@@ -344,7 +346,8 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "msra"
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"

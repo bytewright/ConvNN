@@ -143,7 +143,7 @@ def draw_job_plot2(test_log_path, output_file):
     return output
 
 
-def draw_job_net(solver_path, output_file, CAFFE_TOOL_PATH):
+def draw_job_net(solver_path, output_file, caffe_python_path):
     # draw_net.py <netprototxt_filename> <out_img_filename>
     net_path = ''
     with open(solver_path, 'r') as search:
@@ -152,7 +152,7 @@ def draw_job_net(solver_path, output_file, CAFFE_TOOL_PATH):
             if line.startswith('net: '):
                 net_path = line.replace('net: ', '').replace('"', '')
     process = subprocess.Popen(['python',
-                                CAFFE_TOOL_PATH + 'draw_net.py',
+                                os.path.join(caffe_python_path, 'draw_net.py'),
                                 net_path,
                                 output_file],
                                stdout=subprocess.PIPE,

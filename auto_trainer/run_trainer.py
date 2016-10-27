@@ -240,6 +240,7 @@ if __name__ == '__main__':
         else:
             move_all_files_from_to(job['snapshot_path'], os.path.join(output_path, job['name']+'_failed'))
             log.info('Job {}: failed in {}'.format(job['name'], job['job_duration']))
+        log.info('----------------------------------------------------------')
 
     log.info('all jobs completed')
     log.info('cleaning up tmp dir')
