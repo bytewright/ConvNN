@@ -77,16 +77,17 @@ class NetworkTrainer(Thread):
                 self.log_error('Could not find a caffemodel for solver in {}, '
                               'no filters extracted.'.format(self.job['snapshot_path']))
             save_job_stats_to_json(self.job)
-
+            self.job['completed'] = True
         except KeyboardInterrupt:
             self.log_info('KeyboardInterrupt, stopping current job')
-            return '0s', False
+            self.job['completed'] = False
         except SystemExit:
             self.log_error('SystemExit, stopping script')
             raise
         except:
             self.log_error("Unexpected error during training, processing next job")
             self.log_error(sys.exc_info())
+            self.job['completed'] = False
         # cleanup
         # after training, post stats
         if self.job['completed']:

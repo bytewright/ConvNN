@@ -181,9 +181,9 @@ def generate_output_directory(solver_path, net_path, snapshot_path):
         shutil.copyfile(solver_path, os.path.join(snapshot_path, os.path.basename(solver_path)))
         shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
     else:
-        logging.error('tmp directory is not empty! Aborting')
-        sys.exit()
-    return snapshot_path
+        logging.error('{} already exists in tmp directory ! Aborting')
+        return None, False
+    return snapshot_path, True
 
 
 def get_avg_acc_and_loss(log_path):

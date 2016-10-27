@@ -109,6 +109,7 @@ if __name__ == '__main__':
     if not os.path.isfile(job_file_path):
         log.error('jobfile not found at:\n{}'.format(job_file_path))
         sys.exit()
+    log.info('using {} GPUs for training'.format(args.gpu_count))
     free_gpu_ids = [x for x in range(args.gpu_count)]
     # start training
     worked_job_names = []
@@ -118,24 +119,29 @@ if __name__ == '__main__':
         job, do_work = get_next_job(job_file_path)
         if not do_work:
             if running_threads.__len__() > 0:
-                log.info('Couldn\'t find new job, but threads still running, sleeping')
-                time.sleep(60)
+                log.info('Couldn\'t find new job, but {} threads still running, sleeping'.format(running_threads.__len__()))
+                time.sleep(120)
             else:
-                log.info('Couldn\'t find new job and all jobs completed, ending script')
+                job_names_formated = ''
+                for name in worked_job_names:
+                    job_names_formated += '{}\n'.format(name)
+                log.info('Couldn\'t find new job and all jobs completed, ending script. '
+                         'Completed jobs:\n{}'.format(job_names_formated))
                 break
         else:
-            job['output_dir'] = generate_output_directory(job['solver_path'],
-                                                          job['model_path'],
-                                                          job['snapshot_path'])
-
             # run training for job
             if free_gpu_ids.__len__() > 0:
-                running_threads.append(start_train_thread(job, free_gpu_ids[0]))
-                worked_job_names.append(job['name'])
-                free_gpu_ids.remove(free_gpu_ids[0])
+                job['output_dir'], success = generate_output_directory(job['solver_path'],
+                                                                       job['model_path'],
+                                                                       job['snapshot_path'])
+                if success:
+                    running_threads.append(start_train_thread(job, free_gpu_ids[0]))
+                    worked_job_names.append(job['name'])
+                    free_gpu_ids.remove(free_gpu_ids[0])
+                    time.sleep(3)  # just for better console readability
             else:
-                log.info('all gpus working, sleeping')
-                time.sleep(60)
+                log.info('all {} gpus working, sleeping'.format(args.gpu_count))
+                time.sleep(120)
 
         # check on threads
         for thread in running_threads:

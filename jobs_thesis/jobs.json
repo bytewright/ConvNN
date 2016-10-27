@@ -30,12 +30,12 @@
         "solver_path": "/caffe_project/jobs_thesis/5_alexnet_parallel_fc/solver.prototxt"
     },
     "6": {
-        "ignore": true,
+        "ignore": false,
         "name": "thesis_exp6_parallel+extra_fc",
         "solver_path": "/caffe_project/jobs_thesis/6_alexnet_parallel_fc2/solver.prototxt"
     },
     "7": {
-        "ignore": true,
+        "ignore": false,
         "name": "thesis_exp7_smaller_pooling",
         "solver_path": "/caffe_project/jobs_thesis/7_smaller_pooling/solver.prototxt"
     },
@@ -45,7 +45,7 @@
         "solver_path": "/caffe_project/jobs_thesis/8_no_pooling/solver.prototxt"
     },
     "9": {
-        "ignore": true,
+        "ignore": false,
         "name": "thesis_exp9_dropout_in_conv",
         "solver_path": "/caffe_project/jobs_thesis/9_dropout_in_conv/solver.prototxt"
     }
