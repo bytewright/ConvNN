@@ -26,7 +26,7 @@ class NetworkTrainer(Thread):
         # output = '{} train -solver {} {}\n\n'.format(caffeTool, self.job_file, '-gpu 0')
         solver_process = subprocess.Popen([self.caffe_trainer_path, 'train',
                                            '-solver', self.job['solver_path'],
-                                           '-gpu', self.job['gpu_num']],
+                                           '-gpu', str(self.job['gpu_num'])],
                                           stdout=logfile,
                                           stderr=subprocess.STDOUT)
         try:
