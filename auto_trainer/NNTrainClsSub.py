@@ -92,10 +92,10 @@ class NetworkTrainer(Thread):
         # after training, post stats
         if self.job['completed']:
             move_all_files_from_to(self.job['snapshot_path'], os.path.join(self.experiment_output_path, self.job['name']))
-            self.log_info('Job {}: completed in {}'.format(self.job['name'], self.job['job_duration']))
+            self.log_info('Job {}: completed in {}'.format(self.job['name'], self.job['duration']))
         else:
             move_all_files_from_to(self.job['snapshot_path'], os.path.join(self.experiment_output_path, self.job['name'] + '_failed'))
-            self.log_info('Job {}: failed in {}'.format(self.job['name'], self.job['job_duration']))
+            self.log_info('Job {}: failed in {}'.format(self.job['name'], self.job['duration']))
 
     def log_info(self, log_str):
         logging.info('(GPU {}):{}'.format(self.job['gpu_num'], log_str))
