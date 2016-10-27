@@ -1,5 +1,5 @@
-net: "/home/ellerch/caffeProject/jobs_thesis/4_msra_init/msra_alexnet_places365.prototxt"
-snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/4_msra_init/"
+net: "/caffe_project/jobs_thesis/4_msra_init/msra_alexnet_places365.prototxt"
+snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/4_msra_init/"
 snapshot: 40000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

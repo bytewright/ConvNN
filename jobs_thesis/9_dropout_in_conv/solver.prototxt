@@ -1,5 +1,5 @@
-net: "/home/ellerch/caffeProject/jobs_thesis/9_dropout_in_conv/dropout_in_conv_alexnet_places365.prototxt"
-snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/9_dropout_in_conv/"
+net: "/caffe_project/jobs_thesis/9_dropout_in_conv/dropout_in_conv_alexnet_places365.prototxt"
+snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/9_dropout_in_conv/"
 snapshot: 80000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

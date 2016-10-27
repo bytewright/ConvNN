@@ -10,10 +10,10 @@ layer {
   transform_param {
     mirror: true
     crop_size: 227
-    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
+    mean_file: "/db/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/places365/train_lmdb"
+    source: "/db/train_lmdb"
     batch_size: 256
     backend: LMDB
   }
@@ -29,10 +29,10 @@ layer {
   transform_param {
     mirror: false
     crop_size: 227
-    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
+    mean_file: "/db/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/places365/val_lmdb"
+    source: "/db/val_lmdb"
     batch_size: 50
     backend: LMDB
   }
