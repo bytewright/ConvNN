@@ -1,6 +1,6 @@
 {
     "0": {
-        "ignore": true,
+        "ignore": false,
         "name": "thesis_exp0_vanilla",
         "solver_path": "/caffe_project/jobs_thesis/0_alexnet_vanilla/solver.prototxt"
     },
@@ -35,7 +35,7 @@
         "solver_path": "/caffe_project/jobs_thesis/6_alexnet_parallel_fc2/solver.prototxt"
     },
     "7": {
-        "ignore": false,
+        "ignore": true,
         "name": "thesis_exp7_smaller_pooling",
         "solver_path": "/caffe_project/jobs_thesis/7_smaller_pooling/solver.prototxt"
     },
