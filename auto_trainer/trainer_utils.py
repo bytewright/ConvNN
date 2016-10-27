@@ -1,27 +1,11 @@
-import shutil
-import sys
-import configargparse
-import time
-import os
-import subprocess
+import json
 import logging
+import os
+import shutil
+import subprocess
+import sys
+import time
 
-
-def get_args():
-    configpath = os.path.join(os.path.dirname(__file__), 'config.ini')
-    parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('--jobs-file', type=str,
-                        help='json file, gets parsed from trainingsjobs')
-    parser.add_argument('--caffe-path', type=str,
-                        help='path to caffe home dir')
-    parser.add_argument('--output-path', type=str,
-                        help='Path, where auto_trainer will create an output-directory')
-    parser.add_argument('--debug', help='Debug Mode', action='store_true')
-    #parser.set_defaults(DEBUG=True)
-
-    args = parser.parse_args()
-
-    return args
 
 
 def get_networks_from_file(jobs_file_path):
@@ -200,3 +184,76 @@ def generate_output_directory(solver_path, net_path, snapshot_path):
         logging.error('tmp directory is not empty! Aborting')
         sys.exit()
     return snapshot_path
+
+
+def get_avg_acc_and_loss(log_path):
+    delimiter = ' '
+    test_data = []
+    with open(log_path, 'r') as dest_f:
+        for line in dest_f.readlines():
+            line = line.rstrip()
+            test_data.append([data for data in line.split(delimiter) if data is not ''])
+    if test_data.__len__() < 10:
+        logging.info('found only {} lines in log'.format(test_data.__len__()))
+        use_last_n = 1.0
+    else:
+        use_last_n = 10.0
+    avg_acc = 0.0
+    avg_loss = 0.0
+    found_data_points = 0
+    for data in reversed(test_data):
+        if found_data_points == use_last_n:
+            break
+        if len(data) < 4:
+            continue
+        avg_acc += float(data[2]) / use_last_n
+        avg_loss += float(data[3]) / use_last_n
+        found_data_points += 1
+    return avg_acc, avg_loss
+
+
+def get_best_caffemodel(snapshot_path):
+    best_file = 1
+    best_file_name = ''
+    for f in os.listdir(snapshot_path):
+        if f.endswith(".caffemodel"):
+            iter_num = int(f.replace('_iter_', '').replace('.caffemodel', ''))
+            if iter_num > best_file:
+                best_file = iter_num
+                best_file_name = f
+    path_to_file = os.path.join(snapshot_path, best_file_name)
+    if os.path.isfile(path_to_file):
+        return path_to_file
+    return None
+
+
+def save_job_stats_to_json(job):
+    logging.info('Job "{}" completed in {}. Accuracy: {:.3f}'.format(job['name'],
+                                                                 job['duration'],
+                                                                 job['accuracy']))
+    log_path = os.path.join(job['snapshot_path'], job['name'].replace(' ', '_') + "_stats.json")
+    json.dump(job, open(log_path, 'w'), sort_keys=True, indent=4, separators=(',', ': '))
+    return
+
+
+def move_all_files_from_to(src_path, dest_path):
+    if not os.path.exists(dest_path):
+        os.makedirs(dest_path)
+    else:
+        logging.error('there already is a completed job with name {} in output dir!'.format(dest_path))
+        return False
+    file_list = os.listdir(src_path)
+    logging.info('moving all files from\n{}\nto\n{}'.format(src_path, dest_path))
+    for i in file_list:
+        src = os.path.join(src_path, i)
+        dest = os.path.join(dest_path, i)
+        if os.path.exists(dest):
+            if os.path.isdir(dest):
+                # clean out subfolders
+                move_all_files_from_to(src, dest)
+                continue
+            else:
+                os.remove(dest)
+        shutil.move(src, dest_path)
+    os.rmdir(src_path)
+    return True

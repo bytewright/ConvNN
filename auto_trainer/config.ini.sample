@@ -5,5 +5,6 @@
 jobs-file: jobs_thesis/jobs.json
 # path to output folder. auto_trainer will generate subdir for each run
 output-path: auto_trainer_output
+gpu-count: 1
 caffe-path:  /home/ellerch/bin/caffe/
 debug: True
