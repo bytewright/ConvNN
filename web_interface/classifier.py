@@ -3,8 +3,10 @@
 
 import logging
 import numpy as np
+import cStringIO as StringIO
 import time
 import caffe
+import urllib
 
 log = logging.getLogger(__name__)
 
@@ -29,12 +31,32 @@ class NNClassifier:
         blob.ParseFromString(data)
         arr = np.array(caffe.io.blobproto_to_array(blob))
         out = arr[0]
+        if False:
+            #http://adilmoujahid.com/posts/2016/06/introduction-deep-learning-python-caffe/
+            #Read mean image
+            #mean_blob = caffe_pb2.BlobProto()
+            mean_blob=None
+            with open('/home/ubuntu/deeplearning-cats-dogs-tutorial/input/mean.binaryproto') as f:
+                mean_blob.ParseFromString(f.read())
+            mean_array = np.asarray(mean_blob.data, dtype=np.float32).reshape(
+                (mean_blob.channels, mean_blob.height, mean_blob.width))
+
+
+            #Read model architecture and trained model's weights
+            net = caffe.Net('/home/ubuntu/deeplearning-cats-dogs-tutorial/caffe_models/caffe_model_1/caffenet_deploy_1.prototxt',
+                            '/home/ubuntu/deeplearning-cats-dogs-tutorial/caffe_models/caffe_model_1/caffe_model_1_iter_10000.caffemodel',
+                            caffe.TEST)
+
+            #Define image transformers
+            transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
+            transformer.set_mean('data', mean_array)
+            transformer.set_transpose('data', (2,0,1))
         log.debug(out.shape)
         log.info('loading network_path:{}'.format(network_path))
         log.info('loading weight_path:{}'.format(weight_path))
         self.net = caffe.Classifier(
-            network_path,
-            weight_path)
+            str(network_path),
+            str(weight_path), caffe.TEST)
         #, mean=out
         #image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
         #mean = np.load(db_mean_path).mean(1).mean(1), channel_swap = (2, 1, 0)
@@ -49,33 +71,61 @@ class NNClassifier:
 
         return True
 
+    def dummy_classify(self, image):
+        starttime = time.time()
+        time.sleep(15)
+        log.info('classifing image...')
+        endtime = time.time()
+        result = [True,
+                  [(1, 0.0)],
+                  [(1, 'maxAccurate1'), (2, 'maxAccurate2')],
+                  '%.3f' % (endtime - starttime)]
+        return result
+
     def classify_image(self, image):
-        try:
-            starttime = time.time()
-            log.info('classifing image...')
-            scores = self.net.predict([image], oversample=True).flatten()
-            endtime = time.time()
-            logging.debug(scores)
-            logging.debug(-scores)
-            indices = (-scores).argsort()[:5]
-            logging.debug(indices)
-            predictions = []
-            for index in indices:
-                pred = '{}: {}'.format(index, self.labels[index])
-                predictions.append(self.labels[index])
-                logging.debug(pred)
-            #predictions = self.labels[indices]
-            logging.debug(predictions)
-            meta = [
-                (p, '%.5f' % scores[i])
-                for i, p in zip(indices, predictions)
-                ]
-        except Exception as err:
-            logging.info('Classification error: %s', err)
-            return (False, 'Something went wrong when classifying the '
-                           'image. Maybe try another one?')
+        #try:
+        starttime = time.time()
+        log.info('classifing image...')
+        scores = self.net.predict([image], oversample=True).flatten()
+        endtime = time.time()
+        minutes, sec = divmod(endtime-starttime, 60)
+        log.info('classification done in {}'.format('%02dm %02ds' % (minutes, sec)))
+        log.debug(scores)
+        log.debug(-scores)
+        indices = (-scores).argsort()[:5]
+        log.debug(indices)
+        predictions = []
+        for index in indices:
+            pred = '{}: {}'.format(index, self.labels[index])
+            predictions.append(self.labels[index])
+            logging.debug(pred)
+        #predictions = self.labels[indices]
+        log.debug(predictions)
+        meta = [
+            (p, '%.5f' % scores[i])
+            for i, p in zip(indices, predictions)
+            ]
+        #except Exception as err:
+        #    logging.info('Classification error: %s', err)
+        #    return (False, 'Something went wrong when classifying the '
+        #                   'image. Maybe try another one?')
         result = [True,
                   meta,
                   [(1, 'maxAccurate1'), (2, 'maxAccurate2')],
                   '%.3f' % (endtime - starttime)]
         return result
+
+    def classify_url(self, img_url):
+        try:
+            string_buffer = StringIO.StringIO(
+                urllib.urlopen(img_url).read())
+            image = caffe.io.load_image(string_buffer)
+
+        except Exception as err:
+            # For any exception we encounter in reading the image, we will just
+            # not continue.
+            logging.info('URL Image open error: %s', err)
+            return (False, 'Something went wrong when classifying the '
+                           'image. Maybe try another one?')
+
+        return self.classify_image(image)

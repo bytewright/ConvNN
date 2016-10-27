@@ -37,6 +37,7 @@ layer {
     backend: LMDB
   }
 }
+# shape: [256,3,227,227]
 layer {
   name: "conv1"
   type: "Convolution"
@@ -55,15 +56,16 @@ layer {
     kernel_size: 11
     stride: 4
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
+# shape: [256,96,55,55]
 layer {
   name: "relu1"
   type: "ReLU"
@@ -81,6 +83,7 @@ layer {
     stride: 2
   }
 }
+# shape: [256,96,27,27]
 layer {
   name: "norm1"
   type: "LRN"
@@ -111,15 +114,16 @@ layer {
     kernel_size: 5
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
+# shape: [256, 256, 27, 27]
 layer {
   name: "relu2"
   type: "ReLU"
@@ -137,6 +141,7 @@ layer {
     stride: 2
   }
 }
+# shape: [256, 256, 13, 13]
 layer {
   name: "norm2"
   type: "LRN"
@@ -166,15 +171,16 @@ layer {
     pad: 1
     kernel_size: 3
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
+# shape: [256, 384, 13, 13]
 layer {
   name: "relu3"
   type: "ReLU"
@@ -200,15 +206,16 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
+# shape: [256, 384, 13, 13]
 layer {
   name: "relu4"
   type: "ReLU"
@@ -234,15 +241,16 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
+# shape: [256, 256, 13, 13]
 layer {
   name: "relu5"
   type: "ReLU"
@@ -260,6 +268,8 @@ layer {
     stride: 2
   }
 }
+# shape: [256, 256, 6, 6]
+# ------------------ start parallel ------------------
 layer {
   name: "fc6"
   type: "InnerProduct"
@@ -276,15 +286,16 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
+# shape: [256, 4096]
 layer {
   name: "relu6"
   type: "ReLU"
@@ -303,7 +314,7 @@ layer {
 layer {
   name: "fc7"
   type: "InnerProduct"
-  bottom: "fc6"
+  bottom: "pool5"
   top: "fc7"
   param {
     lr_mult: 1
@@ -316,15 +327,16 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
+# shape: [256, 4096]
 layer {
   name: "relu7"
   type: "ReLU"
@@ -341,9 +353,19 @@ layer {
   }
 }
 layer {
+  name: "ch_concat_mixed_chconcat"
+  type: "Concat"
+  bottom: "fc6"
+  bottom: "fc7"
+  top: "concat1"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "fc8"
   type: "InnerProduct"
-  bottom: "fc7"
+  bottom: "concat1"
   top: "fc8"
   param {
     lr_mult: 1
@@ -356,15 +378,16 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
+# shape: [256, 365]
 layer {
   name: "accuracy"
   type: "Accuracy"

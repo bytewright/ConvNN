@@ -1,0 +1,9 @@
+# auto_trainer config file
+# all paths in here are one dir up relative from run_trainer.py script ('..' used)
+
+# jsonfile with list of jobs
+jobs-file: jobs_thesis/jobs.json
+# path to output folder. auto_trainer will generate subdir for each run
+output-path: auto_trainer_output
+caffe-path:  /home/ellerch/bin/caffe/
+debug: True

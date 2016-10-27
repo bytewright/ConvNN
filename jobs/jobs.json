@@ -1,17 +1,17 @@
 {
     "0": {
         "ignore": true,
-        "name": "test_job",
+        "name": "test_job0",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     },
     "1": {
-        "ignore": false,
-        "name": "xavier_init",
+        "ignore": true,
+        "name": "all_xavier_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
     },
     "2": {
-        "ignore": false,
-        "name": "uniform_init",
+        "ignore": true,
+        "name": "all_uniform_init",
         "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
     },
     "3": {
@@ -25,8 +25,23 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
     },
     "5": {
-        "ignore": true,
+        "ignore": false,
         "name": "vanilla_alexnet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
+    },
+    "6": {
+        "ignore": true,
+        "name": "inception_alexnet",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_alexnet/solver.prototxt"
+    },
+    "7": {
+        "ignore": true,
+        "name": "job_alexnet_parallel_fc",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc/solver.prototxt"
+    },
+    "8": {
+        "ignore": true,
+        "name": "job_alexnet_parallel+extra_fc",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc2/solver.prototxt"
     }
 }

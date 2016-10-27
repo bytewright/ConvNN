@@ -4,16 +4,27 @@ import configargparse
 import time
 import os
 import subprocess
-import caffe
-from PIL import Image
-import numpy as np
-from scipy.misc import toimage
-
-CAFFE_TOOL_PATH = '/home/ellerch/bin/caffe/python/'
-MY_TOOLS_PATH = '/home/ellerch/caffeProject/auto_trainer/caffe_tools/'
+import logging
 
 
-def get_networks_from_file(jobs_file_path, log):
+def get_args():
+    configpath = os.path.join(os.path.dirname(__file__), 'config.ini')
+    parser = configargparse.ArgParser(default_config_files=[configpath])
+    parser.add_argument('--jobs-file', type=str,
+                        help='json file, gets parsed from trainingsjobs')
+    parser.add_argument('--caffe-path', type=str,
+                        help='path to caffe home dir')
+    parser.add_argument('--output-path', type=str,
+                        help='Path, where auto_trainer will create an output-directory')
+    parser.add_argument('--debug', help='Debug Mode', action='store_true')
+    #parser.set_defaults(DEBUG=True)
+
+    args = parser.parse_args()
+
+    return args
+
+
+def get_networks_from_file(jobs_file_path):
     job_list = []
     # open txt with network names/paths
     with open(jobs_file_path, "r") as jobsfile:
@@ -22,21 +33,21 @@ def get_networks_from_file(jobs_file_path, log):
             if job_desc.startswith('#'):
                 continue
             if not os.path.isfile(os.path.join(job_desc, 'solver.prototxt')):
-                log.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
+                logging.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
                 continue
             job_list.append(job_desc)
     return job_list
 
 
-def check_job(job, log):
+def check_job(job):
     if job['ignore']:
-        log.info('ignoring job: ' + job['name'])
+        logging.info('ignoring job: ' + job['name'])
         return None
     if 'solver_path' not in job:
-        log.error('no valid solver_path key in job "{}",\nskipping job'.format(job))
+        logging.error('no valid solver_path key in job "{}",\nskipping job'.format(job))
         return None
     if not os.path.isfile(job['solver_path']):
-        log.error('no solver at \n"{}",\nskipping job'.format(job['solver_path']))
+        logging.error('no solver at \n"{}",\nskipping job'.format(job['solver_path']))
         return None
     net_path = ''
     snapshot_path = ''
@@ -51,37 +62,22 @@ def check_job(job, log):
         job['model_path'] = net_path
         job['snapshot_path'] = snapshot_path
     else:
-        log.error('no valid model_path or snapshot_path in {}-solver, skipping job'.format(job['name']))
+        logging.error('no valid model_path or snapshot_path in {}-solver, skipping job'.format(job['name']))
         return None
     if not os.path.isfile(job['model_path']):
-        log.error('model_path in {}-solver is no file, skipping job'.format(job['name']))
+        logging.error('model_path in {}-solver is no file, skipping job'.format(job['name']))
         return None
     return job
 
 
-def get_args():
-    configpath = os.path.join(os.path.dirname(__file__), 'config.ini')
-    parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument('-j', '--jobs-file', type=str,
-                        help='text file, each line should be one path to a solver file')
-    parser.add_argument('-o', '--output-path', type=str,
-                        help='Path, where auto_trainer will create an output-directory')
-    #parser.set_defaults(DEBUG=True)
-
-    args = parser.parse_args()
-
-    return args
-
-
-def extract_filters(network_path, weight_path, output_path, log):
+def extract_filters(network_path, weight_path, output_path):
     if not os.path.exists(weight_path):
-        log.error('weights not found!: ' + weight_path)
+        logging.error('weights not found!: ' + weight_path)
         return
-    log.info('extracting filters')
+    logging.info('extracting filters')
     filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                          'my_tools',
-                                         'filter_extractor_test.py')
+                                         'filter_extractor.py')
     process = subprocess.Popen(['python', filter_extract_script,
                                 network_path, weight_path, output_path],
                                stdout=subprocess.PIPE,
@@ -92,17 +88,17 @@ def extract_filters(network_path, weight_path, output_path, log):
         time.sleep(2)
         returncode = process.returncode
     if returncode is not 0:
-        log.error('extractor return code: '+str(process.returncode))
-        log.error(output)
+        logging.error('extractor return code: '+str(process.returncode))
+        logging.error(output)
     else:
-        log.info('extractor exited successfully (code {})'.format(returncode))
+        logging.info('extractor exited successfully (code {})'.format(returncode))
 
 
-def draw_job_plot(caffe_log_path, output_file, log):
+def draw_job_plot(caffe_log_path, output_file):
     if not os.path.exists(caffe_log_path):
-        log.error('caffe logfile not found!')
+        logging.error('caffe logfile not found!')
         return
-    log.info('plotting learning curve as png')
+    logging.info('plotting learning curve as png')
     plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
     process = subprocess.Popen(['python', plot_script, caffe_log_path, output_file],
                                stdout=subprocess.PIPE,
@@ -114,24 +110,24 @@ def draw_job_plot(caffe_log_path, output_file, log):
         time.sleep(2)
         returncode = process.returncode
     if returncode is not 0:
-        log.error('plotter return code: '+str(process.returncode))
-        log.error(output)
+        logging.error('plotter return code: '+str(process.returncode))
+        logging.error(output)
     else:
-        log.info('plotter exited successfully (code {})'.format(returncode))
+        logging.info('plotter exited successfully (code {})'.format(returncode))
 
 
-def draw_job_plot2(caffe_log_path, log):
-    if not os.path.exists(caffe_log_path):
-        log.error('caffe logfile not found!')
+def draw_job_plot2(test_log_path, output_file):
+    if not os.path.exists(test_log_path):
+        logging.error('test logfile not found!')
         return
-    log.info('plotting learning curve as png')
-    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'plot_training_log.py')
-    #todo call all plottypes
+    logging.info('plotting learning curve as png')
+    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_tools', 'progress_plot.py')
     process = subprocess.Popen(['python',
                                 plot_script,
-                                '0',
-                                os.path.join(os.path.dirname(caffe_log_path), 'plot0.png'),
-                                caffe_log_path],
+                                '--plot_data',
+                                test_log_path,
+                                '--output_png_path',
+                                output_file],
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     output = process.communicate()[0]
@@ -140,14 +136,14 @@ def draw_job_plot2(caffe_log_path, log):
         time.sleep(2)
         returncode = process.returncode
     if returncode is not 0:
-        log.error('plotter return code: '+str(process.returncode))
-        log.error(output)
+        logging.error('plotter return code: '+str(process.returncode))
+        logging.error(output)
     else:
-        log.info('plotter exited successfully (code {})'.format(returncode))
+        logging.info('plotter exited successfully (code {})'.format(returncode))
     return output
 
 
-def draw_job_net(solver_path, output_file, log):
+def draw_job_net(solver_path, output_file, caffe_python_path):
     # draw_net.py <netprototxt_filename> <out_img_filename>
     net_path = ''
     with open(solver_path, 'r') as search:
@@ -156,7 +152,7 @@ def draw_job_net(solver_path, output_file, log):
             if line.startswith('net: '):
                 net_path = line.replace('net: ', '').replace('"', '')
     process = subprocess.Popen(['python',
-                                CAFFE_TOOL_PATH + 'draw_net.py',
+                                os.path.join(caffe_python_path, 'draw_net.py'),
                                 net_path,
                                 output_file],
                                stdout=subprocess.PIPE,
@@ -167,17 +163,16 @@ def draw_job_net(solver_path, output_file, log):
         time.sleep(2)
         returncode = process.returncode
     if returncode is not 0:
-        log.error('draw_net return code: ' + str(process.returncode))
-        log.error(output)
+        logging.error('draw_net return code: ' + str(process.returncode))
+        logging.error(output)
     else:
-        log.info('draw_net exited successfully (code {})'.format(returncode))
+        logging.info('draw_net exited successfully (code {})'.format(returncode))
     return output
 
 
-def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
+def generate_parsed_splitted_logs(caffe_log_file, job_output_dir):
     #./parse_log.sh <input_log> <output_path>
     script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'parse_log.sh')
-    #log.debug('calling \n{}\n{}\n{}'.format(script_path, caffe_log_file, job_output_dir))
     process = subprocess.Popen(['{} {} {}'.format(script_path, caffe_log_file, job_output_dir)],
                                shell=True,
                                stdout=subprocess.PIPE,
@@ -188,20 +183,20 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir, log):
         time.sleep(2)
         returncode = process.returncode
     if returncode is not 0:
-        log.error('parse_log return code: ' + str(process.returncode))
-        log.error(output.replace(': ', ':\n'))
+        logging.error('parse_log return code: ' + str(process.returncode))
+        logging.error(output.replace(': ', ':\n'))
     else:
-        log.info('parse_log exited successfully (code {})'.format(returncode, output))
+        logging.info('parse_log exited successfully (code {})'.format(returncode, output))
     return output
 
 
-def generate_output_directory(solver_path, net_path, snapshot_path, log):
+def generate_output_directory(solver_path, net_path, snapshot_path):
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)
         # copy used settings and network to output dir
         shutil.copyfile(solver_path, os.path.join(snapshot_path, os.path.basename(solver_path)))
         shutil.copyfile(net_path, os.path.join(snapshot_path, os.path.basename(net_path)))
     else:
-        log.error('tmp directory is not empty! Aborting')
+        logging.error('tmp directory is not empty! Aborting')
         sys.exit()
     return snapshot_path

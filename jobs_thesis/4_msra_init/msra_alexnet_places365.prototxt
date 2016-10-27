@@ -10,10 +10,10 @@ layer {
   transform_param {
     mirror: true
     crop_size: 227
-    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
+    mean_file: "/db/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/places365/train_lmdb"
+    source: "/db/train_lmdb"
     batch_size: 256
     backend: LMDB
   }
@@ -29,10 +29,10 @@ layer {
   transform_param {
     mirror: false
     crop_size: 227
-    mean_file: "/home/ellerch/db/places365/places365CNN_mean.binaryproto"
+    mean_file: "/db/places365CNN_mean.binaryproto"
   }
   data_param {
-    source: "/home/ellerch/db/places365/val_lmdb"
+    source: "/db/val_lmdb"
     batch_size: 50
     backend: LMDB
   }
@@ -55,9 +55,7 @@ layer {
     kernel_size: 11
     stride: 4
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "msra"
     }
     bias_filler {
       type: "constant"
@@ -111,9 +109,7 @@ layer {
     kernel_size: 5
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "msra"
     }
     bias_filler {
       type: "constant"
@@ -166,9 +162,7 @@ layer {
     pad: 1
     kernel_size: 3
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "msra"
     }
     bias_filler {
       type: "constant"
@@ -200,9 +194,7 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "msra"
     }
     bias_filler {
       type: "constant"
@@ -234,9 +226,7 @@ layer {
     kernel_size: 3
     group: 2
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "msra"
     }
     bias_filler {
       type: "constant"
@@ -276,12 +266,12 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
@@ -316,12 +306,12 @@ layer {
   inner_product_param {
     num_output: 4096
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
+      value: 1
     }
   }
 }
@@ -356,12 +346,12 @@ layer {
   inner_product_param {
     num_output: 365
     weight_filler {
-      type: "uniform"
-      min: -0.5
-      max: 0.5
+      type: "gaussian"
+      std: 0.005
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
