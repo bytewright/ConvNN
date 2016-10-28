@@ -16,10 +16,10 @@ test_interval: 500
 
 # The base learning rate, momentum and the weight decay of the network.
 # begin training at a learning rate of 0.01 = 1e-2
-base_lr: 0.03
+base_lr: 0.01
 
 # factor for gradiant correction based on previous gradiants
-momentum: 0.8
+momentum: 0.9
 weight_decay: 0.0005
 
 # drop the learning rate by a factor of 10
@@ -28,8 +28,14 @@ gamma: 0.1
 
 # learning rate policy: drop the learning rate in "steps"
 # by a factor of gamma every stepsize iterations
-lr_policy: "step"
-stepsize: 15000          # drop the learning rate every 100K iterations
+lr_policy: "multistep"
+stepvalue: 25000
+stepvalue: 40000
+stepvalue: 55000
+stepvalue: 70000
+stepvalue: 80000
+stepvalue: 95000
+stepvalue: 105000
 
 display: 500           # how often do we print training loss
-max_iter: 150000          # The maximum number of iterations
+max_iter: 110000          # The maximum number of iterations
