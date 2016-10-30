@@ -1,47 +1,35 @@
 {
     "0": {
-        "ignore": true,
-        "name": "test_job0",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
-    },
-    "1": {
-        "ignore": true,
-        "name": "all_xavier_init",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job0_xavier/solver.prototxt"
-    },
-    "2": {
-        "ignore": true,
-        "name": "all_uniform_init",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job1_uniform/solver.prototxt"
-    },
-    "3": {
-        "ignore": true,
-        "name": "my_conv1_to_abc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job6_conv1toabc/solver.prototxt"
-    },
-    "4": {
-        "ignore": true,
-        "name": "extra_fc_layer",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job3_more_fc/solver.prototxt"
-    },
-    "5": {
         "ignore": false,
-        "name": "vanilla_alexnet",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
-    },
-    "6": {
-        "ignore": true,
-        "name": "inception_alexnet",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_alexnet/solver.prototxt"
-    },
-    "7": {
-        "ignore": true,
-        "name": "job_alexnet_parallel_fc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc/solver.prototxt"
-    },
-    "8": {
-        "ignore": true,
-        "name": "job_alexnet_parallel+extra_fc",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_alexnet_parallel_fc2/solver.prototxt"
+        "name": "vanilla_alexnet_0",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver0.prototxt"
+    },"1": {
+        "ignore": false,
+        "name": "vanilla_alexnet_1",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver1.prototxt"
+    },"2": {
+        "ignore": false,
+        "name": "vanilla_alexnet_2",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver2.prototxt"
+    },"3": {
+        "ignore": false,
+        "name": "vanilla_alexnet_3",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver3.prototxt"
+    },"4": {
+        "ignore": false,
+        "name": "vanilla_alexnet_4",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver4.prototxt"
+    },"5": {
+        "ignore": false,
+        "name": "vanilla_alexnet_5",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver5.prototxt"
+    },"6": {
+        "ignore": false,
+        "name": "vanilla_alexnet_6",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver6.prototxt"
+    },"7": {
+        "ignore": false,
+        "name": "vanilla_alexnet_7",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver7.prototxt"
     }
 }
