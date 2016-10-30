@@ -119,7 +119,7 @@ if __name__ == '__main__':
         job, do_work = get_next_job(job_file_path)
         if not do_work:
             if running_threads.__len__() > 0:
-                log.info('Couldn\'t find new job, but {} threads still running, sleeping'.format(running_threads.__len__()))
+                #log.debug('Couldn\'t find new job, but {} threads still running, sleeping'.format(running_threads.__len__()))
                 time.sleep(120)
             else:
                 job_names_formated = ''
@@ -140,7 +140,7 @@ if __name__ == '__main__':
                     free_gpu_ids.remove(free_gpu_ids[0])
                     time.sleep(3)  # just for better console readability
             else:
-                log.info('all {} gpus working, sleeping'.format(args.gpu_count))
+                #log.debug('all {} gpus working, sleeping'.format(args.gpu_count))
                 time.sleep(120)
 
         # check on threads
