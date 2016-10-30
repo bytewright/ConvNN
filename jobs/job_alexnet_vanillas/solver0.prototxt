@@ -38,4 +38,4 @@ stepvalue: 95000
 stepvalue: 105000
 
 display: 500           # how often do we print training loss
-max_iter: 110000          # The maximum number of iterations
+max_iter: 100000          # The maximum number of iterations
