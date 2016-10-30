@@ -30,9 +30,9 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     },
     "6": {
-        "ignore": true,
-        "name": "inception_alexnet",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_alexnet/solver.prototxt"
+        "ignore": false,
+        "name": "vanilla_alexnet2",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver2.prototxt"
     },
     "7": {
         "ignore": true,
