@@ -37,7 +37,7 @@
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
     },"9": {
         "ignore": false,
-        "name": "inception_mynet",
+        "name": "inception_mynet2",
         "solver_path": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
     }
 }

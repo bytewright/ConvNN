@@ -94,7 +94,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -123,7 +123,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -152,7 +152,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -228,7 +228,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -257,7 +257,7 @@ layer {
     stride: 1
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -285,7 +285,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -314,7 +314,7 @@ layer {
     stride: 1
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -342,7 +342,7 @@ layer {
     stride: 2
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+      #std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
@@ -382,7 +382,7 @@ layer {
     stride: 1
     weight_filler {
       type: "xavier"
-      std: "VarianceNorm_AVERAGE"
+#     std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"
