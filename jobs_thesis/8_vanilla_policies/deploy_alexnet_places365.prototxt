@@ -14,7 +14,7 @@ layer {
   }
   data_param {
     source: "/db/train_lmdb"
-    batch_size: 128
+    batch_size: 256
     backend: LMDB
   }
 }
@@ -73,9 +73,21 @@ layer {
   top: "conv1"
 }
 layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+# shape: [256,96,27,27]
+layer {
   name: "norm1"
   type: "LRN"
-  bottom: "conv1"
+  bottom: "pool1"
   top: "norm1"
   lrn_param {
     local_size: 5
@@ -118,11 +130,22 @@ layer {
   bottom: "conv2"
   top: "conv2"
 }
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
 # shape: [256, 256, 13, 13]
 layer {
   name: "norm2"
   type: "LRN"
-  bottom: "conv2"
+  bottom: "pool2"
   top: "norm2"
   lrn_param {
     local_size: 5
@@ -234,11 +257,22 @@ layer {
   bottom: "conv5"
   top: "conv5"
 }
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
 # shape: [256, 256, 6, 6]
 layer {
   name: "fc6"
   type: "InnerProduct"
-  bottom: "conv5"
+  bottom: "pool5"
   top: "fc6"
   param {
     lr_mult: 1
