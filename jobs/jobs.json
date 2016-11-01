@@ -1,35 +1,43 @@
 {
     "0": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_0",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver0.prototxt"
     },"1": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_1",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver1.prototxt"
     },"2": {
         "ignore": false,
-        "name": "vanilla_alexnet_2",
+        "name": "vanilla_alexnet_2_exp",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver2.prototxt"
     },"3": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_3",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver3.prototxt"
     },"4": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_4",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver4.prototxt"
     },"5": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_5",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver5.prototxt"
     },"6": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_6",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver6.prototxt"
     },"7": {
         "ignore": false,
-        "name": "vanilla_alexnet_7",
+        "name": "vanilla_alexnet_7_sigmoid",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver7.prototxt"
+    },"8": {
+        "ignore": false,
+        "name": "vanilla_alexnet_8_2multistep",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
+    },"9": {
+        "ignore": false,
+        "name": "inception_mynet",
+        "solver_path": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
     }
 }

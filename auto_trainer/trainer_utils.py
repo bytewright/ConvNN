@@ -174,6 +174,31 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir):
     return output
 
 
+def generate_parsed_splitted_logs2(caffe_log_file, job_output_dir):
+    #./parse_log.sh <input_log> <output_path>
+    script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'scripts',
+                               'log_parser', 'my_log_parser.py')
+    process = subprocess.Popen(['python',
+                                script_path,
+                                '--log_file',
+                                caffe_log_file,
+                                '--output_file',
+                                job_output_dir],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        logging.error('parse_log return code: ' + str(process.returncode))
+        logging.error(output.replace(': ', ':\n'))
+    else:
+        logging.info('parse_log exited successfully (code {})'.format(returncode, output))
+    return output
+
+
 def generate_output_directory(solver_path, net_path, snapshot_path):
     if not os.path.exists(snapshot_path):
         os.makedirs(snapshot_path)

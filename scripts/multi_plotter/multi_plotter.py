@@ -106,16 +106,18 @@ if __name__ == "__main__":
 
 
     for i in range(loss_list.__len__()):
-        line, = ax1.plot(iters_list[i], loss_list[i], label="{} Loss".format(line_names[i]), color=color_list[i])
+        line, = ax1.plot(iters_list[i], loss_list[i], label="{}".format(line_names[i]), color=color_list[i])
         lines.append(line)
     for i in range(acc_list.__len__()):
         line, = ax2.plot(iters_list[i], acc_list[i], label="{} Accuracy".format(line_names[i]), color=color_list[i])
-        lines.append(line)
+        #lines.append(line)
     ax1.set_xlabel('Iterationen')
     ax1.set_ylabel('Loss', color='r')
     ax2.set_ylabel("Accuracy", color='b')
 
-    legend = plt.legend(handles=lines, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
-               ncol=2, mode="expand", borderaxespad=0.)
+    #legend = plt.legend(handles=lines, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+    #           ncol=2, mode="expand", borderaxespad=0.)
+    legend = plt.legend(handles=lines, bbox_to_anchor=(1.05, 1), loc=2,
+                        borderaxespad=0.)
     print 'saving plot png to ' + args.output_png_path
     pylab.savefig(args.output_png_path, bbox_extra_artists=(legend,), bbox_inches='tight')

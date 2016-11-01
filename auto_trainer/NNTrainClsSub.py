@@ -7,7 +7,8 @@ import subprocess
 from threading import Thread
 from timeit import default_timer as timer
 from trainer_utils import get_avg_acc_and_loss, save_job_stats_to_json, get_best_caffemodel, draw_job_net,\
-     generate_parsed_splitted_logs, extract_filters, draw_job_plot2, move_all_files_from_to
+     generate_parsed_splitted_logs, extract_filters, draw_job_plot2, \
+     move_all_files_from_to, generate_parsed_splitted_logs2
 
 
 class NetworkTrainer(Thread):
@@ -62,6 +63,9 @@ class NetworkTrainer(Thread):
             # training is done, write log and other output
             generate_parsed_splitted_logs(self.job['caffe_log_path'],
                                           self.job['snapshot_path'])
+            generate_parsed_splitted_logs2(self.job['caffe_log_path'],
+                                           os.path.join(self.job['snapshot_path'],
+                                                        '{}_caffe_test_log.csv'.format(self.job['name'])))
 
             self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(self.job['snapshot_path'],
                                                                                             "parsed_caffe_log.test"))

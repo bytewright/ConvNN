@@ -12,11 +12,11 @@ solver_mode: GPU
 test_iter: 500
 
 # Carry out testing every 500 training iterations.
-test_interval: 2500
+test_interval: 1000
 
 # The base learning rate, momentum and the weight decay of the network.
 # begin training at a learning rate of 0.01 = 1e-2
-base_lr: 0.05
+base_lr: 0.01
 
 # factor for gradiant correction based on previous gradiants
 momentum: 0.9
@@ -29,10 +29,10 @@ gamma: -1e-04
 # learning rate policy: drop the learning rate in "steps"
 # by a factor of gamma every stepsize iterations
 lr_policy: "sigmoid"
-stepsize: 40000
+stepsize: 20000
 
 # sigmoid: the effective learning rate follows a sigmod decay
 # return base_lr ( 1/(1 + exp(-gamma * (iter - stepsize))))
 
 display: 500           # how often do we print training loss
-max_iter: 100000          # The maximum number of iterations
+max_iter: 60000          # The maximum number of iterations
