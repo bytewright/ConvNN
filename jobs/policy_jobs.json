@@ -1,0 +1,39 @@
+{
+    "0": {
+        "ignore": true,
+        "name": "0_multistep_7",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver0.prototxt"
+    },"1": {
+        "ignore": true,
+        "name": "1_multistep_6",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver1.prototxt"
+    },"2": {
+        "ignore": false,
+        "name": "2_exp",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver2.prototxt"
+    },"3": {
+        "ignore": true,
+        "name": "3_inv_0.75",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver3.prototxt"
+    },"4": {
+        "ignore": true,
+        "name": "4_poly_2",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver4.prototxt"
+    },"5": {
+        "ignore": true,
+        "name": "5_poly_0.5",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver5.prototxt"
+    },"6": {
+        "ignore": true,
+        "name": "6_poly_linear",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver6.prototxt"
+    },"7": {
+        "ignore": false,
+        "name": "7_sigmoid_20k",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver7.prototxt"
+    },"8": {
+        "ignore": false,
+        "name": "8_multistep_2",
+        "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
+    }
+}

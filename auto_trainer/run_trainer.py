@@ -32,8 +32,9 @@ def get_next_job(jobs_file):
     jobs_dict = json.load(open(jobs_file, 'r'))
     log.info('fetching next job from {}'.format(jobs_file))
     for tmp_job in jobs_dict:
-        if jobs_dict[tmp_job]['ignore']:
-            continue
+        if 'ignore' not in jobs_dict[tmp_job]:
+            if jobs_dict[tmp_job]['ignore']:
+                continue
         if jobs_dict[tmp_job]['name'] not in worked_job_names:
             checked_job = check_job(jobs_dict[tmp_job])
             if checked_job is not None:
