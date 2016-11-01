@@ -7,16 +7,19 @@ import pylab
 
 
 def load_data(data_file):
-    delimiter = ' '
-    test_data = []
-    with open(data_file, 'r') as f:
-        for line in f.readlines():
-            line = line.rstrip()
-            if line.split(delimiter).__len__() < 3:
-                print('incomplete line found')
-            else:
-                test_data.append([data for data in line.split(delimiter) if data is not ''])
-
+    if os.path.isfile(data_file):
+        delimiter = ' '
+        test_data = []
+        with open(data_file, 'r') as f:
+            for line in f.readlines():
+                line = line.rstrip()
+                if line.split(delimiter).__len__() < 3:
+                    print('incomplete line found')
+                else:
+                    test_data.append([data for data in line.split(delimiter) if data is not ''])
+    else:
+        test_data = [[0,0,0,0] for x in range(100)]
+        print 'generating fake data, {} is no file!'.format(data_file)
     return test_data[1:]
 
 
@@ -29,7 +32,6 @@ if __name__ == "__main__":
     parser.add_argument('--output_png_path', help='path to png, will be overwritten by this script')
     # parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
-
     ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
     plot_data = load_data(args.plot_data)
     # cut ref data to plot data
