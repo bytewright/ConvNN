@@ -41,6 +41,7 @@ class NetworkTrainer(Thread):
             time.sleep(2)
             returncode = solver_process.returncode
         if returncode is not 0:
+            self.job['completed'] = False
             self.log_error('solver return code: ' + str(solver_process.returncode))
         else:
             self.log_info('solver exited successfully (code {})'.format(returncode))

@@ -168,7 +168,7 @@ layer {
   top: "inception1_pool1"
   pooling_param {
     pool: MAX
-    pad: 1
+    pad: 0
     kernel_size: 3
     stride: 2
   }
