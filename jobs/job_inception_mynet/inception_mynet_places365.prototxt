@@ -197,7 +197,7 @@ layer {
 layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1"
+  bottom: "concat1"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -211,7 +211,7 @@ layer {
 layer {
   name: "inception2_conv1_1x1"
   type: "Convolution"
-  bottom: "norm2"
+  bottom: "pool1"
   top: "inception2_conv1"
   param {
     lr_mult: 1
@@ -240,7 +240,7 @@ layer {
 layer {
   name: "inception2_conv2_1x1"
   type: "Convolution"
-  bottom: "norm2"
+  bottom: "pool1"
   top: "inception2_conv2_1x1"
   param {
     lr_mult: 1
@@ -297,7 +297,7 @@ layer {
 layer {
   name: "inception2_conv3_1x1"
   type: "Convolution"
-  bottom: "norm2"
+  bottom: "pool1"
   top: "inception2_conv3_1x1"
   param {
     lr_mult: 1
@@ -354,7 +354,7 @@ layer {
 layer {
   name: "inception2_pool1"
   type: "Pooling"
-  bottom: "norm2"
+  bottom: "pool1"
   top: "inception2_pool1"
   pooling_param {
     pool: MAX
@@ -423,7 +423,7 @@ layer {
 layer {
   name: "fc6"
   type: "InnerProduct"
-  bottom: "concat1"
+  bottom: "concat2"
   top: "fc6"
   param {
     lr_mult: 1
