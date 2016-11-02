@@ -72,7 +72,7 @@ layer {
   bottom: "conv1"
   top: "conv1"
 }
-# shape: [256,96,55,55]
+# shape: [256 96 56 56]
 #------------------------------ layer 2 inception
 layer {
   name: "inception1_conv1_1x1"
@@ -170,7 +170,7 @@ layer {
     pool: MAX
     pad: 1
     kernel_size: 3
-    stride: 1
+    stride: 2
   }
 }
 # shape@concat: [256, 256, 28, 28]

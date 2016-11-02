@@ -54,44 +54,44 @@ class NetworkTrainer(Thread):
         hours, minutes = divmod(minutes, 60)
         self.job['duration'] = '%02dh %02dm %02ds' % (hours, minutes, sec)
         self.job['caffe_log_path'] = os.path.join(self.job['snapshot_path'], "caffe_training.log")
+        if returncode is 0:
+            try:
+                # generate image of NN
+                draw_job_net(self.job['solver_path'],
+                             os.path.join(self.job['snapshot_path'], self.job['name'] + '_net.png'), self.caffe_tool_path)
 
-        try:
-            # generate image of NN
-            draw_job_net(self.job['solver_path'],
-                         os.path.join(self.job['snapshot_path'], self.job['name'] + '_net.png'), self.caffe_tool_path)
+                # training is done, write log and other output
+                generate_parsed_splitted_logs(self.job['caffe_log_path'],
+                                              self.job['snapshot_path'])
+                generate_parsed_splitted_logs2(self.job['caffe_log_path'],
+                                               os.path.join(self.job['snapshot_path'],
+                                                            '{}_caffe_test_log.csv'.format(self.job['name'])))
 
-            # training is done, write log and other output
-            generate_parsed_splitted_logs(self.job['caffe_log_path'],
-                                          self.job['snapshot_path'])
-            generate_parsed_splitted_logs2(self.job['caffe_log_path'],
-                                           os.path.join(self.job['snapshot_path'],
-                                                        '{}_caffe_test_log.csv'.format(self.job['name'])))
+                self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(self.job['snapshot_path'],
+                                                                                                "parsed_caffe_log.test"))
 
-            self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(self.job['snapshot_path'],
-                                                                                            "parsed_caffe_log.test"))
+                draw_job_plot2(os.path.join(self.job['snapshot_path'], "parsed_caffe_log.test"),
+                               os.path.join(self.job['snapshot_path'], self.job['name'] + '_better_training_plot.png'))
 
-            draw_job_plot2(os.path.join(self.job['snapshot_path'], "parsed_caffe_log.test"),
-                           os.path.join(self.job['snapshot_path'], self.job['name'] + '_better_training_plot.png'))
-
-            # get best caffemodel
-            weights_path = get_best_caffemodel(self.job['snapshot_path'])
-            if weights_path is not None:
-                extract_filters(self.job['model_path'], weights_path, self.job['snapshot_path'])
-            else:
-                self.log_error('Could not find a caffemodel for solver in {}, '
-                              'no filters extracted.'.format(self.job['snapshot_path']))
-            save_job_stats_to_json(self.job)
-            self.job['completed'] = True
-        except KeyboardInterrupt:
-            self.log_info('KeyboardInterrupt, stopping current job')
-            self.job['completed'] = False
-        except SystemExit:
-            self.log_error('SystemExit, stopping script')
-            raise
-        except:
-            self.log_error("Unexpected error during training, processing next job")
-            self.log_error(sys.exc_info())
-            self.job['completed'] = False
+                # get best caffemodel
+                weights_path = get_best_caffemodel(self.job['snapshot_path'])
+                if weights_path is not None:
+                    extract_filters(self.job['model_path'], weights_path, self.job['snapshot_path'])
+                else:
+                    self.log_error('Could not find a caffemodel for solver in {}, '
+                                  'no filters extracted.'.format(self.job['snapshot_path']))
+                save_job_stats_to_json(self.job)
+                self.job['completed'] = True
+            except KeyboardInterrupt:
+                self.log_info('KeyboardInterrupt, stopping current job')
+                self.job['completed'] = False
+            except SystemExit:
+                self.log_error('SystemExit, stopping script')
+                raise
+            except:
+                self.log_error("Unexpected error during training, processing next job")
+                self.log_error(sys.exc_info())
+                self.job['completed'] = False
         # cleanup
         # after training, post stats
         if self.job['completed']:
