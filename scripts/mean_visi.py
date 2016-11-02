@@ -19,13 +19,15 @@ blob.ParseFromString(data)
 mean_arr = np.array( caffe.io.blobproto_to_array(blob) )
 
 net = caffe.Classifier(model_path,
-                       weights_path,
-                       raw_scale=255)
+                       weights_path)
+net.set_raw_scale('data', 255)
 #channel_swap=(2, 1, 0),
+
 net_mean = caffe.Classifier(model_path,
                             weights_path,
-                            mean=mean_arr[0],
-                            raw_scale=255)
+                            mean=mean_arr[0])
+net_mean.set_raw_scale('data', 255)
+
 #channel_swap=(2, 1, 0),
 # mean=np.load('/path/to/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'),
 fake = np.ones((227, 227, 3))
