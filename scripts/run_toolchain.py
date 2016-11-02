@@ -24,11 +24,21 @@ def get_test_log(path):
         if f.endswith(".test"):
             return os.path.join(path, f)
     return ''
+
+
 def get_test_log2(path):
     for f in os.listdir(path):
         if f.endswith(".csv"):
             return os.path.join(path, f)
     return ''
+
+
+def get_caffe_log(path):
+    for f in os.listdir(path):
+        if 'caffe_training.log' in f:
+            return os.path.join(path, f)
+    return ''
+
 
 def get_network_path(path):
     for f in os.listdir(path):
@@ -83,7 +93,7 @@ if __name__ == "__main__":
             process = subprocess.Popen(['python',
                                         parser_script,
                                         '--log_file',
-                                        path,
+                                        get_caffe_log(path),
                                         '--output_file',
                                         os.path.join(os.path.dirname(path),
                                         'caffe_log_test.csv')],
