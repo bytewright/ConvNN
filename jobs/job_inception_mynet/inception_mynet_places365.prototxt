@@ -175,7 +175,7 @@ layer {
 }
 # shape@concat: [256, 256, 28, 28]
 layer {
-  name: "ch_concat_mixed_chconcat"
+  name: "inception1_ch_concat"
   type: "Concat"
   bottom: "inception1_conv1"
   bottom: "inception1_conv2"
@@ -392,7 +392,7 @@ layer {
 }
 # shape@concat: [256, 128, 7, 7]
 layer {
-  name: "ch_concat_mixed_chconcat"
+  name: "inception2_ch_concat"
   type: "Concat"
   bottom: "inception2_conv1"
   bottom: "inception2_conv2"

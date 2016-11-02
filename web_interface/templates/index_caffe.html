@@ -6,7 +6,7 @@
     <meta name="description" content="Caffe demos">
     <meta name="author" content="BVLC (http://bvlc.eecs.berkeley.edu/)">
 
-    <title>Masterthesis Webinterface</title>
+    <title>Caffe Demos</title>
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
@@ -58,8 +58,13 @@
       <div class="page-header">
         <h1><a href="/">Caffe Demos</a></h1>
         <p>
-          header blabla
+          The <a href="http://caffe.berkeleyvision.org">Caffe</a> neural network library makes implementing state-of-the-art computer vision systems easy.
         </p>
+      </div>
+
+      <div>
+        <h2>Classification</h2>
+        <a href="/classify_url?imageurl=http%3A%2F%2Fi.telegraph.co.uk%2Fmultimedia%2Farchive%2F02351%2Fcross-eyed-cat_2351472k.jpg">Click for a Quick Example</a>
       </div>
 
       {% if has_result %}
@@ -72,8 +77,8 @@
         <div class="media-body">
           <div class="bs-example bs-example-tabs">
             <ul id="myTab" class="nav nav-tabs">
-              <li class="active"><a href="#infopred" data-toggle="tab">Classifier 1</a></li>
-              <li><a href="#flatpred" data-toggle="tab">Classifier 2</a></li>
+              <li class="active"><a href="#infopred" data-toggle="tab">Maximally accurate</a></li>
+              <li><a href="#flatpred" data-toggle="tab">Maximally specific</a></li>
             </ul>
             <div id="myTabContent" class="tab-content">
               <div class="tab-pane fade in active" id="infopred">
