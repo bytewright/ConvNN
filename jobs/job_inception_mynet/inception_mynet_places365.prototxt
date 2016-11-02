@@ -192,7 +192,7 @@ layer {
   bottom: "concat1"
   top: "concat1"
 }
-# shape@concat: [256, 1024, 28, 28]
+# shape@concat: [256 864 28 28]
 #----------------------------------layer 3
 layer {
   name: "pool1"
@@ -205,7 +205,7 @@ layer {
     stride: 2
   }
 }
-# shape: [256, 1024, 13, 13]
+# shape: [256 864 14 14]
 #----------------------------------layer 4
 # -------------------------- start inception module --------------------------
 layer {
@@ -358,10 +358,12 @@ layer {
   top: "inception2_pool1"
   pooling_param {
     pool: MAX
-    kernel_size: 7
-    stride: 1
+    kernel_size: 3
+    stride: 2
+    pad: 1
   }
 }
+# shape@concat: [256, 128, 7, 7]
 layer {
   name: "inception2_pool1_1x1"
   type: "Convolution"
@@ -382,7 +384,6 @@ layer {
     stride: 1
     weight_filler {
       type: "xavier"
-#     std: "VarianceNorm_AVERAGE"
     }
     bias_filler {
       type: "constant"

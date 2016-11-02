@@ -1,9 +1,9 @@
 conv_filter = [3]
 conv_stride = [2]
-padding =     [0]
+padding =     [1]
 #conv_filter = [11]
 #conv_stride = [4]
-size = 56
+size = 14
 # 256, 13, 13]
 output_vars = 0
 for F,P,S in zip(conv_filter,padding,conv_stride):
