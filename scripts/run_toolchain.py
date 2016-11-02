@@ -66,7 +66,7 @@ if __name__ == "__main__":
             print 'expanding: ' + path_list[curr_index]
             expandable_path = path_list[curr_index][0:-1]
             path_list.remove(path_list[curr_index])
-            path_list = path_list + [x for x in os.listdir(expandable_path) if os.path.isdir(os.path.join(expandable_path,x))]
+            path_list = path_list + [os.path.join(expandable_path, x) for x in os.listdir(expandable_path) if os.path.isdir(os.path.join(expandable_path,x))]
             print path_list
             continue
         else:
