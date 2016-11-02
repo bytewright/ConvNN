@@ -22,7 +22,6 @@ class NNWebInterface(Flask):
         super(NNWebInterface, self).__init__(import_name)
         compress.init_app(self)
         self.route("/", methods=['GET'])(self.index)
-        #self.route("/set_classifier", methods=['GET', 'POST'])(self.set_classifier)
         self.route("/classify_upload", methods=['POST'])(self.classify_upload)
         self.route("/classify_url", methods=['GET'])(self.classify_url)
         self.classifiers = classifiers

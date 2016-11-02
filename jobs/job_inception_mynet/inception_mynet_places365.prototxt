@@ -187,7 +187,7 @@ layer {
   }
 }
 layer {
-  name: "concat_relu"
+  name: "concat_relu1"
   type: "ReLU"
   bottom: "concat1"
   top: "concat1"
@@ -404,7 +404,7 @@ layer {
   }
 }
 layer {
-  name: "concat_relu"
+  name: "concat_relu2"
   type: "ReLU"
   bottom: "concat2"
   top: "concat2"
@@ -547,6 +547,19 @@ layer {
   bottom: "fc8"
   bottom: "label"
   top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "accuracy_top_5"
+  type: "Accuracy"
+  bottom: "fc8"
+  bottom: "label"
+  top: "accuracy_top_5"
+  accuracy_param {
+    top_k: 5
+  }
   include {
     phase: TEST
   }

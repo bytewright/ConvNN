@@ -2,96 +2,101 @@
   "0": {
       "ignore": false,
       "name": "thesis_exp0_vanilla",
-      "solver_path": "/caffe_project/jobs_thesis/0_alexnet_vanilla/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/00_alexnet_vanilla/solver.prototxt"
   },
   "1": {
       "ignore": false,
       "name": "thesis_exp1_3+4+5to1",
-      "solver_path": "/caffe_project/jobs_thesis/1_conv3+4+5to1/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/01_conv3+4+5to1/solver.prototxt"
   },
   "2": {
       "ignore": false,
       "name": "thesis_exp2_inception",
-      "solver_path": "/caffe_project/jobs_thesis/2_inception_alexnet/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/02_inception_alexnet/solver.prototxt"
   },
   "3": {
       "ignore": false,
       "name": "thesis_exp3_all_xavier_init",
-      "solver_path": "/caffe_project/jobs_thesis/3_xavier_init/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/03_xavier_init/solver.prototxt"
   },
   "4": {
       "ignore": false,
       "name": "thesis_exp4_all_msra_init",
-      "solver_path": "/caffe_project/jobs_thesis/4_msra_init/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/04_msra_init/solver.prototxt"
   },
   "5": {
       "ignore": false,
       "name": "thesis_exp5_parallel_fc",
-      "solver_path": "/caffe_project/jobs_thesis/5_alexnet_parallel_fc/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/05_alexnet_parallel_fc/solver.prototxt"
   },
   "6": {
       "ignore": false,
       "name": "thesis_exp6a_3_parallel_fc",
-      "solver_path": "/caffe_project/jobs_thesis/6a_3_parallel_fc/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/06a_3_parallel_fc/solver.prototxt"
   },
   "7": {
       "ignore": false,
       "name": "thesis_exp6b_3_parallel+extra_fc",
-      "solver_path": "/caffe_project/jobs_thesis/6b_3_parallel+extra_fc/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/06b_3_parallel+extra_fc/solver.prototxt"
   },
   "8": {
       "ignore": false,
       "name": "thesis_exp7_smaller_pooling",
-      "solver_path": "/caffe_project/jobs_thesis/7_smaller_pooling/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/07_smaller_pooling/solver.prototxt"
   },
   "9": {
       "ignore": false,
       "name": "thesis_exp9_dropout_in_conv",
-      "solver_path": "/caffe_project/jobs_thesis/9_dropout_in_conv/solver.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/09_dropout_in_conv/solver.prototxt"
   },
   "10": {
       "ignore": false,
       "name": "thesis_exp8_0_multistep_7",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver0.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver0.prototxt"
   },
   "11": {
       "ignore": false,
       "name": "thesis_exp8_1_multistep_6",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver1.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver1.prototxt"
   },
   "12": {
       "ignore": false,
       "name": "thesis_exp8_2_exp",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver2.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver2.prototxt"
   },
   "13": {
       "ignore": false,
       "name": "thesis_exp8_3_inv_0.75",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver3.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver3.prototxt"
   },
   "14": {
       "ignore": false,
       "name": "thesis_exp8_4_poly_2",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver4.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver4.prototxt"
   },
   "15": {
       "ignore": false,
       "name": "thesis_exp8_5_poly_0.5",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver5.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver5.prototxt"
   },
   "16": {
       "ignore": false,
       "name": "thesis_exp8_6_poly_linear",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver6.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver6.prototxt"
   },
   "17": {
       "ignore": false,
       "name": "thesis_exp8_7_sigmoid_20k",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver7.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver7.prototxt"
   },
   "18": {
       "ignore": false,
       "name": "thesis_exp8_8_multistep_2",
-      "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
+      "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver8.prototxt"
+  }
+  "19": {
+      "ignore": false,
+      "name": "thesis_exp10_mynet",
+      "solver_path": "/caffe_project/jobs_thesis/10_mynet/solver.prototxt"
   }
 }
