@@ -7,7 +7,7 @@ import numpy as np
 import pylab
 
 
-model_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/deploy.prototxt'
+model_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/deploy_alexnet_places365.prototxt'
 weights_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/_iter_110000.caffemodel'
 out_path = '/home/ellerch/caffeProject/mean_visi.png'
 mean_path = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
@@ -19,15 +19,14 @@ blob.ParseFromString(data)
 mean_arr = np.array( caffe.io.blobproto_to_array(blob) )
 
 net = caffe.Classifier(model_path,
-                       weights_path)
-net.set_raw_scale('data', 255)
-#channel_swap=(2, 1, 0),
+                       weights_path,
+                       raw_scale=255)
 
+#channel_swap=(2, 1, 0),
 net_mean = caffe.Classifier(model_path,
                             weights_path,
-                            mean=mean_arr[0])
-net_mean.set_raw_scale('data', 255)
-
+                            mean=mean_arr[0],
+                            raw_scale=255)
 #channel_swap=(2, 1, 0),
 # mean=np.load('/path/to/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'),
 fake = np.ones((227, 227, 3))
