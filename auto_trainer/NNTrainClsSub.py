@@ -8,7 +8,7 @@ from threading import Thread
 from timeit import default_timer as timer
 from trainer_utils import get_avg_acc_and_loss, save_job_stats_to_json, get_best_caffemodel, draw_job_net,\
      generate_parsed_splitted_logs, extract_filters, draw_job_plot2, \
-     move_all_files_from_to, generate_parsed_splitted_logs2
+     move_all_files_from_to, generate_parsed_splitted_logs2, draw_job_plot3
 
 
 class NetworkTrainer(Thread):
@@ -62,17 +62,19 @@ class NetworkTrainer(Thread):
                              os.path.join(self.job['snapshot_path'], self.job['name'] + '_net.png'), self.caffe_tool_path)
 
                 # training is done, write log and other output
-                generate_parsed_splitted_logs(self.job['caffe_log_path'],
-                                              self.job['snapshot_path'])
                 generate_parsed_splitted_logs2(self.job['caffe_log_path'],
                                                os.path.join(self.job['snapshot_path'],
-                                                            '{}_caffe_test_log.csv'.format(self.job['name'])))
+                                                            self.job['name'] + '_caffe_test_log.csv'))
+                generate_parsed_splitted_logs(self.job['caffe_log_path'],
+                                              self.job['snapshot_path'])
 
                 self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(self.job['snapshot_path'],
                                                                                                 "parsed_caffe_log.test"))
 
                 draw_job_plot2(os.path.join(self.job['snapshot_path'], "parsed_caffe_log.test"),
                                os.path.join(self.job['snapshot_path'], self.job['name'] + '_better_training_plot.png'))
+                draw_job_plot3(os.path.join(self.job['snapshot_path'], self.job['name'] + '_caffe_test_log.csv'),
+                               os.path.join(self.job['snapshot_path'], self.job['name'] + '_training_plot2.png'))
 
                 # get best caffemodel
                 weights_path = get_best_caffemodel(self.job['snapshot_path'])

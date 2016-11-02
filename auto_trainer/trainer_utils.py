@@ -127,6 +127,33 @@ def draw_job_plot2(test_log_path, output_file):
     return output
 
 
+def draw_job_plot3(test_log_path, output_file):
+    if not os.path.exists(test_log_path):
+        logging.error('test logfile not found!')
+        return
+    logging.info('plotting learning curve as png')
+    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_tools', 'progress_plot2.py')
+    process = subprocess.Popen(['python',
+                                plot_script,
+                                '--plot_data',
+                                test_log_path,
+                                '--output_png_path',
+                                output_file],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    output = process.communicate()[0]
+    returncode = process.returncode
+    while returncode is None:
+        time.sleep(2)
+        returncode = process.returncode
+    if returncode is not 0:
+        logging.error('plotter return code: '+str(process.returncode))
+        logging.error(output)
+    else:
+        logging.info('plotter exited successfully (code {})'.format(returncode))
+    return output
+
+
 def draw_job_net(solver_path, output_file, caffe_python_path):
     # draw_net.py <netprototxt_filename> <out_img_filename>
     net_path = ''
@@ -177,7 +204,7 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir):
 def generate_parsed_splitted_logs2(caffe_log_file, job_output_dir):
     #./parse_log.sh <input_log> <output_path>
     script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'scripts',
-                               'log_parser', 'my_log_parser.py')
+                               'log_parser', 'my_log_parser2.py')
     process = subprocess.Popen(['python',
                                 script_path,
                                 '--log_file',

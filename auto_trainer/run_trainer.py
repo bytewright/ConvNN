@@ -128,7 +128,11 @@ if __name__ == '__main__':
     running_threads = []
     while True:
         # load new job from jobs.json
-        job, do_work = get_next_job(job_file_path)
+        try:
+            job, do_work = get_next_job(job_file_path)
+        except ValueError:
+            log.error('json not correctly formatted!')
+            break;
         if not do_work:
             if running_threads.__len__() > 0:
                 #log.debug('Couldn\'t find new job, but {} threads still running, sleeping'.format(running_threads.__len__()))
