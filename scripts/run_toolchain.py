@@ -81,9 +81,11 @@ if __name__ == "__main__":
                                         '--log_file',
                                         path,
                                         '--output_file',
-                                        os.path.join(os.path.dirname(path), 'caffe_log_test{}.csv'.format(os.path.basename(path)[-5]))],
+                                        os.path.join(os.path.dirname(path),
+                                        'caffe_log_test.csv')],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT)
+            #os.path.join(os.path.dirname(path), 'caffe_log_test{}.csv'.format(os.path.basename(path)[-5]))],
             output = process.communicate()[0]
             print output
         if run_plotter:
