@@ -43,6 +43,6 @@
     },"10": {
         "ignore": false,
         "name": "alexnet_vanilla",
-        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     }
 }
