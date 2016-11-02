@@ -360,7 +360,6 @@ layer {
     pool: MAX
     kernel_size: 3
     stride: 2
-    pad: 1
   }
 }
 # shape@concat: [256, 128, 7, 7]
