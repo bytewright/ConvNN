@@ -95,7 +95,7 @@ if __name__ == "__main__":
                                         '--log_file',
                                         get_caffe_log(path),
                                         '--output_file',
-                                        os.path.join(os.path.dirname(path),
+                                        os.path.join(path,
                                         'caffe_log_test.csv')],
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT)

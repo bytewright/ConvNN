@@ -16,6 +16,7 @@ def load_data(data_file):
     test_data = []
     with open(data_file, 'r') as f:
         for line in f.readlines():
+            #print line
             line = line.rstrip()
             if line.split(csv_delimiter).__len__() < 3:
                 print('incomplete line found')
