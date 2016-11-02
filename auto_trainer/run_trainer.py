@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import configargparse
+import shutil
 
 from NNTrainClsSub import NetworkTrainer
 from trainer_utils import check_job, generate_output_directory, draw_job_net,\
@@ -76,6 +77,16 @@ def get_args():
 
     return parser.parse_args()
 
+
+def check_if_no_files(path):
+    list = os.listdir(path)
+    for sub_path in list:
+        if os.path.isfile(sub_path):
+            return False
+        else:
+            if not check_if_no_files(sub_path):
+                return False
+    return True
 
 if __name__ == '__main__':
     args = get_args()
@@ -157,4 +168,9 @@ if __name__ == '__main__':
     log.info('all jobs completed')
     log.info('cleaning up tmp dir')
     if os.path.exists(os.path.join(output_dir, 'tmp')):
-        os.rmdir(os.path.join(output_dir, 'tmp'))
+        if check_if_no_files(os.path.join(output_dir, 'tmp')):
+            shutil.rmtree(os.path.join(output_dir, 'tmp'))
+            #os.rmdir(os.path.join(output_dir, 'tmp'))
+        else:
+            log.error('there are still files in dir, please delete manually:\n'
+                      '{}'.format(os.path.join(output_dir, 'tmp')))

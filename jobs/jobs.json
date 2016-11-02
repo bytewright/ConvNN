@@ -28,16 +28,16 @@
         "name": "vanilla_alexnet_6",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver6.prototxt"
     },"7": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_7_sigmoid",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver7.prototxt"
     },"8": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_8_2multistep",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
     },"9": {
         "ignore": false,
-        "name": "inception_mynet2",
+        "name": "inception_mynet",
         "solver_path": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
     }
 }
