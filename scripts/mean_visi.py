@@ -7,7 +7,7 @@ import numpy as np
 import pylab
 
 
-model_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/deploy_alexnet_places365.prototxt'
+model_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/deploy.prototxt'
 weights_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/_iter_110000.caffemodel'
 out_path = '/home/ellerch/caffeProject/mean_visi.png'
 mean_path = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
