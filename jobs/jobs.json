@@ -8,7 +8,7 @@
         "name": "vanilla_alexnet_1",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver1.prototxt"
     },"2": {
-        "ignore": false,
+        "ignore": true,
         "name": "vanilla_alexnet_2_exp",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver2.prototxt"
     },"3": {
@@ -38,6 +38,7 @@
     },"9": {
         "ignore": false,
         "name": "inception_mynet",
-        "solver_path": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_mynet/solver.prototxt",
+        "solver_path_cluster": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
     }
 }
