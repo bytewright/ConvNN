@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Caffe demos">
+    <meta name="description" content="Masterthesis Webinterface">
     <meta name="author" content="BVLC (http://bvlc.eecs.berkeley.edu/)">
 
-    <title>Masterthesis Webinterface</title>
+    <title>Masterthesis Webinterface bla</title>
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
@@ -21,12 +21,8 @@
           $('#imagefile').change(
             function(){
               if ($(this).val()){
-                <!-- div mit id erstellen,
-                   div anfangs versteckt
-                   on change div zeigen
-                   bild aus this.val holen
-                   submit()
-                   -->
+              {# <!-- div mit id erstellen,                    div anfangs versteckt                   on change div zeigen                   bild aus this.val holen                   submit()                   --> #}
+
                 $('#formupload').submit();
               }
             }
@@ -56,39 +52,43 @@
     <!-- Begin page content -->
     <div class="container">
       <div class="page-header">
-        <h1><a href="/">Caffe Demos</a></h1>
+        <h1><a href="/">Masterthesis Webinterface</a></h1>
         <p>
           header blabla
         </p>
       </div>
 
       {% if has_result %}
-      {% if not result[0] %}
+      {% if not results[0][0] %}
       <!-- we have error in the result. -->
-      <div class="alert alert-danger">{{ result[1] }} Did you provide a valid URL or a valid image file? </div>
+      <div class="alert alert-danger">{{ results[0][1] }} Bild konnte nicht klassifiziert werden, bitte Datei überprüfen </div>
       {% else %}
       <div class="media">
-        <a class="pull-left" href="#"><img class="media-object" width="192" height="192" src={{ imagesrc }}></a>
+        <div class="media-image">
+          <a class="pull-left" href="#"><img class="media-object" width="192" height="192" src={{ imagesrc }}></a>
+        </div>
         <div class="media-body">
           <div class="bs-example bs-example-tabs">
             <ul id="myTab" class="nav nav-tabs">
-              <li class="active"><a href="#infopred" data-toggle="tab">Classifier 1</a></li>
-              <li><a href="#flatpred" data-toggle="tab">Classifier 2</a></li>
+              {% for result in results %}
+                {% if loop.index == 1 %}
+              <li class="active">
+                <a href="#classifier{{loop.index}}_res" data-toggle="tab">{{loop.index}}: {{ result[3] }} </a>
+              </li>
+                {% else %}
+              <li>
+                <a href="#classifier{{loop.index}}_res" data-toggle="tab">{{loop.index}}: {{ result[3] }} </a>
+              </li>
+                {% endif %}
+              {% endfor %}
             </ul>
             <div id="myTabContent" class="tab-content">
-              <div class="tab-pane fade in active" id="infopred">
-                <ul class="list-group">
-                  {% for single_pred in result[2] %}
-                  <li class="list-group-item">
-                  <span class="badge">{{ single_pred[1] }}</span>
-                  <h4 class="list-group-item-heading">
-                    <a href="https://www.google.com/#q={{ single_pred[0] }}" target="_blank">{{ single_pred[0] }}</a>
-                  </h4>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              <div class="tab-pane fade" id="flatpred">
+              {% for result in results %}
+              {% if loop.index == 1 %}
+              <div class="tab-pane fade in active" id="classifier{{loop.index}}_res">
+              {% else %}
+                <div class="tab-pane fade" id="classifier{{loop.index}}_res">
+              {% endif %}
                 <ul class="list-group">
                   {% for single_pred in result[1] %}
                   <li class="list-group-item">
@@ -98,14 +98,20 @@
                   </h4>
                   </li>
                   {% endfor %}
+                  <li class="list-group-item">
+                    <h4 class="list-group-item-heading">
+                      CNN took {{ result[2] }} seconds.
+                    </h4>
+                  </li>
                 </ul>
               </div>
+              {% endfor %}
             </div>
           </div>
 
         </div>
       </div>
-      <p> CNN took {{ result[3] }} seconds. </p>
+
       {% endif %}
       <hr>
       {% endif %}

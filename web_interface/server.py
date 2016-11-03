@@ -51,8 +51,9 @@ class NNWebInterface(Flask):
             result = classifier.dummy_classify(image)
             #result = classifier.classify_image(image)
             results.append(result)
+        print 'got {} results'.format(results.__len__())
         return render_template(
-            'index.html', has_result=True, result=results[0],
+            'index.html', has_result=True, results=results,
             imagesrc=self.embed_image_html(image)
         )
 

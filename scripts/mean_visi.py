@@ -1,40 +1,25 @@
 # https://gist.github.com/yassersouri/f617bf7eff9172290b4f
-import matplotlib as mpl
-mpl.use('Agg')
-from matplotlib import pylab as plt
 import caffe
 import numpy as np
-import pylab
+from scipy.misc import imshow
 
+caffe.set_mode_cpu()
 
-model_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/deploy.prototxt'
-weights_path = '/home/ellerch/caffeProject/auto_trainer_output/2016-10-30_11h-46m-18s_experiment/vanilla_alexnet/_iter_110000.caffemodel'
-out_path = '/home/ellerch/caffeProject/mean_visi.png'
 mean_path = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
+#mean_path = '/path/to/mean.binaryproto'
 
 #convert to npy
 blob = caffe.proto.caffe_pb2.BlobProto()
-data = open( mean_path , 'rb' ).read()
+data = open(mean_path, 'rb').read()
 blob.ParseFromString(data)
-mean_arr = np.array( caffe.io.blobproto_to_array(blob) )
+mean_arr = np.array(caffe.io.blobproto_to_array(blob))
+print mean_arr[0].shape
+#>(3,256,256)
+r_chan = mean_arr[0][0]
+g_chan = mean_arr[0][1]
+b_chan = mean_arr[0][2]
 
-net = caffe.Classifier(model_path,
-                       weights_path,
-                       raw_scale=255)
+imshow(np.dstack((r_chan, g_chan, b_chan)))
+imshow(np.dstack((g_chan, b_chan, r_chan)))
+imshow(np.dstack((b_chan, r_chan, g_chan)))
 
-#channel_swap=(2, 1, 0),
-net_mean = caffe.Classifier(model_path,
-                            weights_path,
-                            mean=mean_arr[0],
-                            raw_scale=255)
-#channel_swap=(2, 1, 0),
-# mean=np.load('/path/to/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'),
-fake = np.ones((227, 227, 3))
-
-fake_pre = net_mean.preprocess('data', fake)
-fake_re = net.deprocess('data', fake_pre)
-
-mean_image = 1 - fake_re
-
-plt.imshow(mean_image)
-pylab.savefig(out_path)

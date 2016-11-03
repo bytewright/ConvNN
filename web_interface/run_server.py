@@ -52,10 +52,7 @@ if __name__ == '__main__':
     for cnn_index in cnns_list:
         # for each cnn, crate classifier
         classifier = NNClassifier(gpu_mode=False)
-        if not classifier.set_neural_network(cnns_list[cnn_index]['network_path'],
-                                             cnns_list[cnn_index]['weights_path'],
-                                             cnns_list[cnn_index]['mean_db_path'],
-                                             cnns_list[cnn_index]['class_labels']):
+        if not classifier.set_neural_network(cnns_list[cnn_index]):
             log.error('classifier {} could not be loaded'.format(cnns_list[cnn_index]['name']))
         else:
             classifiers.append(classifier)
