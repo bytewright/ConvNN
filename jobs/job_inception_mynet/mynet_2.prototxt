@@ -454,7 +454,7 @@ layer {
     num_output: 256
     pad: 0
     kernel_size: 1
-    stride: 1
+    stride: 2
     weight_filler {
       type: "xavier"
       #std: "VarianceNorm_AVERAGE"
@@ -511,7 +511,7 @@ layer {
     num_output: 128
     pad: 1
     kernel_size: 3
-    stride: 1
+    stride: 2
     weight_filler {
       type: "xavier"
       #std: "VarianceNorm_AVERAGE"
@@ -568,7 +568,7 @@ layer {
     num_output: 32
     pad: 2
     kernel_size: 5
-    stride: 1
+    stride: 2
     weight_filler {
       type: "xavier"
       #std: "VarianceNorm_AVERAGE"
