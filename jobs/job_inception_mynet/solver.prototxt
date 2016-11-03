@@ -1,5 +1,5 @@
-net: "/home/ellerch/caffeProject/jobs/job_inception_mynet/inception_mynet_places365.prototxt"
-snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job_inception_mynet/"
+net: "/home/ellerch/caffeProject/jobs/job_inception_mynet/mynet_2.prototxt"
+snapshot_prefix: "/home/ellerch/caffeProject/auto_trainer_output/tmp/job_inception_mynet2/"
 snapshot: 60000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.
@@ -34,4 +34,4 @@ power: 2
 # return base_lr (1 - iter/max_iter) ^ (power)
 
 display: 500           # how often do we print training loss
-max_iter: 70000          # The maximum number of iterations
+max_iter: 40000          # The maximum number of iterations

@@ -41,7 +41,7 @@
         "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_mynet/solver.prototxt",
         "solver_path_cluster": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
     },"10": {
-        "ignore": false,
+        "ignore": true,
         "name": "alexnet_vanilla",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
     }
