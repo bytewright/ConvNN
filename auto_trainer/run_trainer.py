@@ -127,8 +127,23 @@ if __name__ == '__main__':
     worked_job_names = []
     running_threads = []
     while True:
-        # load new job from jobs.json
+
+        # check on threads
+        for thread in running_threads:
+            if not thread.isAlive():
+                job = thread.get_job()
+                log.info('GPU {} Thread "{}" is finished, duration: {}'.format(job['gpu_num'],
+                                                                               thread.getName(),
+                                                                               job['duration']))
+                running_threads.remove(thread)
+                free_gpu_ids.append(job['gpu_num'])
+
+        if free_gpu_ids.__len__() == 0:
+            time.sleep(120)
+            continue
+
         try:
+            # load new job from jobs.json
             job, do_work = get_next_job(job_file_path)
         except ValueError:
             log.error('json not correctly formatted!')
@@ -159,15 +174,7 @@ if __name__ == '__main__':
                 #log.debug('all {} gpus working, sleeping'.format(args.gpu_count))
                 time.sleep(120)
 
-        # check on threads
-        for thread in running_threads:
-            if not thread.isAlive():
-                job = thread.get_job()
-                log.info('GPU {} Thread "{}" is finished, duration: {}'.format(job['gpu_num'],
-                                                                               thread.getName(),
-                                                                               job['duration']))
-                running_threads.remove(thread)
-                free_gpu_ids.append(job['gpu_num'])
+
 
     log.info('all jobs completed')
     log.info('cleaning up tmp dir')
