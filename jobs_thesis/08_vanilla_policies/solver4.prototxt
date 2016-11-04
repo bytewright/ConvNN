@@ -9,10 +9,10 @@ solver_mode: GPU
 # test_iter specifies how many forward passes the test should carry out.
 # (max_iter/test_interval)*test_iter = 28000 test images used
 # how many mini-batches to test in each validation phase
-test_iter: 500
+test_iter: 200
 
 # Carry out testing every 500 training iterations.
-test_interval: 2500
+test_interval: 500
 
 # The base learning rate, momentum and the weight decay of the network.
 # begin training at a learning rate of 0.01 = 1e-2
@@ -34,4 +34,4 @@ power: 2
 # return base_lr (1 - iter/max_iter) ^ (power)
 
 display: 500           # how often do we print training loss
-max_iter: 100000          # The maximum number of iterations
+max_iter: 110000          # The maximum number of iterations

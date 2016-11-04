@@ -1,6 +1,6 @@
 net: "/caffe_project/jobs_thesis/01_conv3+4+5to1/my_conv3+4+5to1_alexnet.prototxt"
 snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/01_conv3+4+5to1/"
-snapshot: 30000
+snapshot: 80000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.
 snapshot_after_train: true
@@ -28,8 +28,10 @@ gamma: 0.1
 
 # learning rate policy: drop the learning rate in "steps"
 # by a factor of gamma every stepsize iterations
-lr_policy: "step"
-stepsize: 20000          # drop the learning rate every 100K iterations
+lr_policy: "multistep"
+stepvalue: 20000
+stepvalue: 50000
+stepvalue: 90000
 
 display: 500           # how often do we print training loss
 max_iter: 110000          # The maximum number of iterations

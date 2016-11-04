@@ -28,8 +28,11 @@ gamma: 0.1
 
 # learning rate policy: drop the learning rate in "steps"
 # by a factor of gamma every stepsize iterations
-lr_policy: "step"
-stepsize: 20000          # drop the learning rate every 100K iterations
+lr_policy: "multistep"
+stepvalue: 20000
+stepvalue: 50000
+stepvalue: 90000
 
 display: 500           # how often do we print training loss
 max_iter: 110000          # The maximum number of iterations
+

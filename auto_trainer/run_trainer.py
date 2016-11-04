@@ -169,6 +169,10 @@ if __name__ == '__main__':
                     running_threads.append(start_train_thread(job, free_gpu_ids[0]))
                     worked_job_names.append(job['name'])
                     free_gpu_ids.remove(free_gpu_ids[0])
+                    for train_thread in running_threads:
+                        log.info('GPU {}: {}, started: {}'.format(train_thread.get_job()['gpu_num'],
+                                                                  train_thread.get_job()['name'],
+                                                                  train_thread.get_job()['start_time']))
                     time.sleep(3)  # just for better console readability
             else:
                 #log.debug('all {} gpus working, sleeping'.format(args.gpu_count))
