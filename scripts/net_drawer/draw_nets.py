@@ -46,5 +46,5 @@ if __name__ == "__main__":
                 name = file_name.replace('.prototxt', '')
                 draw_job_net(os.path.join(nets_path, file_name),
                              os.path.join(nets_path, name+'.png'),
-                             caffe_path)
+                             os.path.join(caffe_path, 'python'))
 
