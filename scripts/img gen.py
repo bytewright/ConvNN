@@ -17,7 +17,7 @@ def get_cropped_img(img):
 
 img_src = "H:\\Entwicklung\\ConvNN\\Thesis\\Thesis_Bilder\\raws\\places2 bsp"
 cols = []
-categories = 4
+categories = 5
 num_per_cat = 4
 for i in range(categories):
     cols.append([])
