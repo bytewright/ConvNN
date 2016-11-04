@@ -379,13 +379,13 @@ layer {
 }
 # shape: [256, 4096]
 layer {
-  name: "relu7"
+  name: "relu1c"
   type: "ReLU"
   bottom: "fc1c"
   top: "fc1c"
 }
 layer {
-  name: "drop7"
+  name: "drop1c"
   type: "Dropout"
   bottom: "fc1c"
   top: "fc1c"
