@@ -15,6 +15,7 @@ class NetworkTrainer(Thread):
     def __init__(self, job, caffe_trainer_path, caffe_tool_path, experiment_output_path):
         Thread.__init__(self)
         self.job = job
+        self.job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
         self.caffe_trainer_path = caffe_trainer_path
         self.caffe_tool_path = caffe_tool_path
         self.experiment_output_path = experiment_output_path
@@ -22,7 +23,6 @@ class NetworkTrainer(Thread):
     def run(self):
         self.log_info('Thread start\nName: {}\njob file: {}'.format(self.getName(), self.job['solver_path']))
         logfile = open(os.path.join(self.job['snapshot_path'], "tmp_caffe_training.log"), "w")
-        self.job['start_time'] = datetime.datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss')
         start = timer()
         # output = '{} train -solver {} {}\n\n'.format(caffeTool, self.job_file, '-gpu 0')
         solver_process = subprocess.Popen([self.caffe_trainer_path, 'train',
