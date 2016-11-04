@@ -1,5 +1,5 @@
-net: "/caffe_project/jobs_thesis/6a_3_parallel_fc/alexnet_parallel__extra_fc.prototxt"
-snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/6a_3_parallel_fc/"
+net: "/caffe_project/jobs_thesis/06a_3_parallel_fc/alexnet_parallel__extra_fc.prototxt"
+snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/06a_3_parallel_fc/"
 snapshot: 30000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

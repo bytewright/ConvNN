@@ -1,5 +1,5 @@
-net: "/caffe_project/jobs_thesis/3_xavier_init/xavier_alexnet_places365.prototxt"
-snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/3_xavier_init/"
+net: "/caffe_project/jobs_thesis/03_xavier_init/xavier_alexnet_places365.prototxt"
+snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/03_xavier_init/"
 snapshot: 40000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

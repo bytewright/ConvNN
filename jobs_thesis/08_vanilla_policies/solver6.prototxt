@@ -1,5 +1,5 @@
-net: "/caffe_project/jobs_thesis/8_vanilla_policies/deploy_alexnet_places365.prototxt"
-snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/8_vanilla_policies/6/"
+net: "/caffe_project/jobs_thesis/08_vanilla_policies/deploy_alexnet_places365.prototxt"
+snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/08_vanilla_policies/6/"
 snapshot: 80000
 # A final snapshot is saved at the end of training unless
 # this flag is set to false. The default is true.

@@ -1,4 +1,4 @@
-net: "/caffe_project/jobs_thesis/0_alexnet_vanilla/deploy_alexnet_places365.prototxt"
+net: "/caffe_project/jobs_thesis/00_alexnet_vanilla/deploy_alexnet_places365.prototxt"
 snapshot_prefix: "/caffe_project/auto_trainer_output/tmp/0_alexnet_vanilla/"
 snapshot: 80000
 # A final snapshot is saved at the end of training unless
