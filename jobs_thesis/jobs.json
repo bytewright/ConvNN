@@ -41,12 +41,12 @@
   },
   "8": {
       "ignore": false,
-      "name": "thesis_exp7_smaller_pooling",
+      "name": "thesis_exp7_smaller_pooling2",
       "solver_path": "/caffe_project/jobs_thesis/07_smaller_pooling/solver.prototxt"
   },
   "9": {
       "ignore": false,
-      "name": "thesis_exp9_dropout_in_conv",
+      "name": "thesis_exp9_dropout_in_conv2",
       "solver_path": "/caffe_project/jobs_thesis/09_dropout_in_conv/solver.prototxt"
   },
   "10": {
@@ -96,7 +96,7 @@
   }
   "19": {
       "ignore": false,
-      "name": "thesis_exp10_mynet",
+      "name": "thesis_exp10_mynet2",
       "solver_path": "/caffe_project/jobs_thesis/10_mynet/solver.prototxt"
   }
 }

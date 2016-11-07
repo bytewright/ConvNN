@@ -40,10 +40,10 @@ layer {
 #------------------------------ layer 1
 # shape: [128,3,227,227]
 layer {
-  name: "conv1"
+  name: "conv1a"
   type: "Convolution"
   bottom: "data"
-  top: "conv1"
+  top: "conv1a"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -53,7 +53,7 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96
+    num_output: 128
     kernel_size: 7
     pad: 1
     stride: 2
@@ -68,10 +68,48 @@ layer {
   }
 }
 layer {
+  name: "conv1b"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1b"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 30
+    kernel_size: 11
+    pad: 3
+    stride: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "inception1_ch_concat"
+  type: "Concat"
+  bottom: "conv1a"
+  bottom: "conv1b"
+  top: "conv_concat1"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "relu1"
   type: "ReLU"
-  bottom: "conv1"
-  top: "conv1"
+  bottom: "conv_concat1"
+  top: "conv_concat1"
 }
 #------------------------------ layer 2
 # shape: [256 96 112 112]
