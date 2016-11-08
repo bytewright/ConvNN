@@ -95,7 +95,7 @@
       "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver8.prototxt"
   },
   "19": {
-      "ignore": true,
+      "ignore": false,
       "name": "08_9_fixed",
       "solver_path": "/caffe_project/jobs_thesis/08_vanilla_policies/solver9.prototxt"
   },
