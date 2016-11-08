@@ -116,7 +116,7 @@ layer {
 layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1"
+  bottom: "conv_concat1"
   top: "pool1"
   pooling_param {
     pool: MAX

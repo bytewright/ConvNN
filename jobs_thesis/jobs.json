@@ -103,5 +103,10 @@
       "ignore": false,
       "name": "10_mynet2",
       "solver_path": "/caffe_project/jobs_thesis/10_mynet/solver.prototxt"
+  },
+  "21": {
+      "ignore": false,
+      "name": "10_mynet3",
+      "solver_path": "/caffe_project/jobs_thesis/10_mynet/solver.prototxt"
   }
 }
