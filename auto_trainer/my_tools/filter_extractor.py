@@ -43,7 +43,7 @@ if __name__ == "__main__":
         if filter_channels is 3:
             # 3. compose new image
             # new size = 120x120
-            comp_im = Image.new("RGB", ((filter_size + 1) * 10 - 1, (filter_size + 1) * (math.ceil(filter_count/10)) - 1), "white")
+            comp_im = Image.new("RGB", int(((filter_size + 1) * 10 - 1), int((filter_size + 1) * (math.ceil(filter_count/10)) - 1)), "white")
             offset_x = 0
             offset_y = 0
             for i in range(filter_count):
@@ -69,4 +69,5 @@ if __name__ == "__main__":
                         offset_x = 0
                         offset_y += filter_size + 1
         # 4. save to path
+        os.makedirs(output_path)
         comp_im.save(os.path.join(output_path, name + '_filters.png'))
