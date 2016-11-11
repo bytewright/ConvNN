@@ -72,5 +72,6 @@ if __name__ == "__main__":
                         offset_x = 0
                         offset_y += filter_size + 1
         # 4. save to path
-        os.makedirs(output_path)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         comp_im.save(os.path.join(output_path, name + '_filters.png'))
