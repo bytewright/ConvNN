@@ -56,7 +56,7 @@ if __name__ == "__main__":
                 if offset_x > (filter_size + 1) * 10 - 1:
                     offset_x = 0
                     offset_y += filter_size + 1
-            comp_im_big = comp_im.resize(get_new_size(int(new_img_y_size), 400))
+            comp_im_big = comp_im.resize(get_new_size(comp_im.size, 400))
             comp_im_big.save(os.path.join(output_path, name + '_filters_big.png'))
         else:
             comp_im = Image.new("L", (filter_channels * (filter_size + 1), (filter_size + 1) * filter_count), "white")
