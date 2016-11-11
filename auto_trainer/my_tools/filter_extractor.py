@@ -43,7 +43,10 @@ if __name__ == "__main__":
         if filter_channels is 3:
             # 3. compose new image
             # new size = 120x120
-            comp_im = Image.new("RGB", int(((filter_size + 1) * 10 - 1), int((filter_size + 1) * (math.ceil(filter_count/10)) - 1)), "white")
+            new_img_x_size = (filter_size + 1) * 10 - 1
+            new_img_y_size = (filter_size + 1) * (math.ceil(filter_count/10)) - 1
+            print 'new imgsize: {}x{}'.format(new_img_x_size, new_img_y_size)
+            comp_im = Image.new("RGB", (int(new_img_x_size), int(new_img_y_size)), "white")
             offset_x = 0
             offset_y = 0
             for i in range(filter_count):
