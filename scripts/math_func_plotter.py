@@ -65,6 +65,7 @@ lines = []
 
 fig, ax1 = plt.subplots()
 lines.append(ax1.plot(iters, [step(x) for x in iters], label='step 10k'))
+lines.append(ax1.plot(iters, [0.002 for x in iters], label='fixed'))
 lines.append(ax1.plot(iters, [sigmoid(x) for x in iters], label='sigmoid 10k'))
 lines.append(ax1.plot(iters, [multistep_6(x) for x in iters], label='multistep 3'))
 lines.append(ax1.plot(iters, [multistep_2(x) for x in iters], label='multistep 3'))
@@ -80,7 +81,7 @@ ax1.set_ylabel('Learningrate')
 
 #legend = plt.legend(handles=[x[0] for x in lines], bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 #               ncol=2, mode="expand", borderaxespad=0.)
-legend = plt.legend(handles=[x[0] for x in lines], bbox_to_anchor=(1.05, 1), loc=2,
+legend = plt.legend(handles=[x[0] for x in lines], bbox_to_anchor=(1.01, 1), loc=2,
                borderaxespad=0.)
 plt.show()
 fig.savefig('math_plots.png', bbox_extra_artists=(legend,), bbox_inches='tight')

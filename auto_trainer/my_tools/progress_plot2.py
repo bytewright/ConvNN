@@ -35,18 +35,23 @@ if __name__ == "__main__":
     # parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
-    min_size = 99100000
+    print 'plotting\t{}\nvs\t\t\t{}\noutput:\t\t{}'.format(args.reference_data, args.plot_data, args.output_png_path)
+    min_size = 9910000
     plot_datas = []
-    ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
-    plot_datas.append(ref_data)
-    if int(ref_data[-1][0]) < min_size:
-        print '{} is new min size'.format(int(ref_data[-1][0]))
-        min_size = int(ref_data[-1][0])
+    # load data of experiment
     plot_data = load_data(args.plot_data)
     plot_datas.append(plot_data)
     if int(plot_data[-1][0]) < min_size:
-        print '{} is new min size'.format(int(plot_data[-1][0]))
+        #print '{} is new min size'.format(int(plot_data[-1][0]))
         min_size = int(plot_data[-1][0])
+    # load reference data
+    #ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
+    ref_data = load_data(args.reference_data)
+    plot_datas.append(ref_data)
+    if int(ref_data[-1][0]) < min_size:
+        #print '{} is new min size'.format(int(ref_data[-1][0]))
+        min_size = int(ref_data[-1][0])
+
 
     # cut data to min size
     print 'min iters in data is:' + str(min_size)
@@ -80,6 +85,9 @@ if __name__ == "__main__":
     line2a, = ax2.plot(iters_list[0], acc_list[0], label="Test Accuracy", color='b')
     line2b, = ax2.plot(iters_list[1], acc_list[1], label="Referenz Accuracy", color='#99cbe9')
     lines = [line1a, line1b, line2a, line2b]
+    #line1b, = ax1.plot(iters_list[1], loss_list[1], label="Referenz loss", color='r')
+    #line2b, = ax2.plot(iters_list[1], acc_list[1], label="Referenz Accuracy", color='b')
+    #lines = [line1b, line2b]
 
     ax1.set_xlabel('Iterationen')
     ax1.set_ylabel('Loss', color='r')
@@ -87,5 +95,5 @@ if __name__ == "__main__":
 
     legend = plt.legend(handles=lines, bbox_to_anchor=(1.05, 1), loc=2,
                         borderaxespad=0.)
-    print 'saving plot png to ' + args.output_png_path
+    #print 'saving plot png to ' + args.output_png_path
     pylab.savefig(args.output_png_path, bbox_extra_artists=(legend,), bbox_inches='tight')

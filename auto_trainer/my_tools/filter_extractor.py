@@ -1,9 +1,16 @@
 import caffe
 from PIL import Image
 import numpy as np
+import math
 from scipy.misc import toimage
 import argparse
 import os
+
+
+def get_new_size(size, x_size):
+    factor = x_size / size[0]
+    return x_size, math.ceil(size[1]*factor)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='extracts convolution filter from trained model as pngs')
@@ -36,7 +43,7 @@ if __name__ == "__main__":
         if filter_channels is 3:
             # 3. compose new image
             # new size = 120x120
-            comp_im = Image.new("RGB", ((filter_size + 1) * 10 - 1, (filter_size + 1) * 10 - 1), "white")
+            comp_im = Image.new("RGB", ((filter_size + 1) * 10 - 1, (filter_size + 1) * (math.ceil(filter_count/10)) - 1), "white")
             offset_x = 0
             offset_y = 0
             for i in range(filter_count):
@@ -46,7 +53,7 @@ if __name__ == "__main__":
                 if offset_x > (filter_size + 1) * 10 - 1:
                     offset_x = 0
                     offset_y += filter_size + 1
-            comp_im_big = comp_im.resize((400, 400))
+            comp_im_big = comp_im.resize(get_new_size(comp_im.size(), 400))
             comp_im_big.save(os.path.join(output_path, name + '_filters_big.png'))
         else:
             comp_im = Image.new("L", (filter_channels * (filter_size + 1), (filter_size + 1) * filter_count), "white")

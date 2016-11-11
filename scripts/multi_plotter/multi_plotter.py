@@ -12,7 +12,7 @@ import matplotlib.colors as colors
 csv_delimiter = ';'
 iter_index = 0
 acc_index = 1
-loss_index = 2
+loss_index = 3
 
 
 def get_cmap(N):
@@ -55,11 +55,19 @@ if __name__ == "__main__":
     data_path_dict = json.load(open(args.json_path, 'r'))
     min_size = 99100000
     for path_index in data_path_dict:
-        if 'ignore' in data_path_dict[path_index].keys():
+        print path_index
+        if 'path_prefix' in path_index:
             continue
+        print '{}:{}'.format(path_index, data_path_dict[path_index]['name'])
         line_names.append(data_path_dict[path_index]['name'])
+        csv_path = ''
+        dir_path = os.path.join(data_path_dict['path_prefix'], data_path_dict[path_index]['csv_path'])
+        for f in os.listdir(dir_path):
+            if f.endswith(".csv"):
+                csv_path = os.path.join(dir_path, f)
+                break
 
-        plot_data = load_data(data_path_dict[path_index]['csv_path'])
+        plot_data = load_data(csv_path)
         print '{}:\t{} iters'.format(data_path_dict[path_index]['name'], plot_data[-1][0])
         plot_datas.append(plot_data)
         if int(plot_data[-1][0]) < min_size:
@@ -117,7 +125,7 @@ if __name__ == "__main__":
 
     #legend = plt.legend(handles=lines, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
     #           ncol=2, mode="expand", borderaxespad=0.)
-    legend = plt.legend(handles=lines, bbox_to_anchor=(1.05, 1), loc=2,
+    legend = plt.legend(handles=lines, bbox_to_anchor=(1.1, 1), loc=2,
                         borderaxespad=0.)
     print 'saving plot png to ' + args.output_png_path
     pylab.savefig(args.output_png_path, bbox_extra_artists=(legend,), bbox_inches='tight')
