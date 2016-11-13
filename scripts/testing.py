@@ -30,7 +30,7 @@ if __name__ == '__main__':
                                 '--gpu',
                                 '--images_dim',
                                 images_dim,
-                                "--mean_file", mean_file
+                                "--mean_file", mean_file,
                                 "--input_scale", input_scale,
                                 "--raw_scale", raw_scale,
                                 "--channel_swap", channel_swap],
