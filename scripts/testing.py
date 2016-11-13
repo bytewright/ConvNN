@@ -13,8 +13,8 @@ if __name__ == '__main__':
     pretrained_model = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_vgg16_places365.caffemodel'
     images_dim = '256,256'
     mean_file = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
-    input_scale = 1.0
-    raw_scale = 255.0,
+    input_scale = "1.0"
+    raw_scale = "255.0",
     channel_swap = '2,1,0'
 
     print 'plotting learning curve as png'
