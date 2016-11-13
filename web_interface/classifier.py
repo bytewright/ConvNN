@@ -48,7 +48,7 @@ class NNClassifier:
         labels = []
         with open(params['class_labels'], 'r') as file:
             for line in file:
-                label = (line.split(' ')[0])[3:]
+                label = (line.split(';')[1])
                 labels.append(label)
         self.my_log_info('loaded {} labels'.format(len(labels)))
         self.labels = labels
@@ -60,14 +60,24 @@ class NNClassifier:
         time.sleep(5.48)
         self.my_log_info('classifing image...')
         endtime = time.time()
-        result = [True,
-                  [('/f/forest/broadleaf', 0.67110592),
-                   ('/f/field/wild', 0.065907449),
-                   ('/p/pasture', 0.059617899),
-                   ('/f/forest_path', 0.046961967),
-                   ('/r/rainforest', 0.046631806)],
-                  '%.3f' % (endtime - starttime),
-                  '{} ({})'.format(self.name, self.type)]
+        if self.type is 'scene':
+            result = [True,
+                      [('/f/forest/broadleaf', 0.67110592),
+                       ('/f/field/wild', 0.065907449),
+                       ('/p/pasture', 0.059617899),
+                       ('/f/forest_path', 0.046961967),
+                       ('/r/rainforest', 0.046631806)],
+                      '%.3f' % (endtime - starttime),
+                      '{} ({})'.format(self.name, self.type)]
+        else:
+            result = [True,
+                      [('white wolf, Arctic wolf, Canis lupus tundrarum', 0.35455278),
+                       ('tusker', 0.18887606),
+                       ('timber wolf, grey wolf, gray wolf, Canis lupus', 0.094796762),
+                       ('Indian elephant, Elephas maximus', 0.089816146),
+                       ('Irish wolfhound', 0.088667534)],
+                      '%.3f' % (endtime - starttime),
+                      '{} ({})'.format(self.name, self.type)]
         return result
 
     def classify_image(self, image):
