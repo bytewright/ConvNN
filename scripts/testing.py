@@ -9,8 +9,8 @@ import sys
 
 if __name__ == '__main__':
     script_path = '/home/ellerch/bin/caffe/python/classify.py'
-    input_file = '/home/ellerch/caffeProject/scripts/classify_test/jcxdqj4r.bmp'
-    output_file = '/home/ellerch/caffeProject/scripts/classify_test/jcxdqj4r.output'
+    input_file = '/home/ellerch/caffeProject/scripts/classify_test/pzjxnad5.png'
+    output_file = '/home/ellerch/caffeProject/scripts/classify_test/pzjxnad5'
     model_def = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_deploy_vgg16_places365.prototxt'
     pretrained_model = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_vgg16_places365.caffemodel'
     images_dim = '256,256'
@@ -51,3 +51,18 @@ if __name__ == '__main__':
         # os.path.join(os.path.dirname(path), 'caffe_log_test{}.csv'.format(os.path.basename(path)[-5]))],
         output = process.communicate()[0]
         print output
+
+        lables_path = '/home/ellerch/db/places365/categories_places365.txt'
+        labels = []
+        with open(lables_path, 'r') as f:
+            for line in f.readlines():
+                line.rstrip()
+                line = line.replace('\n', '')
+                labels.append((int(line.split(' ')[1]), line.split(' ')[0]))
+        print labels[:10]
+        raw_vals = np.load(output_file+'.npy')
+        vals = zip([x for x in raw_vals[0]], range(365))
+
+        vals = sorted(vals, reverse=True)
+        for val in vals[:10]:
+            print '{}:{}'.format(val, labels[val[1]])
