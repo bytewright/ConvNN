@@ -3,7 +3,9 @@ import numpy as np
 import math
 import subprocess
 import os
-
+import caffe
+import numpy as np
+import sys
 
 if __name__ == '__main__':
     script_path = '/home/ellerch/bin/caffe/python/classify.py'
@@ -13,29 +15,39 @@ if __name__ == '__main__':
     pretrained_model = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_vgg16_places365.caffemodel'
     images_dim = '256,256'
     mean_file = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
+    mean_out_file = '/home/ellerch/db/places365/places365CNN_mean.npy'
     input_scale = "1.0"
     raw_scale = "255.0",
     channel_swap = '2,1,0'
 
-    print 'plotting learning curve as png'
-    # plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
-    process = subprocess.Popen(['python',
-                                script_path,
-                                input_file,
-                                output_file,
-                                '--model_def',
-                                model_def,
-                                '--pretrained_model',
-                                pretrained_model,
-                                '--gpu',
-                                '--images_dim',
-                                images_dim,
-                                "--mean_file", mean_file,
-                                "--input_scale", input_scale,
-                                "--raw_scale", raw_scale,
-                                "--channel_swap", channel_swap],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    # os.path.join(os.path.dirname(path), 'caffe_log_test{}.csv'.format(os.path.basename(path)[-5]))],
-    output = process.communicate()[0]
-    print output
+
+    blob = caffe.proto.caffe_pb2.BlobProto()
+    data = open(mean_file, 'rb').read()
+    blob.ParseFromString(data)
+    arr = np.array(caffe.io.blobproto_to_array(blob))
+    out = arr[0]
+    np.save(mean_out_file, out)
+    if False:
+
+        print 'plotting learning curve as png'
+        # plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
+        process = subprocess.Popen(['python',
+                                    script_path,
+                                    input_file,
+                                    output_file,
+                                    '--model_def',
+                                    model_def,
+                                    '--pretrained_model',
+                                    pretrained_model,
+                                    '--gpu',
+                                    '--images_dim',
+                                    images_dim,
+                                    "--mean_file", mean_file,
+                                    "--input_scale", input_scale,
+                                    "--raw_scale", raw_scale,
+                                    "--channel_swap", channel_swap],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT)
+        # os.path.join(os.path.dirname(path), 'caffe_log_test{}.csv'.format(os.path.basename(path)[-5]))],
+        output = process.communicate()[0]
+        print output
