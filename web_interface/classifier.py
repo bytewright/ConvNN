@@ -56,11 +56,11 @@ class NNClassifier:
         return True
 
     def dummy_classify(self, image):
-        starttime = time.time()
-        time.sleep(5.48)
-        self.my_log_info('classifing image...')
-        endtime = time.time()
-        if self.type is 'scene':
+        if 'vgg' in self.name:
+            starttime = time.time()
+            time.sleep(5.48)
+            self.my_log_info('classifing image...')
+            endtime = time.time()
             result = [True,
                       [('/f/forest/broadleaf', 0.67110592),
                        ('/f/field/wild', 0.065907449),
@@ -70,6 +70,10 @@ class NNClassifier:
                       '%.3f' % (endtime - starttime),
                       '{} ({})'.format(self.name, self.type)]
         else:
+            starttime = time.time()
+            time.sleep(3.24)
+            self.my_log_info('classifing image...')
+            endtime = time.time()
             result = [True,
                       [('white wolf, Arctic wolf, Canis lupus tundrarum', 0.35455278),
                        ('tusker', 0.18887606),
