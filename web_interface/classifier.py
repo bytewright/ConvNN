@@ -32,15 +32,17 @@ class NNClassifier:
         self.type = params['type']
         self.my_log_info('loading db_mean_path:{}'.format(params['mean_db_path']))
         mean_npy = np.load(params['mean_db_path'])
+        print mean_npy.shape
+
         #blob = caffe.proto.caffe_pb2.BlobProto()
         #data = open(params['mean_db_path'], 'rb').read()
         #blob.ParseFromString(data)
         #mean_arr = np.array(caffe.io.blobproto_to_array(blob))[0]
         self.my_log_info('loading network_path:{}'.format(params['network_path']))
         self.my_log_info('loading weight_path:{}'.format(params['weights_path']))
-        self.net = caffe.Classifier(params['network_path'], params['weights_path'],
-                                    image_dims=[256, 256], mean=mean_npy,
-                                    input_scale=1.0, raw_scale=255.0, channel_swap=[2, 1, 0])
+        #self.net = caffe.Classifier(params['network_path'], params['weights_path'],
+        #                            image_dims=[256, 256], mean=mean_npy,
+        #                            input_scale=1.0, raw_scale=255.0, channel_swap=[2, 1, 0])
 
         self.my_log_info('loading labels_path:{}'.format(params['class_labels']))
         labels = []
@@ -55,11 +57,15 @@ class NNClassifier:
 
     def dummy_classify(self, image):
         starttime = time.time()
-        time.sleep(15)
+        time.sleep(5.48)
         self.my_log_info('classifing image...')
         endtime = time.time()
         result = [True,
-                  [(1, 0.0)],
+                  [('/f/forest/broadleaf', 0.67110592),
+                   ('/f/field/wild', 0.065907449),
+                   ('/p/pasture', 0.059617899),
+                   ('/f/forest_path', 0.046961967),
+                   ('/r/rainforest', 0.046631806)],
                   '%.3f' % (endtime - starttime),
                   '{} ({})'.format(self.name, self.type)]
         return result
