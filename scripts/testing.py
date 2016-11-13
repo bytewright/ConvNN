@@ -14,8 +14,8 @@ if __name__ == '__main__':
     model_def = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_deploy_vgg16_places365.prototxt'
     pretrained_model = '/home/ellerch/caffeProject/web_interface/cnn/sce_vgg_16/sce_vgg16_places365.caffemodel'
     images_dim = '256,256'
-    mean_file = '/home/ellerch/db/places365/places365CNN_mean.binaryproto'
-    mean_out_file = '/home/ellerch/db/places365/places365CNN_mean.npy'
+    mean_file = '/home/ellerch/caffeProject/web_interface/cnn/obj_googlenet/imagenet_mean.binaryproto'
+    mean_out_file = '/home/ellerch/caffeProject/web_interface/cnn/obj_googlenet/imagenet_mean.npy'
     input_scale = "1.0"
     raw_scale = "255.0",
     channel_swap = '2,1,0'
