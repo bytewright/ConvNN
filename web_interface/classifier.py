@@ -39,8 +39,8 @@ class NNClassifier:
         self.my_log_info('loading network_path:{}'.format(params['network_path']))
         self.my_log_info('loading weight_path:{}'.format(params['weights_path']))
         self.net = caffe.Classifier(params['network_path'], params['weights_path'],
-                                    image_dims='256,256', mean=mean_npy,
-                                    input_scale=255, raw_scale=1.0, channel_swap='2,1,0')
+                                    image_dims=[256, 256], mean=mean_npy,
+                                    input_scale=255, raw_scale=1.0, channel_swap=[2, 1, 0])
 
         self.my_log_info('loading labels_path:{}'.format(params['class_labels']))
         labels = []
