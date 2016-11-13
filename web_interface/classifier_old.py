@@ -37,10 +37,13 @@ class NNClassifier:
         mean_arr = np.array(caffe.io.blobproto_to_array(blob))[0]
         self.my_log_info('loading network_path:{}'.format(params['network_path']))
         self.my_log_info('loading weight_path:{}'.format(params['weights_path']))
-        self.net = caffe.Classifier(params['network_path'], params['weights_path'],
-                                    image_dims='256,256', mean=params['mean_db_path'],
-                                    input_scale=255, raw_scale=1.0, channel_swap='2,1,0')
+        self.net = caffe.Classifier(
+            str(params['network_path']),
+            str(params['weights_path']), mean=mean_arr)
 
+        #, mean=out
+        #image_dims=(self.model_args['image_dim']), raw_scale=self.model_args['image_raw_scale'],
+        #mean = np.load(db_mean_path).mean(1).mean(1), channel_swap = (2, 1, 0)
         self.my_log_info('loading labels_path:{}'.format(params['class_labels']))
         labels = []
         with open(params['class_labels'], 'r') as file:
@@ -67,8 +70,7 @@ class NNClassifier:
         try:
             starttime = time.time()
             self.my_log_info('classifing image...')
-            #scores = self.net.predict([image], oversample=True).flatten()
-            scores = self.net.predict([image]).flatten()
+            scores = self.net.predict([image], oversample=True).flatten()
             endtime = time.time()
             minutes, sec = divmod(endtime-starttime, 60)
             self.my_log_info('classification done in {}'.format('%02dm %02ds' % (minutes, sec)))
