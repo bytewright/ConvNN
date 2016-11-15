@@ -6,7 +6,7 @@ import os
 import subprocess
 from threading import Thread
 from timeit import default_timer as timer
-from trainer_utils import get_avg_acc_and_loss, save_job_stats_to_json, get_best_caffemodel, draw_job_net,\
+from trainer_utils import save_job_stats_to_json, get_best_caffemodel, draw_job_net,\
      generate_parsed_splitted_logs, extract_filters, get_training_stats, \
      move_all_files_from_to, generate_parsed_splitted_logs2, draw_job_plot
 
@@ -74,10 +74,10 @@ class NetworkTrainer(Thread):
                 # parse .test logfile and average over last items
                 stats_dict = get_training_stats(os.path.join(self.job['snapshot_path'],
                                                              self.job['name'] + '_caffe_test_log.csv'))
-                self.job.update()
-                self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(
-                                                                                    self.job['snapshot_path'],
-                                                                                    "parsed_caffe_log.test"))
+                self.job.update(stats_dict)
+                #self.job['accuracy'], self.job['test_loss'] = get_avg_acc_and_loss(os.path.join(
+                #                                                                    self.job['snapshot_path'],
+                #                                                                    "parsed_caffe_log.test"))
                 # uses data from csv file to generate plots
                 draw_job_plot(os.path.join(self.job['snapshot_path'], self.job['name'] + '_caffe_test_log.csv'),
                               os.path.join(self.job['snapshot_path'], self.job['name'] + '_training_plot2.png'))
