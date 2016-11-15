@@ -79,9 +79,9 @@ def get_training_stats(csv_path):
     csv_data = test_data[1:]
     num_items = 10
 
-    acc1 = [float(x[acc1_index]) for x in csv_data]
-    acc5 = [float(x[acc5_index]) for x in csv_data]
-    loss = [float(x[loss_index]) for x in csv_data]
+    acc1 = [float(x[acc1_index]) for x in reversed(csv_data)]
+    acc5 = [float(x[acc5_index]) for x in reversed(csv_data)]
+    loss = [float(x[loss_index]) for x in reversed(csv_data)]
     max_top1 = (max(acc1))
     max_top5 = (max(acc5))
     avg_loss = 0.0
@@ -89,9 +89,9 @@ def get_training_stats(csv_path):
     avg_acc_top5 = 0.0
 
     for i in range(num_items):
-        avg_acc_top1 += acc1[-i] / (num_items-1)
-        avg_acc_top5 += acc5[-i] / (num_items-1)
-        avg_loss += loss[-i] / (num_items-1)
+        avg_acc_top1 += acc1[i] / num_items
+        avg_acc_top5 += acc5[i] / num_items
+        avg_loss += loss[i] / num_items
 
     stats = {'max_top1': round(max_top1*100, 3),
              'max_top5': round(max_top5*100, 3),

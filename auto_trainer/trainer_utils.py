@@ -266,6 +266,8 @@ def get_training_stats(csv_path):
     acc1_index = 1
     acc5_index = 2
     loss_index = 3
+    num_items = 10
+
     test_data = []
     with open(csv_path, 'r') as f:
         for line in f.readlines():
@@ -274,7 +276,9 @@ def get_training_stats(csv_path):
             test_data.append([data for data in line.split(csv_delimiter) if data is not ''])
 
     csv_data = test_data[1:]
-    num_items = 10
+
+    if csv_data.__len__() < num_items:
+        num_items = int(csv_data.__len__() / 2)
 
     acc1 = [float(x[acc1_index]) for x in csv_data]
     acc5 = [float(x[acc5_index]) for x in csv_data]
@@ -285,10 +289,10 @@ def get_training_stats(csv_path):
     avg_acc_top1 = 0.0
     avg_acc_top5 = 0.0
 
-    for i in range(num_items):
-        avg_acc_top1 += acc1[-i] / (num_items - 1)
-        avg_acc_top5 += acc5[-i] / (num_items - 1)
-        avg_loss += loss[-i] / (num_items - 1)
+    for i in range(num_items+1):
+        avg_acc_top1 += acc1[-(i+1)] / num_items
+        avg_acc_top5 += acc5[-(i+1)] / num_items
+        avg_loss += loss[-(i+1)] / num_items
 
     stats = {'max_top1': round(max_top1 * 100, 3),
              'max_top5': round(max_top5 * 100, 3),

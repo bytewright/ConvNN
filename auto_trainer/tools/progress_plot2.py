@@ -36,6 +36,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print 'plotting\t{}\nvs\t\t\t{}\noutput:\t\t{}'.format(args.reference_data, args.plot_data, args.output_png_path)
+    if args.reference_data is None:
+        ref_data = False
+    else:
+        ref_data = True
     min_size = 9910000
     plot_datas = []
     # load data of experiment
@@ -44,13 +48,14 @@ if __name__ == "__main__":
     if int(plot_data[-1][0]) < min_size:
         #print '{} is new min size'.format(int(plot_data[-1][0]))
         min_size = int(plot_data[-1][0])
-    # load reference data
-    #ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
-    ref_data = load_data(args.reference_data)
-    plot_datas.append(ref_data)
-    if int(ref_data[-1][0]) < min_size:
-        #print '{} is new min size'.format(int(ref_data[-1][0]))
-        min_size = int(ref_data[-1][0])
+    if ref_data:
+        # load reference data
+        #ref_data = load_data(os.path.join(os.path.dirname(__file__), args.reference_data))
+        ref_data = load_data(args.reference_data)
+        plot_datas.append(ref_data)
+        if int(ref_data[-1][0]) < min_size:
+            #print '{} is new min size'.format(int(ref_data[-1][0]))
+            min_size = int(ref_data[-1][0])
 
 
     # cut data to min size
@@ -81,10 +86,13 @@ if __name__ == "__main__":
     ax2 = ax1.twinx()
 
     line1a, = ax1.plot(iters_list[0], loss_list[0], label="Test Loss", color='r')
-    line1b, = ax1.plot(iters_list[1], loss_list[1], label="Referenz loss", color='#eb977f')
     line2a, = ax2.plot(iters_list[0], acc_list[0], label="Test Accuracy", color='b')
-    line2b, = ax2.plot(iters_list[1], acc_list[1], label="Referenz Accuracy", color='#99cbe9')
-    lines = [line1a, line1b, line2a, line2b]
+    if ref_data:
+        line1b, = ax1.plot(iters_list[1], loss_list[1], label="Referenz loss", color='#eb977f')
+        line2b, = ax2.plot(iters_list[1], acc_list[1], label="Referenz Accuracy", color='#99cbe9')
+        lines = [line1a, line1b, line2a, line2b]
+    else:
+        lines = [line1a, line2a]
     #line1b, = ax1.plot(iters_list[1], loss_list[1], label="Referenz loss", color='r')
     #line2b, = ax2.plot(iters_list[1], acc_list[1], label="Referenz Accuracy", color='b')
     #lines = [line1b, line2b]
