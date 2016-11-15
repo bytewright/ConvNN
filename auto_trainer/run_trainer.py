@@ -120,9 +120,9 @@ if __name__ == '__main__':
         for thread in running_threads:
             if not thread.isAlive():
                 job = thread.get_job()
-                log.info('GPU {} Thread "{}" is finished, duration: {}'.format(job['gpu_num'],
-                                                                               thread.getName(),
-                                                                               job['duration']))
+                log.info('Thread "{}" on GPU {} is finished, duration: {}'.format(thread.getName(),
+                                                                                  job['gpu_num'],
+                                                                                  job['duration']))
                 running_threads.remove(thread)
                 free_gpu_ids.append(job['gpu_num'])
 
@@ -158,10 +158,12 @@ if __name__ == '__main__':
                     worked_job_names.append(job['name'])
                     free_gpu_ids.remove(free_gpu_ids[0])
                     time.sleep(2)  # just for better console readability
+                    running_jobs = 'Jobs in training:\n'
                     for train_thread in running_threads:
-                        log.info('GPU {}: {}, started: {}'.format(train_thread.get_job()['gpu_num'],
-                                                                  train_thread.get_job()['name'],
-                                                                  train_thread.get_job()['start_time']))
+                        running_jobs += 'Job "{}" on GPU {}, started: {}\n'.format(train_thread.get_job()['name'],
+                                                                                   train_thread.get_job()['gpu_num'],
+                                                                                   train_thread.get_job()['start_time'])
+                    log.info(running_jobs)
                     time.sleep(3)  # just for better console readability
             else:
                 #log.debug('all {} gpus working, sleeping'.format(args.gpu_count))
