@@ -36,7 +36,7 @@
         "name": "vanilla_alexnet_8_2multistep",
         "solver_path": "/caffe_project/jobs/job_alexnet_vanillas/solver8.prototxt"
     },"9": {
-        "ignore": false,
+        "ignore": true,
         "name": "inception_mynet",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_inception_mynet/solver.prototxt",
         "solver_path_cluster": "/caffe_project/jobs/job_inception_mynet/solver.prototxt"
@@ -44,5 +44,17 @@
         "ignore": true,
         "name": "alexnet_vanilla",
         "solver_path": "/home/ellerch/caffeProject/jobs/job_xx_alexnet_vanilla/solver.prototxt"
+    },"11": {
+        "ignore": false,
+        "name": "test1",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
+    },"12": {
+        "ignore": false,
+        "name": "test2",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
+    },"13": {
+        "ignore": false,
+        "name": "test2",
+        "solver_path": "/home/ellerch/caffeProject/jobs/job_test/solver.prototxt"
     }
 }

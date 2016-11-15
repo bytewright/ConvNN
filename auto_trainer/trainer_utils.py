@@ -3,27 +3,26 @@ import logging
 import os
 import shutil
 import subprocess
-import sys
 import time
 
 
-
-def get_networks_from_file(jobs_file_path):
-    job_list = []
-    # open txt with network names/paths
-    with open(jobs_file_path, "r") as jobsfile:
-        for job_desc in jobsfile:
-            job_desc = job_desc.rstrip()  # remove '\n' at end of line
-            if job_desc.startswith('#'):
-                continue
-            if not os.path.isfile(os.path.join(job_desc, 'solver.prototxt')):
-                logging.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
-                continue
-            job_list.append(job_desc)
-    return job_list
+#def get_networks_from_file(jobs_file_path):
+#    job_list = []
+#    # open txt with network names/paths
+#    with open(jobs_file_path, "r") as jobsfile:
+#        for job_desc in jobsfile:
+#            job_desc = job_desc.rstrip()  # remove '\n' at end of line
+#            if job_desc.startswith('#'):
+#                continue
+#            if not os.path.isfile(os.path.join(job_desc, 'solver.prototxt')):
+#                logging.error('no solver.prototxt in \n"{}",\nskipping job'.format(job_desc))
+#                continue
+#            job_list.append(job_desc)
+#    return job_list
 
 
 def check_job(job):
+    # checks all paths in solver file
     if job['ignore']:
         logging.info('ignoring job: ' + job['name'])
         return None
@@ -35,6 +34,7 @@ def check_job(job):
         return None
     net_path = ''
     snapshot_path = ''
+    # parse network and snapshot path from solver
     with open(job['solver_path'], 'r') as search:
         for line in search:
             line = line.rstrip()  # remove '\n' at end of line
@@ -55,13 +55,17 @@ def check_job(job):
 
 
 def extract_filters(network_path, weight_path, output_path):
+    # needs adjustment for new projects
+    filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                         'tools',
+                                         'filter_extractor.py')
+    if not os.path.isfile(filter_extract_script):
+        logging.error('filter_extract_script not found at {}'.format(filter_extract_script))
+        return
     if not os.path.exists(weight_path):
         logging.error('weights not found!: ' + weight_path)
         return
     logging.info('extracting filters')
-    filter_extract_script = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                         'my_tools',
-                                         'filter_extractor.py')
     process = subprocess.Popen(['python', filter_extract_script,
                                 network_path, weight_path, output_path],
                                stdout=subprocess.PIPE,
@@ -78,61 +82,67 @@ def extract_filters(network_path, weight_path, output_path):
         logging.info('extractor exited successfully (code {})'.format(returncode))
 
 
-def draw_job_plot(caffe_log_path, output_file):
-    if not os.path.exists(caffe_log_path):
-        logging.error('caffe logfile not found!')
+#def draw_job_plot(caffe_log_path, output_file):
+#    # needs adjustment for new projects
+#    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
+#
+#    if not os.path.exists(caffe_log_path):
+#        logging.error('caffe logfile not found!')
+#        return
+#    logging.info('plotting learning curve as png')
+#    process = subprocess.Popen(['python', plot_script, caffe_log_path, output_file],
+#                               stdout=subprocess.PIPE,
+#                               stderr=subprocess.STDOUT)
+#    output = process.communicate()[0]
+#    #log.debug(output)
+#    returncode = process.returncode
+#    while returncode is None:
+#        time.sleep(2)
+#        returncode = process.returncode
+#    if returncode is not 0:
+#        logging.error('plotter return code: '+str(process.returncode))
+#        logging.error(output)
+#    else:
+#        logging.info('plotter exited successfully (code {})'.format(returncode))
+#
+#
+#def draw_job_plot2(test_log_path, output_file):
+#    if not os.path.exists(test_log_path):
+#        logging.error('test logfile not found!')
+#        return
+#    logging.info('plotting learning curve as png')
+#    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tools', 'progress_plot.py')
+#    process = subprocess.Popen(['python',
+#                                plot_script,
+#                                '--plot_data',
+#                                test_log_path,
+#                                '--output_png_path',
+#                                output_file],
+#                               stdout=subprocess.PIPE,
+#                               stderr=subprocess.STDOUT)
+#    output = process.communicate()[0]
+#    returncode = process.returncode
+#    while returncode is None:
+#        time.sleep(2)
+#        returncode = process.returncode
+#    if returncode is not 0:
+#        logging.error('plotter return code: '+str(process.returncode))
+#        logging.error(output)
+#    else:
+#        logging.info('plotter exited successfully (code {})'.format(returncode))
+#    return output
+#
+
+def draw_job_plot(test_log_path, output_file):
+    # needs adjustment for new projects
+    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tools', 'progress_plot2.py')
+    if not os.path.isfile(plot_script):
+        logging.error('plotting script not found at {}'.format(plot_script))
         return
-    logging.info('plotting learning curve as png')
-    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'progress_plot.py')
-    process = subprocess.Popen(['python', plot_script, caffe_log_path, output_file],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    output = process.communicate()[0]
-    #log.debug(output)
-    returncode = process.returncode
-    while returncode is None:
-        time.sleep(2)
-        returncode = process.returncode
-    if returncode is not 0:
-        logging.error('plotter return code: '+str(process.returncode))
-        logging.error(output)
-    else:
-        logging.info('plotter exited successfully (code {})'.format(returncode))
-
-
-def draw_job_plot2(test_log_path, output_file):
     if not os.path.exists(test_log_path):
         logging.error('test logfile not found!')
         return
     logging.info('plotting learning curve as png')
-    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_tools', 'progress_plot.py')
-    process = subprocess.Popen(['python',
-                                plot_script,
-                                '--plot_data',
-                                test_log_path,
-                                '--output_png_path',
-                                output_file],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    output = process.communicate()[0]
-    returncode = process.returncode
-    while returncode is None:
-        time.sleep(2)
-        returncode = process.returncode
-    if returncode is not 0:
-        logging.error('plotter return code: '+str(process.returncode))
-        logging.error(output)
-    else:
-        logging.info('plotter exited successfully (code {})'.format(returncode))
-    return output
-
-
-def draw_job_plot3(test_log_path, output_file):
-    if not os.path.exists(test_log_path):
-        logging.error('test logfile not found!')
-        return
-    logging.info('plotting learning curve as png')
-    plot_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_tools', 'progress_plot2.py')
     process = subprocess.Popen(['python',
                                 plot_script,
                                 '--plot_data',
@@ -155,6 +165,12 @@ def draw_job_plot3(test_log_path, output_file):
 
 
 def draw_job_net(solver_path, output_file, caffe_python_path):
+    # needs adjustment for new projects
+    # caffe_python_path is defined in config.ini
+    net_draw_script = os.path.join(caffe_python_path, 'draw_net.py')
+    if not os.path.isfile(net_draw_script):
+        logging.error('net_draw_script not found at {}'.format(net_draw_script))
+        return
     # draw_net.py <netprototxt_filename> <out_img_filename>
     net_path = ''
     with open(solver_path, 'r') as search:
@@ -163,7 +179,7 @@ def draw_job_net(solver_path, output_file, caffe_python_path):
             if line.startswith('net: '):
                 net_path = line.replace('net: ', '').replace('"', '')
     process = subprocess.Popen(['python',
-                                os.path.join(caffe_python_path, 'draw_net.py'),
+                                net_draw_script,
                                 net_path,
                                 output_file],
                                stdout=subprocess.PIPE,
@@ -184,6 +200,9 @@ def draw_job_net(solver_path, output_file, caffe_python_path):
 def generate_parsed_splitted_logs(caffe_log_file, job_output_dir):
     #./parse_log.sh <input_log> <output_path>
     script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'caffe_tools', 'parse_log.sh')
+    if not os.path.isfile(script_path):
+        logging.error('script_path not found at {}'.format(script_path))
+        return
     process = subprocess.Popen(['{} {} {}'.format(script_path, caffe_log_file, job_output_dir)],
                                shell=True,
                                stdout=subprocess.PIPE,
@@ -202,9 +221,12 @@ def generate_parsed_splitted_logs(caffe_log_file, job_output_dir):
 
 
 def generate_parsed_splitted_logs2(caffe_log_file, job_output_dir):
-    #./parse_log.sh <input_log> <output_path>
-    script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'scripts',
-                               'log_parser', 'my_log_parser2.py')
+    script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tools', 'csv_log_parser.py')
+    #script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'scripts',
+    #                           'log_parser', 'my_log_parser2.py')
+    if not os.path.isfile(script_path):
+        logging.error('script_path not found at {}'.format(script_path))
+        return
     process = subprocess.Popen(['python',
                                 script_path,
                                 '--log_file',
@@ -238,30 +260,68 @@ def generate_output_directory(solver_path, net_path, snapshot_path):
     return snapshot_path, True
 
 
-def get_avg_acc_and_loss(log_path):
-    delimiter = ' '
+def get_training_stats(csv_path):
+    # needs adjustments if another csv parser is used
+    csv_delimiter = ';'
+    acc1_index = 1
+    acc5_index = 2
+    loss_index = 3
     test_data = []
-    with open(log_path, 'r') as dest_f:
-        for line in dest_f.readlines():
+    with open(csv_path, 'r') as f:
+        for line in f.readlines():
+            # print line
             line = line.rstrip()
-            test_data.append([data for data in line.split(delimiter) if data is not ''])
-    if test_data.__len__() < 10:
-        logging.info('found only {} lines in log'.format(test_data.__len__()))
-        use_last_n = 1.0
-    else:
-        use_last_n = 10.0
-    avg_acc = 0.0
+            test_data.append([data for data in line.split(csv_delimiter) if data is not ''])
+
+    csv_data = test_data[1:]
+    num_items = 10
+
+    acc1 = [float(x[acc1_index]) for x in csv_data]
+    acc5 = [float(x[acc5_index]) for x in csv_data]
+    loss = [float(x[loss_index]) for x in csv_data]
+    max_top1 = (max(acc1))
+    max_top5 = (max(acc5))
     avg_loss = 0.0
-    found_data_points = 0
-    for data in reversed(test_data):
-        if found_data_points == use_last_n:
-            break
-        if len(data) < 4:
-            continue
-        avg_acc += float(data[2]) / use_last_n
-        avg_loss += float(data[3]) / use_last_n
-        found_data_points += 1
-    return avg_acc, avg_loss
+    avg_acc_top1 = 0.0
+    avg_acc_top5 = 0.0
+
+    for i in range(num_items):
+        avg_acc_top1 += acc1[-i] / (num_items - 1)
+        avg_acc_top5 += acc5[-i] / (num_items - 1)
+        avg_loss += loss[-i] / (num_items - 1)
+
+    stats = {'max_top1': round(max_top1 * 100, 3),
+             'max_top5': round(max_top5 * 100, 3),
+             'avg_loss': round(avg_loss, 3),
+             'avg_acc_top1': round(avg_acc_top1 * 100, 3),
+             'avg_acc_top5': round(avg_acc_top5 * 100, 3)}
+    return stats
+
+
+#def get_avg_acc_and_loss(log_path):
+#    delimiter = ' '
+#    test_data = []
+#    with open(log_path, 'r') as dest_f:
+#        for line in dest_f.readlines():
+#            line = line.rstrip()
+#            test_data.append([data for data in line.split(delimiter) if data is not ''])
+#    if test_data.__len__() < 10:
+#        logging.info('found only {} lines in log'.format(test_data.__len__()))
+#        use_last_n = 1.0
+#    else:
+#        use_last_n = 10.0
+#    avg_acc = 0.0
+#    avg_loss = 0.0
+#    found_data_points = 0
+#    for data in reversed(test_data):
+#        if found_data_points == use_last_n:
+#            break
+#        if len(data) < 4:
+#            continue
+#        avg_acc += float(data[2]) / use_last_n
+#        avg_loss += float(data[3]) / use_last_n
+#        found_data_points += 1
+#    return avg_acc, avg_loss
 
 
 def get_best_caffemodel(snapshot_path):

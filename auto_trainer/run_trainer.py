@@ -8,8 +8,7 @@ import configargparse
 import shutil
 
 from NNTrainClsSub import NetworkTrainer
-from trainer_utils import check_job, generate_output_directory, draw_job_net,\
-     draw_job_plot, generate_parsed_splitted_logs, extract_filters, draw_job_plot2
+from trainer_utils import check_job, generate_output_directory
 
 logFormatter = logging.Formatter("%(asctime)s [%(module)14s] [%(levelname)5s] %(message)s")
 log = logging.getLogger()
@@ -17,16 +16,6 @@ log.setLevel(logging.DEBUG)
 consoleHandler = logging.StreamHandler()
 consoleHandler.setFormatter(logFormatter)
 log.addHandler(consoleHandler)
-
-
-def get_networks_from_python():
-    #with open('examples/mnist/lenet_auto_train.prototxt', 'w') as f:
-    #    f.write(str(example_lenet('examples/mnist/mnist_train_lmdb', 64)))
-
-    #with open('examples/mnist/lenet_auto_test.prototxt', 'w') as f:
-    #    f.write(str(example_lenet('examples/mnist/mnist_test_lmdb', 100)))
-    # todo make solver file
-    return []
 
 
 def get_next_job(jobs_file):
@@ -54,7 +43,6 @@ def start_train_thread(job, run_on_gpu_num):
     job['gpu_num'] = run_on_gpu_num
 
     train_thread = NetworkTrainer(job, caffe_trainer_tool, caffe_tool_path, experiment_output_path)
-    #train_thread.daemon = True
     train_thread.setName('{}'.format(job['name']))
     train_thread.start()
 
