@@ -47,11 +47,16 @@ class NNWebInterface(Flask):
 
         # gather results from all classifiers
         results = []
+        tag_list = []
         for classifier in self.classifiers:
-            result = classifier.dummy_classify(image)
-            #result = classifier.classify_image(image)
+            #result = classifier.dummy_classify(image)
+            result = classifier.classify_image(image)
             results.append(result)
-        print 'got {} results'.format(results.__len__())
+            for category_score in result[1]:
+                print category_score[0]
+                tag_list.append(category_score[0])
+        #logging.debug('got {} results, tag-cloud:\n{}'.format(results.__len__()), ', '.join(map(str, tag_list)))
+        logging.debug(tag_list)
         return render_template(
             'index.html', has_result=True, results=results,
             imagesrc=self.embed_image_html(image)

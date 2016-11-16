@@ -51,8 +51,8 @@ if __name__ == '__main__':
     cnns_list = json.load(open(args.cnns_json, 'r'))
     for cnn_index in cnns_list:
         # for each cnn, crate classifier
-        classifier = NNClassifier(gpu_mode=True)
-        if not classifier.set_neural_network(cnns_list[cnn_index]):
+        classifier = NNClassifier()
+        if not classifier.set_neural_network(cnns_list[cnn_index], gpu_mode=False):
             log.error('classifier {} could not be loaded'.format(cnns_list[cnn_index]['name']))
         else:
             classifiers.append(classifier)

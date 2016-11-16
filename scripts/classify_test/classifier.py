@@ -113,6 +113,29 @@ class NNClassifier:
                   '{} ({})'.format(self.name, self.type)]
         return result
 
+    def classify_image2(self, image):
+        starttime = time.time()
+        self.my_log_info('classifing image...')
+        scores = self.net.predict([image], oversample=True).flatten()
+        #scores = self.net.predict([image]).flatten()
+        endtime = time.time()
+        minutes, sec = divmod(endtime-starttime, 60)
+        self.my_log_info('classification done in {}'.format('%02dm %02ds' % (minutes, sec)))
+
+        indices = (-scores).argsort()[:5]
+
+        predictions = []
+        for index in indices:
+            #pred = '{}: {}'.format(index, self.labels[index])
+            #print pred
+            predictions.append(self.labels[index])
+
+        #predictions = self.labels[indices]
+        meta = [
+            (p, '%.5f' % scores[i])
+            for i, p in zip(indices, predictions)
+            ]
+        return meta
 
     def classify_url(self, img_url):
         try:
