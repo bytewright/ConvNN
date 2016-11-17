@@ -49,14 +49,14 @@ if __name__ == '__main__':
     # load cnns
     classifiers = []
     cnns_list = json.load(open(args.cnns_json, 'r'))
-    for cnn_index in cnns_list:
-        # for each cnn, crate classifier
-        classifier = NNClassifier()
-        if not classifier.set_neural_network(cnns_list[cnn_index], gpu_mode=False):
-            log.error('classifier {} could not be loaded'.format(cnns_list[cnn_index]['name']))
-        else:
-            classifiers.append(classifier)
-    if classifiers.__len__() <= 0:
-        log.error('no valid classifier in '+args.cnns_json)
-    app = NNWebInterface('webinterface', classifiers, args.upload_path)
+    #for cnn_index in cnns_list:
+    #    # for each cnn, crate classifier
+    #    classifier = NNClassifier()
+    #    if not classifier.set_neural_network(cnns_list[cnn_index], gpu_mode=False):
+    #        log.error('classifier {} could not be loaded'.format(cnns_list[cnn_index]['name']))
+    #    else:
+    #        classifiers.append(classifier)
+    #if classifiers.__len__() <= 0:
+    #    log.error('no valid classifier in '+args.cnns_json)
+    app = NNWebInterface('webinterface', cnns_list, args.upload_path)
     app.run(host='0.0.0.0', port=args.port)

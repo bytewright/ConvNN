@@ -10,6 +10,7 @@ from flask import Flask, jsonify, render_template, request
 from werkzeug import secure_filename
 from flask.json import JSONEncoder
 from flask_compress import Compress
+from classifier import NNClassifier
 from datetime import datetime
 from PIL import Image
 
@@ -25,7 +26,7 @@ class NNWebInterface(Flask):
         self.route("/classify_upload", methods=['POST'])(self.classify_upload)
         self.route("/classify_url", methods=['GET'])(self.classify_url)
         self.route("/generate_json", methods=['GET'])(self.generate_json)
-        self.classifiers = classifiers
+        self.classifiers_json = classifiers
         self.flask_upload_folder = upload_folder
 
     def classify_upload(self):
@@ -46,14 +47,27 @@ class NNWebInterface(Flask):
                 result=(False, 'Cannot open uploaded image.')
             )
 
-        # gather results from all classifiers
+        # start all classifiers
+        running_threads = []
+        for cnn_index in self.classifiers_json:
+            classifier = NNClassifier(self.classifiers_json[cnn_index], gpu_mode=False)
+            if classifier.set_image(image):
+                classifier.start()
+                running_threads.append(classifier)
+            else:
+                log.error('something wrong with classifier: {}'.format(self.classifiers_json[cnn_index]['name']))
+
+        # gather results
         results = []
         tag_list = []
-        for classifier in self.classifiers:
-            result = classifier.classify_image(image)
+        for classifier in running_threads:
+            classifier.join()
+            success, result = classifier.get_result()
+            if not success:
+                log.error('something wrong with classifier: {}\nresult: {}'.format(classifier.get_name(), result))
+                continue
             results.append(result)
             for category_score in result[1]:
-
                 for tag in category_score[0].split(', '):
                     tag_list.append(tag)
         return render_template(
@@ -65,25 +79,33 @@ class NNWebInterface(Flask):
         image_url = request.args.get('imageurl', '')
         logging.info('Image: %s', image_url)
 
+        # start all classifiers
+        running_threads = []
+        for cnn_index in self.classifiers_json:
+            classifier = NNClassifier(self.classifiers_json[cnn_index], gpu_mode=False)
+            if classifier.set_image_url(image_url):
+                classifier.start()
+                running_threads.append(classifier)
+            else:
+                log.error('something wrong with classifier: {}'.format(self.classifiers_json[cnn_index]['name']))
+
+        # gather results
         results = []
         tag_list = []
-        try:
-            for classifier in self.classifiers:
-                result = classifier.classify_url(image_url)
-                results.append(result)
-                for category_score in result[1]:
-
-                    for tag in category_score[0].split(', '):
-                        tag_list.append(tag)
-        except Exception as err:
-            logging.info('URL error: %s', err)
-            return render_template(
-                'index.html', has_result=True,
-                result=(False, 'Cannot open image url.')
-            )
-
+        for classifier in running_threads:
+            classifier.join()
+            success, result = classifier.get_result()
+            if not success:
+                log.error('something wrong with classifier: {}\nresult: {}'.format(classifier.get_name(), result))
+                continue
+            results.append(result)
+            for category_score in result[1]:
+                for tag in category_score[0].split(', '):
+                    tag_list.append(tag)
         return render_template(
-            'index.html', has_result=True, results=results, imagesrc=image_url, tag_list=tag_list)
+            'index.html', has_result=True, results=results,
+            imagesrc=image_url, tag_list=tag_list
+        )
 
     @staticmethod
     def generate_json():
