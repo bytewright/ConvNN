@@ -24,6 +24,7 @@ class NNWebInterface(Flask):
         self.route("/", methods=['GET'])(self.index)
         self.route("/classify_upload", methods=['POST'])(self.classify_upload)
         self.route("/classify_url", methods=['GET'])(self.classify_url)
+        self.route("/generate_json", methods=['GET'])(self.generate_json)
         self.classifiers = classifiers
         self.flask_upload_folder = upload_folder
 
@@ -49,17 +50,15 @@ class NNWebInterface(Flask):
         results = []
         tag_list = []
         for classifier in self.classifiers:
-            #result = classifier.dummy_classify(image)
             result = classifier.classify_image(image)
             results.append(result)
             for category_score in result[1]:
-                print category_score[0]
-                tag_list.append(category_score[0])
-        #logging.debug('got {} results, tag-cloud:\n{}'.format(results.__len__()), ', '.join(map(str, tag_list)))
-        logging.debug(tag_list)
+
+                for tag in category_score[0].split(', '):
+                    tag_list.append(tag)
         return render_template(
             'index.html', has_result=True, results=results,
-            imagesrc=self.embed_image_html(image)
+            imagesrc=self.embed_image_html(image), tag_list=tag_list
         )
 
     def classify_url(self):
@@ -67,10 +66,15 @@ class NNWebInterface(Flask):
         logging.info('Image: %s', image_url)
 
         results = []
+        tag_list = []
         try:
             for classifier in self.classifiers:
                 result = classifier.classify_url(image_url)
                 results.append(result)
+                for category_score in result[1]:
+
+                    for tag in category_score[0].split(', '):
+                        tag_list.append(tag)
         except Exception as err:
             logging.info('URL error: %s', err)
             return render_template(
@@ -79,12 +83,17 @@ class NNWebInterface(Flask):
             )
 
         return render_template(
-            'index.html', has_result=True, result=results[0], imagesrc=image_url)
+            'index.html', has_result=True, results=results, imagesrc=image_url, tag_list=tag_list)
 
+    @staticmethod
+    def generate_json():
+        tag_list = request.args.get('json_data')
+        json_data = {"tags": tag_list}
+        return jsonify(**json_data)
 
     @staticmethod
     def index():
-        log.debug('index accessed')
+        logging.debug('index accessed')
         return render_template('index.html', has_result=False)
 
     @staticmethod

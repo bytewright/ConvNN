@@ -52,41 +52,12 @@ class NNClassifier:
         self.labels = labels
         return True
 
-    def dummy_classify(self, image):
-        if 'vgg' in self.name:
-            starttime = time.time()
-            time.sleep(5.48)
-            self.my_log_info('classifing image...')
-            endtime = time.time()
-            result = [True,
-                      [('/f/forest/broadleaf', 0.67110592),
-                       ('/f/field/wild', 0.065907449),
-                       ('/p/pasture', 0.059617899),
-                       ('/f/forest_path', 0.046961967),
-                       ('/r/rainforest', 0.046631806)],
-                      '%.3f' % (endtime - starttime),
-                      '{} ({})'.format(self.name, self.type)]
-        else:
-            starttime = time.time()
-            time.sleep(3.24)
-            self.my_log_info('classifing image...')
-            endtime = time.time()
-            result = [True,
-                      [('white wolf, Arctic wolf, Canis lupus tundrarum', 0.35455278),
-                       ('tusker', 0.18887606),
-                       ('timber wolf, grey wolf, gray wolf, Canis lupus', 0.094796762),
-                       ('Indian elephant, Elephas maximus', 0.089816146),
-                       ('Irish wolfhound', 0.088667534)],
-                      '%.3f' % (endtime - starttime),
-                      '{} ({})'.format(self.name, self.type)]
-        return result
-
     def classify_image(self, image):
         try:
             starttime = time.time()
             self.my_log_info('classifing image...')
-            #scores = self.net.predict([image], oversample=True).flatten()
-            scores = self.net.predict([image]).flatten()
+            scores = self.net.predict([image], oversample=True).flatten()
+            #scores = self.net.predict([image]).flatten()
             endtime = time.time()
             minutes, sec = divmod(endtime-starttime, 60)
             self.my_log_info('classification done in {}'.format('%02dm %02ds' % (minutes, sec)))
